@@ -3,6 +3,7 @@ import { SubmitChat } from './Icons/icons'
 
 interface ChatSubmitProp {
   onSendChat: (message: string) => void
+  disable: boolean
 }
 
 const ChatSubmit = (prop: ChatSubmitProp) => {
@@ -43,12 +44,14 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
         placeholder="Type a message"
         className="w-full p-3 text-black rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
         rows={1}
+        disabled={prop.disable}
       />
       <span className="absolute inset-y-0 end-0 grid w-20 place-content-center">
         <button
           type="button"
           className="rounded-full border border-indigo-600 bg-indigo-600 p-3 text-white hover:bg-indigo-300 hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
           onClick={onSubmit}
+          disabled={prop.disable}
         >
           <SubmitChat />
         </button>
