@@ -56,7 +56,7 @@ const PageInventory = () => {
       <div className="block w-3/4">
         <div className="bg-[#181818] rounded p-4">
           <div className="bg-[#181818] rounded p-4">
-            <div className="text-2xl font-semibold mb-4">Explore NFTs</div>
+            <div className="text-2xl font-semibold mb-4">My Nous</div>
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
               {nfts.map((nft, index) => (
                 <div
