@@ -21,22 +21,27 @@ import PageNft from 'pages/nft'
 import PageInventory from 'pages/inventory'
 import PageRoom from 'pages/Room'
 import { ApiProvider } from 'hooks/use-api'
+import { LitProtocolProvider } from 'hooks/use-lit-protocol'
 import SignInModal from 'components/Modal/SignInModal'
 import PublicLayout from 'layouts/PublicLayout'
+import PageAdmin from 'pages/admin'
 
 const App = () => {
   return (
     <ApiProvider>
-      <Routes>
-        <Route element={<MainLayout children={undefined} />}>
-          <Route path="/" element={<PageIndex />} />
-          <Route path="/nft" element={<PageNft />} />
-          <Route path="/inventory" element={<PageInventory />} />
-        </Route>
-        <Route element={<PublicLayout children={undefined} />}>
-          <Route path="/room/:key" element={<PageRoom />} />
-        </Route>
-      </Routes>
+      <LitProtocolProvider>
+        <Routes>
+          <Route element={<MainLayout children={undefined} />}>
+            <Route path="/" element={<PageIndex />} />
+            <Route path="/nft" element={<PageNft />} />
+            <Route path="/inventory" element={<PageInventory />} />
+            <Route path="/admin" element={<PageAdmin />} />
+          </Route>
+          <Route element={<PublicLayout children={undefined} />}>
+            <Route path="/room/:key" element={<PageRoom />} />
+          </Route>
+        </Routes>
+      </LitProtocolProvider>
     </ApiProvider>
   )
 }

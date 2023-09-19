@@ -16,6 +16,8 @@
     "@ethersproject/keccak256": "^5.7.0",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
+    "@lit-protocol/lit-node-client": "^2.2.54",
+    "@lit-protocol/types": "^2.2.54",
     "@near-wallet-selector/core": "^8.5.0",
     "@near-wallet-selector/modal-ui": "^8.5.0",
     "@near-wallet-selector/my-near-wallet": "^8.5.0",
