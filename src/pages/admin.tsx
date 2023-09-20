@@ -1,16 +1,37 @@
-import { AccessControlConditions } from '@lit-protocol/types'
+import { AccessControlConditions, AuthSig } from '@lit-protocol/types'
 import { useState } from 'react'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { convertCamelToSnakeCase } from 'utils'
 import { v4 } from 'uuid'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
+
+export const accessControlConditions: AccessControlConditions = [
+  {
+    contractAddress: '',
+    standardContractType: '',
+    chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+    method: 'eth_getBalance',
+    parameters: [':userAddress'],
+    conditionType: 'evmBasic',
+    returnValueTest: {
+      comparator: '=',
+      value: '0',
+    },
+  },
+]
+
 const PageAdmin = () => {
   const [text, setText] = useState<string>('')
 
-  const [encrypted, setEncrypted] = useState({
+  const [encrypted, setEncrypted] = useState<{
+    encryptedString: string
+    encryptedSymmetricKey: string
+    authSig: AuthSig
+  }>({
     encryptedString: '',
     encryptedSymmetricKey: '',
+    authSig: {} as AuthSig,
   })
 
   const [decrypted, setDecrypted] = useState('')
@@ -18,21 +39,6 @@ const PageAdmin = () => {
   const { address, signMessage } = useConnectedWallet()
   const { encrypt, decrypt } = useLitProtocol()
   const { mutateAsync: publish } = usePublishTransaction()
-
-  const accessControlConditions: AccessControlConditions = [
-    {
-      contractAddress: '',
-      standardContractType: '',
-      chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
-      method: 'eth_getBalance',
-      parameters: [':userAddress'],
-      conditionType: 'evmBasic',
-      returnValueTest: {
-        comparator: '=',
-        value: '0',
-      },
-    },
-  ]
 
   const onEncrypt = async () => {
     let { encryptedString, encryptedSymmetricKey, authSig } = await encrypt({ text, accessControlConditions })
@@ -47,7 +53,7 @@ const PageAdmin = () => {
 
     const signature = (await signMessage(JSON.stringify(content))) as string
 
-    const res = await publish({
+    await publish({
       alias: '',
       chain_id: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
       data: content,
@@ -60,17 +66,16 @@ const PageAdmin = () => {
       token_id: '',
       version: v4(),
     })
-    console.log('res', res)
 
-    setEncrypted({ encryptedString, encryptedSymmetricKey })
+    setEncrypted({ encryptedString, encryptedSymmetricKey, authSig })
   }
 
   const onDecrypt = async () => {
     if (!encrypted.encryptedString) return
 
-    const { encryptedString, encryptedSymmetricKey } = encrypted
+    const { encryptedString, encryptedSymmetricKey, authSig } = encrypted
 
-    let decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey })
+    let decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
     setDecrypted(decrypted)
   }
 

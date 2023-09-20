@@ -19,6 +19,7 @@ export type EncryptStringArgs = {
 export type DecryptStringArgs = {
   encryptedString: string
   encryptedSymmetricKey: string
+  authSig: AuthSig
   accessControlConditions: AccessControlConditions
 }
 
@@ -76,10 +77,8 @@ class LitProtocol {
     }
   }
 
-  async decryptString({ encryptedString, encryptedSymmetricKey, accessControlConditions }: DecryptStringArgs) {
+  async decryptString({ encryptedString, encryptedSymmetricKey, accessControlConditions, authSig }: DecryptStringArgs) {
     if (!this.litNodeClient) await this.connect()
-
-    const authSig = await checkAndSignAuthMessage({ chain: this._chain })
 
     console.log(
       `%c ${JSON.stringify({ accessControlConditions, encryptedSymmetricKey, authSig, chain: this._chain }, null, 2)}`,
