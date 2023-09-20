@@ -222,3 +222,25 @@ export function timeAgo(timestamp: number): string {
 
   return ''
 }
+
+const camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+
+export function convertCamelToSnakeCase(obj: Record<string, any>) {
+  if (typeof obj === 'object' && obj !== null) {
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        obj[i] = convertCamelToSnakeCase(obj[i])
+      }
+    } else {
+      const newObj: Record<string, any> = {}
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          const newKey = camelToSnakeCase(key)
+          newObj[newKey] = convertCamelToSnakeCase(obj[key])
+        }
+      }
+      return newObj
+    }
+  }
+  return obj
+}

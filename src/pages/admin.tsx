@@ -1,24 +1,11 @@
 import { AccessControlConditions } from '@lit-protocol/types'
 import { useState } from 'react'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
-
+import { usePublishTransaction } from 'repositories/rpc.repository'
+import { convertCamelToSnakeCase } from 'utils'
+import { v4 } from 'uuid'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 const PageAdmin = () => {
-  const accessControlConditions: AccessControlConditions = [
-    {
-      contractAddress: '',
-      standardContractType: '',
-      chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
-      method: 'eth_getBalance',
-      parameters: [':userAddress'],
-      //params: [':userAddress'],
-      conditionType: 'evmBasic',
-      returnValueTest: {
-        comparator: '=',
-        value: '0', // '0xba21Df4cF0e779F46CAdd58CCf5a24Ce2512d09e0',
-      },
-    },
-  ]
-
   const [text, setText] = useState<string>('')
 
   const [encrypted, setEncrypted] = useState({
@@ -28,10 +15,52 @@ const PageAdmin = () => {
 
   const [decrypted, setDecrypted] = useState('')
 
+  const { address, signMessage } = useConnectedWallet()
   const { encrypt, decrypt } = useLitProtocol()
+  const { mutateAsync: publish } = usePublishTransaction()
+
+  const accessControlConditions: AccessControlConditions = [
+    {
+      contractAddress: '',
+      standardContractType: '',
+      chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+      method: 'eth_getBalance',
+      parameters: [':userAddress'],
+      conditionType: 'evmBasic',
+      returnValueTest: {
+        comparator: '=',
+        value: '0',
+      },
+    },
+  ]
 
   const onEncrypt = async () => {
-    let { encryptedString, encryptedSymmetricKey } = await encrypt({ text, accessControlConditions })
+    let { encryptedString, encryptedSymmetricKey, authSig } = await encrypt({ text, accessControlConditions })
+
+    const content = JSON.stringify(
+      convertCamelToSnakeCase({
+        encryptedString,
+        encryptedSymmetricKey,
+        authSig,
+      })
+    )
+
+    const signature = (await signMessage(JSON.stringify(content))) as string
+
+    const res = await publish({
+      alias: '',
+      chain_id: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+      data: content,
+      mcdata: JSON.stringify({ loose: 0 }),
+      meta_contract_id: import.meta.env.VITE_META_CONTRACT_ID,
+      method: 'metadata',
+      public_key: address.full as string,
+      signature,
+      token_address: import.meta.env.VITE_NOUS_AI_NFT,
+      token_id: '',
+      version: v4(),
+    })
+    console.log('res', res)
 
     setEncrypted({ encryptedString, encryptedSymmetricKey })
   }
@@ -56,7 +85,7 @@ const PageAdmin = () => {
         <br />
         <input className="text-black" name="text" type="text" value={text} onChange={e => setText(e.target.value)} />
         <div className="mt-2">
-          <p>Encrypted: {encrypted.encryptedString ?? '-'} </p>
+          <p>Encrypted: {encrypted.encryptedString ?? '-'}</p>
           <button
             onClick={() => onEncrypt()}
             className="rounded-sm bg-gradient-to-t from-[#7224A7] to-[#FF3065] px-4 py-2"
@@ -65,7 +94,6 @@ const PageAdmin = () => {
           </button>
 
           <p>Decrypted: {decrypted ?? '-'} </p>
-
           <button
             onClick={() => onDecrypt()}
             className="rounded-sm bg-gradient-to-t from-[#7224A7] to-[#FF3065] px-4 py-2"

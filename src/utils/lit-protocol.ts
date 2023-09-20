@@ -68,9 +68,11 @@ class LitProtocol {
       )}`,
       'background: #222; color: #fff'
     )
+
     return {
       encryptedString: await blobToBase64String(encryptedString),
       encryptedSymmetricKey: uint8arrayToString(encryptedSymmetricKey, 'base16'),
+      authSig,
     }
   }
 
