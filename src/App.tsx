@@ -3,7 +3,18 @@ import { useEffect, useState } from 'react'
 // import { connectorsForWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
 import { PhantomConnector } from 'phantom-wagmi-connector'
-import { bsc, bscTestnet, goerli, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
+import {
+  arbitrum,
+  arbitrumGoerli,
+  bsc,
+  bscTestnet,
+  celo,
+  celoAlfajores,
+  goerli,
+  mainnet,
+  polygon,
+  polygonMumbai,
+} from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
@@ -48,10 +59,16 @@ const App = () => {
 
 const currentChain = [
   // mainnet
+  arbitrum,
+  bsc,
+  celo,
   mainnet,
   polygon,
   bsc,
   // tesnet
+  arbitrumGoerli,
+  bscTestnet,
+  celoAlfajores,
   goerli,
   polygonMumbai,
   bscTestnet,
@@ -63,7 +80,7 @@ const { chains, publicClient } = configureChains(currentChain, [
   jsonRpcProvider({
     rpc: chain => {
       return {
-        http: `${chain.rpcUrls.default}`,
+        http: `${chain.rpcUrls.default.http}`,
       }
     },
   }),
