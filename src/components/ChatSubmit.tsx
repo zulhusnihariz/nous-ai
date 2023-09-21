@@ -32,7 +32,8 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
   }
 
   return (
-    <div className="relative sm:w-full md:w-1/2 mx-auto">
+    <div className="relative bg-[#313138] py-6">
+    <div className="relative sm:w-full md:w-3/4 lg:w-1/2 mx-auto px-4 flex items-center">
       <textarea
         id="message"
         ref={textAreaRef}
@@ -42,8 +43,8 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
           handleResize()
         }}
         placeholder="Type a message"
-        className="w-full p-3 text-black rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
-        rows={1}
+        className="w-full py-3 px-3 text-black rounded-md border-gray-200  shadow-sm text-xs sm:text-sm bg-white"
+        rows={2}
         disabled={prop.disable}
       />
       <span className="absolute inset-y-0 end-0 grid w-20 place-content-center">
@@ -56,6 +57,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
           <SubmitChat />
         </button>
       </span>
+    </div>
     </div>
   )
 }
