@@ -1,12 +1,13 @@
 import ChainName from 'components/ChainName'
 import ShareDialog from 'components/ShareDialog'
-import { PlayerState, Sheet } from 'lib'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { createMixedAudio, formatDataKey } from 'utils'
+import { convertSnakeToCamelCase, formatDataKey } from 'utils'
 import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { ChatIcon, DatabaseIcon } from 'components/Icons/icons'
+import { accessControlConditions } from './admin'
+import { useLitProtocol } from 'hooks/use-lit-protocol'
 
 const PageNft = () => {
   const location = useLocation()
@@ -54,6 +55,8 @@ const PageNft = () => {
     opened: false,
   })
 
+  const { decrypt } = useLitProtocol()
+
   // init
   useEffect(() => {
     const init = () => {
@@ -69,6 +72,16 @@ const PageNft = () => {
   const goToChatroom = () => {
     if (!nftKey) return
     navigate(`/room/${nftKey}`)
+  }
+
+  const getKnowledge = async () => {
+    let metadata = convertSnakeToCamelCase(JSON.parse(nft.data))
+
+    if (!metadata) return
+
+    const { encryptedString, encryptedSymmetricKey, authSig } = metadata
+    let decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
+    if (decrypted) console.log(decrypted)
   }
 
   return (
@@ -112,7 +125,7 @@ const PageNft = () => {
                 </button>
                 <button
                   className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer hover:border hover:border-white"
-                  onClick={() => {}}
+                  onClick={() => getKnowledge()}
                 >
                   <div>
                     <DatabaseIcon />
