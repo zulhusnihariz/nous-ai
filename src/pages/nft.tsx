@@ -74,13 +74,16 @@ const PageNft = () => {
     navigate(`/room/${nftKey}`)
   }
 
-  const getKnowledge = async () => {
-    let metadata = convertSnakeToCamelCase(JSON.parse(nft.data))
+  const goToKnowledge = async () => {
+    // load metadata from network for lit-protocol
+
+    // if not empty
+    const metadata = convertSnakeToCamelCase(JSON.parse(nft.data))
 
     if (!metadata) return
 
     const { encryptedString, encryptedSymmetricKey, authSig } = metadata
-    let decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
+    const decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
     if (decrypted) console.log(decrypted)
   }
 
@@ -125,7 +128,7 @@ const PageNft = () => {
                 </button>
                 <button
                   className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer hover:border hover:border-white"
-                  onClick={() => getKnowledge()}
+                  onClick={() => goToKnowledge()}
                 >
                   <div>
                     <DatabaseIcon />
