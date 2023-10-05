@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand'
 import { resetters } from '..'
-import { NftMetadata, Transaction, LitProtocolEncryption } from 'services/rpc'
+import { NftMetadata, Transaction, LitProtocolEncryption, NousMetadata } from 'services/rpc'
 
 export type ModalState = {
   isOpen: boolean
@@ -12,6 +12,7 @@ export type Modal = {
   signUpRainbow: ModalState
   encryptKnowledge: ModalState & Partial<Transaction> & { encryption?: LitProtocolEncryption }
   nftMetadata: ModalState & Partial<Transaction> & { metadata?: NftMetadata }
+  nousMetadata: ModalState & Partial<Transaction> & { metadata?: NousMetadata }
 }
 
 export interface ModalSlice {
@@ -33,6 +34,11 @@ const initialModal = {
     signUpRainbow: { isOpen: false },
     encryptKnowledge: { isOpen: false, ...initialTransaction, encryption: undefined },
     nftMetadata: {
+      isOpen: false,
+      ...initialTransaction,
+      metadata: undefined,
+    },
+    nousMetadata: {
       isOpen: false,
       ...initialTransaction,
       metadata: undefined,

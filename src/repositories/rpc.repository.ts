@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import rpc, { JSONRPCFilter, NftMetadata, Transaction, LitProtocolEncryption } from '../services/rpc'
+import rpc, { JSONRPCFilter, NftMetadata, Transaction, LitProtocolEncryption, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { formatTokenKey } from 'utils'
@@ -95,6 +95,7 @@ type UseGetMetadatasReturnType = Record<
       chain: string
       id: string
     }
+    nous: NousMetadata & { version: string }
   }
 >
 const useGetMetadatas = () => {

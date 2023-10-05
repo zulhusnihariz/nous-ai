@@ -60,6 +60,10 @@ export interface LitProtocolEncryption {
   auth_sig: AuthSig
 }
 
+export interface NousMetadata {
+  id: string
+}
+
 const getMetadataAllVersion = (chain: String, address: String, token_id: String) => {
   const encoded_key = formatDataKey(chain, address, token_id)
   return rpc({

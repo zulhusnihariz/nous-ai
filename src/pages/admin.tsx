@@ -4,6 +4,7 @@ import NftMetadataModal from 'components/Modal/NftMetadata'
 import { useGetMetadatas } from 'repositories/rpc.repository'
 import { LitProtocolEncryption } from 'services/rpc'
 import { v4 } from 'uuid'
+import NousMetadataModal from 'components/Modal/NousMetadata'
 
 const PageAdmin = () => {
   const { setModalState } = useBoundStore()
@@ -43,6 +44,22 @@ const PageAdmin = () => {
     })
   }
 
+  const openNousMetadataModal = (tokenId: string) => {
+    const token = metadatas?.[tokenId]?.token
+    const nous = metadatas?.[tokenId]?.nous
+
+    setModalState({
+      nousMetadata: {
+        isOpen: true,
+        token_id: `${tokenId}`,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+        token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
+        version: nous?.version ?? v4(),
+        metadata: nous,
+      },
+    })
+  }
+
   return (
     <div className="h-screen w-full flex justify-center items-start">
       <table className="table-auto min-w-full divide-y-2 divide-gray-200 bg-gray-800 text-sm">
@@ -50,8 +67,9 @@ const PageAdmin = () => {
           <tr>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Token ID</th>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Name</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Metadata</th>
+            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nft Metadata</th>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Encryption</th>
+            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nous Metadata</th>
           </tr>
         </thead>
 
@@ -86,6 +104,12 @@ const PageAdmin = () => {
                     +
                   </button>
                 </td>
+
+                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
+                  <button className="border border-gray-200 p-3" onClick={() => openNousMetadataModal(`${el.tokenId}`)}>
+                    +
+                  </button>
+                </td>
               </tr>
             )
           })}
@@ -93,6 +117,7 @@ const PageAdmin = () => {
       </table>
       <NftMetadataModal />
       <EncryptKnowledgeModal />
+      <NousMetadataModal />
     </div>
   )
 }
