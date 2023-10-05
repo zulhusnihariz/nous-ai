@@ -43,7 +43,7 @@ const EncryptKnowledgeModal = () => {
   const { mutateAsync: publish } = usePublishTransaction()
 
   const onEncrypt = async () => {
-    if (!knowledgeBaseURL) return
+    if (!knowledgeBaseURL || address?.full) return
 
     const { encryptedString, encryptedSymmetricKey, authSig } = await encrypt({
       text: knowledgeBaseURL as string,

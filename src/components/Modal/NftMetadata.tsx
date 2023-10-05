@@ -61,6 +61,7 @@ const NftMetadataModal = () => {
   }
 
   const onCreateMetadata = async () => {
+    if (!address?.full) return
     const content = JSON.stringify(nftMetadata)
 
     const signature = (await signMessage(JSON.stringify(content))) as string
