@@ -197,7 +197,7 @@ function hexToUint8Array(hexString: String): Uint8Array {
 }
 
 export function formatTokenKey(chain_id: String, address: String) {
-  const input = `${chain_id}${address}`
+  const input = `${chain_id}${address.toLowerCase()}`
   const sha256Hash = SHA256(input).toString()
   const uint8Array = hexToUint8Array(sha256Hash)
   return encode(uint8Array)

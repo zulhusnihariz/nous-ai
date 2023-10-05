@@ -5,6 +5,7 @@ import imageCompression from 'browser-image-compression'
 import { useStoreBlob } from 'repositories/rpc.repository'
 
 interface Prop {
+  url: string
   setImageURL: (url: string) => void
   setIsLoading: (bool: boolean) => void
 }
@@ -63,6 +64,10 @@ export const ImageUploader = (prop: Prop) => {
 
     if (url) setURL()
   }, [url])
+
+  useEffect(() => {
+    if (!imagePreview) setImagePreview(prop.url)
+  }, [imagePreview])
 
   return (
     <div className={`relative  w-full ${imagePreview ? 'h-[150px]' : 'h-[100px]'}`}>

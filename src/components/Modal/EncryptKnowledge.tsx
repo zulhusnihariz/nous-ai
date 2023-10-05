@@ -1,13 +1,11 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useBoundStore } from 'store'
 import { AccessControlConditions, AuthSig } from '@lit-protocol/types'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import { usePublishTransaction } from 'repositories/rpc.repository'
-import { convertCamelToSnakeCase } from 'utils'
-import { v4 } from 'uuid'
+import { convertCamelToSnakeCase, convertSnakeToCamelCase } from 'utils'
 
 export const accessControlConditions: AccessControlConditions = [
   {
@@ -18,22 +16,16 @@ export const accessControlConditions: AccessControlConditions = [
     parameters: [':userAddress'],
     conditionType: 'evmBasic',
     returnValueTest: {
-      comparator: '=',
+      comparator: '>',
       value: '0',
     },
   },
 ]
 
-interface Prop {
-  chainId: String
-  tokenAddress: String
-  tokenId: String
-}
-
-const EncryptKnowledgeModal = (prop: Prop) => {
-  const navigate = useNavigate()
-
+const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
+  const { isOpen, encryption, token_id, chain_id, token_address, version } = modal.encryptKnowledge
+
   const [knowledgeBaseURL, setKnowledgeBaseURL] = useState('')
 
   const [encrypted, setEncrypted] = useState<{
@@ -69,30 +61,36 @@ const EncryptKnowledgeModal = (prop: Prop) => {
     const signature = (await signMessage(JSON.stringify(content))) as string
 
     await publish({
-      alias: '',
-      chain_id: prop.chainId as string,
+      alias: 'lit_protocol',
+      chain_id: chain_id as string,
       data: content,
       mcdata: '',
       meta_contract_id: import.meta.env.VITE_LIT_PROTOCOL_META_CONTRACT_ID,
       method: 'metadata',
       public_key: address.full,
       signature,
-      token_address: import.meta.env.VITE_NOUS_AI_NFT,
-      token_id: prop.tokenId as string,
-      version: v4(),
+      token_address: token_address as string,
+      token_id: token_id as string,
+      version: version as string,
     })
 
     setEncrypted({ encryptedString, encryptedSymmetricKey, authSig })
+    closeDialog()
   }
 
-  // const onDecrypt = async () => {
-  //   if (!encrypted.encryptedString) return
+  const onDecrypt = async () => {
+    if (!encryption) return
+    const { encrypted_string, encrypted_symmetric_key, auth_sig } = encryption
 
-  //   const { encryptedString, encryptedSymmetricKey, authSig } = encrypted
+    let decrypted = await decrypt({
+      accessControlConditions,
+      encryptedString: encrypted_string,
+      encryptedSymmetricKey: encrypted_symmetric_key,
+      authSig: convertSnakeToCamelCase(auth_sig) as AuthSig,
+    })
 
-  //   const decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
-  //   setDecrypted(decrypted)
-  // }
+    setKnowledgeBaseURL(decrypted)
+  }
 
   const closeDialog = () => {
     setModalState({ encryptKnowledge: { isOpen: false } })
@@ -100,7 +98,7 @@ const EncryptKnowledgeModal = (prop: Prop) => {
 
   return (
     <>
-      <Transition appear show={modal.encryptKnowledge.isOpen} as={Fragment} afterLeave={() => setKnowledgeBaseURL('')}>
+      <Transition appear show={isOpen} as={Fragment} afterLeave={() => setKnowledgeBaseURL('')}>
         <Dialog as="div" className="relative z-10" onClose={closeDialog}>
           <Transition.Child
             as={Fragment}
@@ -129,12 +127,12 @@ const EncryptKnowledgeModal = (prop: Prop) => {
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 gap-5 mb-4">
                     Encrypt Knowlege Base Encryption
                   </Dialog.Title>
-                  <input
+                  {/*      <input
                     className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
                     name="tokenAddress"
                     type="text"
                     placeholder="Token Address"
-                    value={prop.tokenAddress as string}
+                    value={modal.encryptKnowledge.tokenAddress as string}
                     disabled={true}
                   />
 
@@ -144,7 +142,7 @@ const EncryptKnowledgeModal = (prop: Prop) => {
                       name="chain"
                       type="text"
                       placeholder="Chain"
-                      value={prop.chainId as string}
+                      value={modal.encryptKnowledge.chainId as string}
                       disabled={true}
                     />
                     <input
@@ -152,11 +150,11 @@ const EncryptKnowledgeModal = (prop: Prop) => {
                       name="tokenId"
                       type="text"
                       placeholder="Token ID"
-                      value={prop.tokenId as string}
+                      value={modal.encryptKnowledge.tokenId as string}
                       disabled={true}
                     />
                   </div>
-
+ */}
                   <input
                     className="w-full rounded-lg border-black border p-3 text-sm shadow-sm block text-black mt-2"
                     name="knowledgeBaseUrl"
@@ -165,7 +163,7 @@ const EncryptKnowledgeModal = (prop: Prop) => {
                     value={knowledgeBaseURL as string}
                     onChange={e => setKnowledgeBaseURL(e.target.value)}
                   />
-                  <div className="mt-4">
+                  <div className="mt-4 flex gap-4 justify-center">
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -173,6 +171,16 @@ const EncryptKnowledgeModal = (prop: Prop) => {
                     >
                       Encrypt
                     </button>
+
+                    {encryption && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        onClick={() => onDecrypt()}
+                      >
+                        Decrypt
+                      </button>
+                    )}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

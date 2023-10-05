@@ -8,4 +8,6 @@ export enum RQ_KEY {
   CHECK_BOOKMARKED_SHEETS = 'check_bookmarked_sheets',
   GET_EVENTS = 'get_events',
   GET_POSTS = 'get_posts',
+  GET_METADATAS = 'get_metadatas',
+  GET_METADATA = 'get_metadata',
 }

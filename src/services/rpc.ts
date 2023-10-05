@@ -1,4 +1,6 @@
+import { AuthSig } from '@lit-protocol/types'
 import rpc from 'adapter/jsonrpc'
+import { Metadata } from 'lib'
 import { formatDataKey } from 'utils'
 
 export type RPCResponse<T> = {
@@ -12,7 +14,7 @@ export type RPCResponse<T> = {
 
 export type NftMetadata = {
   attributes: Array<{ trait_type: string; value: string }>
-  external_url: string
+  external_url?: string
   description: string
   image: string
   name: string
@@ -52,6 +54,12 @@ export type Transaction = {
   version: string
 }
 
+export interface LitProtocolEncryption {
+  encrypted_string: string
+  encrypted_symmetric_key: string
+  auth_sig: AuthSig
+}
+
 const getMetadataAllVersion = (chain: String, address: String, token_id: String) => {
   const encoded_key = formatDataKey(chain, address, token_id)
   return rpc({
@@ -77,7 +85,7 @@ const getMetadataUseKeyByBlock = (nftKey: String, meta_contract_id: String, vers
   })
 }
 
-const searchMetadatas = async (nftKey: String, meta_contract_id: String) => {
+const searchMetadatas = async ({ query = [], ordering = [], from = 0, to = 0 }: Partial<JSONRPCFilter<Metadata>>) => {
   const response = await rpc({
     method: 'POST',
     data: JSON.stringify({
@@ -86,24 +94,15 @@ const searchMetadatas = async (nftKey: String, meta_contract_id: String) => {
       params: {
         query: [
           {
-            column: 'data_key',
-            op: '=',
-            query: nftKey,
-          },
-          {
-            column: 'meta_contract_id',
-            op: '=',
-            query: meta_contract_id,
-          },
-          {
             column: 'loose',
             op: '=',
-            query: '0',
+            query: '1',
           },
+          ...query,
         ],
-        ordering: [],
-        from: 0,
-        to: 0,
+        ordering,
+        from,
+        to,
       },
       id: '1',
     }),
@@ -111,7 +110,6 @@ const searchMetadatas = async (nftKey: String, meta_contract_id: String) => {
 
   return response.data?.result?.metadatas
 }
-
 const getContentFromIpfs = (cid: String) => {
   return rpc({
     method: 'POST',

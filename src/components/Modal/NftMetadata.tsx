@@ -1,12 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Fragment, useEffect, useState } from 'react'
 import { useBoundStore } from 'store'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
-import { usePublishTransaction, useStoreBlob } from 'repositories/rpc.repository'
-import { v4 } from 'uuid'
+import { usePublishTransaction } from 'repositories/rpc.repository'
 import { ImageUploader } from 'components/ImageUploader'
-import GenericButton from 'components/Button/GenericButton'
 
 interface NftMetadata {
   name: string
@@ -15,14 +12,8 @@ interface NftMetadata {
   attributes: { trait_type: string; value: string }[]
 }
 
-interface Prop {
-  chainId: String
-  tokenAddress: String
-  tokenId: String
-}
-
-const initialNftMetadata = {
-  name: '',
+const initialNftMetadata: NftMetadata = {
+  name: 'Nous Psyche',
   description: '',
   image: '',
   attributes: [
@@ -31,13 +22,14 @@ const initialNftMetadata = {
   ],
 }
 
-const NftMetadataModal = (prop: Prop) => {
+const NftMetadataModal = () => {
   const { modal, setModalState } = useBoundStore()
+  const { isOpen, metadata, token_id, chain_id, token_address, version } = modal.nftMetadata
+
   const [nftMetadata, setNftMetadata] = useState<NftMetadata>(initialNftMetadata)
   const [isLoading, setIsLoading] = useState(false)
 
   const { address, signMessage } = useConnectedWallet()
-  const { mutateAsync: storeBlob } = useStoreBlob()
   const { mutateAsync: publish } = usePublishTransaction()
 
   const handleChange = (e: any) => {
@@ -69,40 +61,40 @@ const NftMetadataModal = (prop: Prop) => {
   }
 
   const onCreateMetadata = async () => {
-    let test = true
-    if (test) return
-
     const content = JSON.stringify(nftMetadata)
 
     const signature = (await signMessage(JSON.stringify(content))) as string
 
     await publish({
       alias: '',
-      chain_id: prop.chainId as string,
+      chain_id: chain_id as string,
       data: content,
       mcdata: '',
-      meta_contract_id: import.meta.env.VITE_METADATA_META_CONTRACT_ID,
+      meta_contract_id: import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID,
       method: 'metadata',
       public_key: address.full,
       signature,
-      token_address: import.meta.env.VITE_NOUS_AI_NFT,
-      token_id: prop.tokenId as string,
-      version: v4(),
+      token_address: token_address as string,
+      token_id: token_id as string,
+      version: version as string,
     })
+
+    closeDialog()
   }
 
   const closeDialog = () => {
-    setModalState({ nftMetadata: { isOpen: false } })
+    setModalState({
+      nftMetadata: { isOpen: false, token_id: '', chain_id: '', token_address: '', metadata: undefined },
+    })
   }
+
+  useEffect(() => {
+    if (metadata) setNftMetadata(metadata)
+  }, [metadata])
 
   return (
     <>
-      <Transition
-        appear
-        show={modal.nftMetadata.isOpen}
-        as={Fragment}
-        afterLeave={() => setNftMetadata(initialNftMetadata)}
-      >
+      <Transition appear show={isOpen} as={Fragment} afterLeave={() => setNftMetadata(initialNftMetadata)}>
         <Dialog as="div" className="relative z-10" onClose={closeDialog}>
           <Transition.Child
             as={Fragment}
@@ -129,7 +121,7 @@ const NftMetadataModal = (prop: Prop) => {
               >
                 <Dialog.Panel className="w-full text-center max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 align-middle shadow-xl transition-all">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 gap-5 mb-4">
-                    Nft Metadata
+                    Metadata for Token ID: {token_id}
                   </Dialog.Title>
 
                   <input
@@ -138,7 +130,7 @@ const NftMetadataModal = (prop: Prop) => {
                     type="text"
                     placeholder="Name"
                     value={nftMetadata.name as string}
-                    onChange={e => handleChange(e)}
+                    disabled={true}
                   />
 
                   <input
@@ -192,7 +184,8 @@ const NftMetadataModal = (prop: Prop) => {
                       )
                     })}
 
-                  {/* <ImageUploader
+                  <ImageUploader
+                    url={nftMetadata.image as string}
                     setIsLoading={bool => setIsLoading(bool)}
                     setImageURL={(url: string) => {
                       handleChange({
@@ -202,7 +195,7 @@ const NftMetadataModal = (prop: Prop) => {
                         },
                       })
                     }}
-                  /> */}
+                  />
 
                   <div className="mt-4">
                     <button
@@ -211,7 +204,7 @@ const NftMetadataModal = (prop: Prop) => {
                       onClick={() => onCreateMetadata()}
                       disabled={isLoading}
                     >
-                      {isLoading ? 'Processing...' : 'Create'}
+                      {isLoading ? 'Processing...' : metadata ? 'Update' : 'Create'}
                     </button>
                   </div>
                 </Dialog.Panel>
