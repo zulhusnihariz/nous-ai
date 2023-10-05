@@ -6,7 +6,7 @@ import { convertSnakeToCamelCase, formatDataKey } from 'utils'
 import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { ChatIcon, DatabaseIcon } from 'components/Icons/icons'
-import { accessControlConditions } from './admin'
+import { accessControlConditions } from '../components/Modal/EncryptKnowledge'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 
 const PageNft = () => {
