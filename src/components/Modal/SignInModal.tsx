@@ -4,13 +4,15 @@ import ConnectSolana from 'components/Connect/ConnectSolana'
 import ConnectWallet from 'components/Connect/ConnectWallet'
 import ConnectNear from 'components/Connect/ConnectNear'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
-import { arbitrum, bsc, celo, mainnet, polygon } from 'wagmi/chains'
+import { arbitrum, bsc, celo, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 import { useState } from 'react'
 
 const chains = [
   {
-    name: 'Polygon',
-    chain: polygon,
+    /* name: 'Polygon',
+    chain: polygon, */
+    name: 'Mumbai',
+    chain: polygonMumbai,
     svg: (
       <span role="img" aria-label="Polygon Logo" className="icon-32">
         <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16">
@@ -55,6 +57,10 @@ export default function SignInModal() {
                 </div>
                 <div className={chains[selectedIndex].name == 'Celo' ? '' : 'hidden'}>
                   <ConnectWallet chain={CURRENT_CHAIN.CELO} chainId={celo.id} />
+                </div>
+
+                <div className={chains[selectedIndex].name == 'Mumbai' ? '' : 'hidden'}>
+                  <ConnectWallet chain={CURRENT_CHAIN.MUMBAI} chainId={polygonMumbai.id} />
                 </div>
                 <div className={chains[selectedIndex].name == 'Solana' ? '' : 'hidden'}>
                   <ConnectSolana />

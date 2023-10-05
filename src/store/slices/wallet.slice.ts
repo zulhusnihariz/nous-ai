@@ -14,6 +14,7 @@ export enum CURRENT_CHAIN {
   // testnet
   GOERLI = 'goerli',
   MUMBAI = 'mumbai',
+  MATIC_MUMBAI = 'maticmum',
 }
 
 export type Wallet = {
