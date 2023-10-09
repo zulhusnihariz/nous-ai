@@ -40,15 +40,16 @@ const useGetNftByWalletAddress = ({ address, chain }: { address: string; chain: 
   })
 }
 
-const useGetNftByContractAddress = ({ token_address, chain }: { token_address: string; chain: string }) => {
+const useGetNftByContractAddress = (chain: string) => {
+  const tokenAddress = import.meta.env.VITE_NOUS_AI_NFT
   const { getNftsByContractAddress } = useApi()
 
   return useQuery({
-    queryKey: [RQ_KEY.GET_NFTS, chain, token_address],
+    queryKey: [RQ_KEY.GET_NFTS, chain, tokenAddress],
     queryFn: async ({ queryKey }) => {
       const [_rqKey, chain] = queryKey
       try {
-        const response = await getNftsByContractAddress(token_address, chain)
+        const response = await getNftsByContractAddress(tokenAddress, chain)
 
         const nfts = response.data.result.map(
           (d: { token_address: any; token_id: any; metadata: string; owner_of: string; minter_address: string }) => {

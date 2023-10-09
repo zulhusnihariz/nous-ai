@@ -3,7 +3,8 @@ import rpc, { JSONRPCFilter, NftMetadata, Transaction, LitProtocolEncryption, No
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { formatTokenKey } from 'utils'
-import { Metadata } from 'lib'
+import { Metadata, Nft } from 'lib'
+import { useGetNftByContractAddress } from './moralis.repository'
 
 const useGetCompleteTransactions = () => {
   return useQuery({
@@ -85,21 +86,21 @@ const useStoreBlob = () => {
   })
 }
 
-type UseGetMetadatasReturnType = Record<
-  string,
-  {
-    nft: NftMetadata & { version: string }
-    lit_protocol: LitProtocolEncryption & { version: string }
-    token: {
-      address: string
-      chain: string
-      id: string
-    }
-    nous: NousMetadata & { version: string }
+type NousNft = {
+  metadata: NftMetadata & { version: string }
+  lit_protocol: LitProtocolEncryption & { version: string }
+  nous: NousMetadata & { version: string }
+  token: {
+    address: string
+    chain: string
+    id: string
   }
->
-const useGetMetadatas = () => {
-  return useQuery<UseGetMetadatasReturnType>({
+}
+
+const useGetNousNfts = (chain: string) => {
+  const { data: nfts } = useGetNftByContractAddress(chain)
+
+  return useQuery<(Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_METADATAS],
     queryFn: async () => {
       const result = await rpc.searchMetadatas({
@@ -135,10 +136,14 @@ const useGetMetadatas = () => {
           if (curr === undefined) return prev
 
           let { tokenId, alias, ...rest } = curr
-          if (!prev[tokenId]) prev[tokenId] = {}
+
+          if (!prev[tokenId]) {
+            const nft = nfts?.find(el => el.token_id === tokenId)
+            prev[tokenId] = { ...nft }
+          }
 
           if (alias === '') {
-            prev[tokenId]['nft'] = rest
+            prev[tokenId]['metadata'] = rest
           } else {
             prev[tokenId][alias] = rest
           }
@@ -148,9 +153,10 @@ const useGetMetadatas = () => {
         {} as Record<string, any>
       )
 
-      return reduced
+      return Object.values(reduced)
     },
+    enabled: Boolean(nfts && nfts?.length > 0),
   })
 }
 
-export { useGetCompleteTransactions, useGetTransactions, usePublishTransaction, useStoreBlob, useGetMetadatas }
+export { useGetCompleteTransactions, useGetTransactions, usePublishTransaction, useStoreBlob, useGetNousNfts }

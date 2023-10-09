@@ -1,24 +1,19 @@
 import { useBoundStore } from 'store'
 import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
 import NftMetadataModal from 'components/Modal/NftMetadata'
-import { useGetMetadatas } from 'repositories/rpc.repository'
+import { useGetNousNfts } from 'repositories/rpc.repository'
 import { LitProtocolEncryption } from 'services/rpc'
 import { v4 } from 'uuid'
 import NousMetadataModal from 'components/Modal/NousMetadata'
-import { useGetNftByContractAddress } from 'repositories/moralis.repository'
 
 const PageAdmin = () => {
   const { setModalState } = useBoundStore()
-  const { data: metadatas } = useGetMetadatas()
+  const { data: nfts } = useGetNousNfts('mumbai')
+  const openNftMetadataModal = (tokenId: string, index: number) => {
+    if (!nfts?.[index]) return
 
-  const { data: nfts } = useGetNftByContractAddress({
-    token_address: import.meta.env.VITE_NOUS_AI_NFT,
-    chain: 'mumbai',
-  })
-
-  const openNftMetadataModal = (tokenId: string) => {
-    const token = metadatas?.[tokenId]?.token
-    const nft = metadatas?.[tokenId]?.nft
+    const token = nfts[index]?.token
+    const metadata = nfts[index]?.metadata
 
     setModalState({
       nftMetadata: {
@@ -26,15 +21,17 @@ const PageAdmin = () => {
         token_id: `${tokenId}`,
         chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
-        version: nft?.version ?? v4(),
-        metadata: nft,
+        version: metadata?.version ?? v4(),
+        metadata,
       },
     })
   }
 
-  const openEncryptKnowledgeModal = (tokenId: string) => {
-    const token = metadatas?.[tokenId]?.token
-    const lit_protocol = metadatas?.[tokenId]?.lit_protocol
+  const openEncryptKnowledgeModal = (tokenId: string, index: number) => {
+    if (!nfts?.[index]) return
+
+    const token = nfts[index]?.token
+    const lit_protocol = nfts[index]?.lit_protocol
 
     setModalState({
       encryptKnowledge: {
@@ -48,9 +45,11 @@ const PageAdmin = () => {
     })
   }
 
-  const openNousMetadataModal = (tokenId: string) => {
-    const token = metadatas?.[tokenId]?.token
-    const nous = metadatas?.[tokenId]?.nous
+  const openNousMetadataModal = (tokenId: string, index: number) => {
+    if (!nfts?.[index]) return
+
+    const token = nfts[index]?.token
+    const nous = nfts[index]?.nous
 
     setModalState({
       nousMetadata: {
@@ -78,32 +77,26 @@ const PageAdmin = () => {
         </thead>
 
         <tbody className="divide-y divide-gray-200">
-          {nfts?.map((el, index) => {
+          {nfts?.map((nft, index) => {
             return (
               <tr key={index}>
                 <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
                   <div>
-                    <div className="text-center font-semibold">{el.token_id}</div>
+                    <div className="text-center font-semibold">{nft.token_id}</div>
                   </div>
                 </td>
 
                 <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
                   <div>
                     <div className="text-center font-semibold">
-                      {metadatas?.[el.token_id]?.nft.attributes.find(el => el.trait_type === 'name')?.value ?? '-'}
+                      {nft.metadata.attributes.find(el => el.trait_type === 'name')?.value ?? '-'}
                     </div>
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-2 text-white text-center">
-                  <button className="border border-gray-200 p-3" onClick={() => openNftMetadataModal(`${el.token_id}`)}>
-                    +
-                  </button>
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
                   <button
                     className="border border-gray-200 p-3"
-                    onClick={() => openEncryptKnowledgeModal(`${el.token_id}`)}
+                    onClick={() => openNftMetadataModal(`${nft.token_id}`, index)}
                   >
                     +
                   </button>
@@ -112,7 +105,16 @@ const PageAdmin = () => {
                 <td className="whitespace-nowrap px-4 py-2 text-white text-center">
                   <button
                     className="border border-gray-200 p-3"
-                    onClick={() => openNousMetadataModal(`${el.token_id}`)}
+                    onClick={() => openEncryptKnowledgeModal(`${nft.token_id}`, index)}
+                  >
+                    +
+                  </button>
+                </td>
+
+                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
+                  <button
+                    className="border border-gray-200 p-3"
+                    onClick={() => openNousMetadataModal(`${nft.token_id}`, index)}
                   >
                     +
                   </button>

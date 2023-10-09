@@ -157,7 +157,7 @@ const NftMetadataModal = () => {
                   {nftMetadata.attributes.length > 0 &&
                     nftMetadata.attributes.map((attribute, idx) => {
                       return (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2" key={idx}>
                           <input
                             className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
                             name="trait_type"
