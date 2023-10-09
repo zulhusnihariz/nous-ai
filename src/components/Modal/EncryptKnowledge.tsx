@@ -1,26 +1,11 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { useBoundStore } from 'store'
-import { AccessControlConditions, AuthSig } from '@lit-protocol/types'
+import { AccessControlConditions } from '@lit-protocol/types'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { convertCamelToSnakeCase, convertSnakeToCamelCase } from 'utils'
-
-export const accessControlConditions: AccessControlConditions = [
-  {
-    contractAddress: '',
-    standardContractType: '',
-    chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
-    method: 'eth_getBalance',
-    parameters: [':userAddress'],
-    conditionType: 'evmBasic',
-    returnValueTest: {
-      comparator: '>',
-      value: '0',
-    },
-  },
-]
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
@@ -28,24 +13,28 @@ const EncryptKnowledgeModal = () => {
 
   const [knowledgeBaseURL, setKnowledgeBaseURL] = useState('')
 
-  const [encrypted, setEncrypted] = useState<{
-    encryptedString: string
-    encryptedSymmetricKey: string
-    authSig: AuthSig
-  }>({
-    encryptedString: '',
-    encryptedSymmetricKey: '',
-    authSig: {} as AuthSig,
-  })
-
   const { address, signMessage } = useConnectedWallet()
   const { encrypt, decrypt } = useLitProtocol()
   const { mutateAsync: publish } = usePublishTransaction()
 
   const onEncrypt = async () => {
-    if (!knowledgeBaseURL || address?.full) return
+    if (!knowledgeBaseURL || !address?.full) return
 
-    const { encryptedString, encryptedSymmetricKey, authSig } = await encrypt({
+    const accessControlConditions: AccessControlConditions = [
+      {
+        contractAddress: import.meta.env.VITE_NOUS_AI_NFT,
+        standardContractType: 'ERC721',
+        chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+        method: 'ownerOf',
+        parameters: [token_id],
+        returnValueTest: {
+          comparator: '=',
+          value: ':userAddress',
+        },
+      },
+    ]
+
+    const { encryptedString, encryptedSymmetricKey } = await encrypt({
       text: knowledgeBaseURL as string,
       accessControlConditions,
     })
@@ -54,7 +43,7 @@ const EncryptKnowledgeModal = () => {
       convertCamelToSnakeCase({
         encryptedString,
         encryptedSymmetricKey,
-        authSig,
+        accessControlConditions,
       })
     )
 
@@ -74,19 +63,17 @@ const EncryptKnowledgeModal = () => {
       version: version as string,
     })
 
-    setEncrypted({ encryptedString, encryptedSymmetricKey, authSig })
     closeDialog()
   }
 
   const onDecrypt = async () => {
-    if (!encryption) return
-    const { encrypted_string, encrypted_symmetric_key, auth_sig } = encryption
+    if (!encryption || !address?.full) return
+    const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = encryption
 
     let decrypted = await decrypt({
-      accessControlConditions,
+      accessControlConditions: convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions,
       encryptedString: encrypted_string,
       encryptedSymmetricKey: encrypted_symmetric_key,
-      authSig: convertSnakeToCamelCase(auth_sig) as AuthSig,
     })
 
     setKnowledgeBaseURL(decrypted)

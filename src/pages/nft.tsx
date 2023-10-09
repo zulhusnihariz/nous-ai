@@ -6,7 +6,6 @@ import { convertSnakeToCamelCase, formatDataKey } from 'utils'
 import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { ChatIcon, DatabaseIcon } from 'components/Icons/icons'
-import { accessControlConditions } from '../components/Modal/EncryptKnowledge'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 
 const PageNft = () => {
@@ -82,8 +81,8 @@ const PageNft = () => {
 
     if (!metadata) return
 
-    const { encryptedString, encryptedSymmetricKey, authSig } = metadata
-    const decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey, authSig })
+    const { encryptedString, encryptedSymmetricKey, accessControlConditions } = metadata
+    const decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey })
     if (decrypted) console.log(decrypted)
   }
 

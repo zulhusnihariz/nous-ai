@@ -9,7 +9,7 @@ import {
   encryptString,
   decryptString,
 } from '@lit-protocol/lit-node-client'
-import { AccessControlConditions, AuthSig } from '@lit-protocol/types'
+import { AccessControlConditions } from '@lit-protocol/types'
 
 export type EncryptStringArgs = {
   text: string
@@ -19,7 +19,6 @@ export type EncryptStringArgs = {
 export type DecryptStringArgs = {
   encryptedString: string
   encryptedSymmetricKey: string
-  authSig: AuthSig
   accessControlConditions: AccessControlConditions
 }
 
@@ -56,20 +55,6 @@ class LitProtocol {
       chain: this._chain,
     })
 
-    console.log(
-      `%c ${JSON.stringify(
-        {
-          accessControlConditions,
-          encryptedSymmetricKey: uint8arrayToString(encryptedSymmetricKey, 'base16'),
-          authSig,
-          chain: this._chain,
-        },
-        null,
-        2
-      )}`,
-      'background: #222; color: #fff'
-    )
-
     return {
       encryptedString: await blobToBase64String(encryptedString),
       encryptedSymmetricKey: uint8arrayToString(encryptedSymmetricKey, 'base16'),
@@ -77,13 +62,15 @@ class LitProtocol {
     }
   }
 
-  async decryptString({ encryptedString, encryptedSymmetricKey, accessControlConditions, authSig }: DecryptStringArgs) {
+  async decryptString({ encryptedString, encryptedSymmetricKey, accessControlConditions }: DecryptStringArgs) {
     if (!this.litNodeClient) await this.connect()
 
     console.log(
-      `%c ${JSON.stringify({ accessControlConditions, encryptedSymmetricKey, authSig, chain: this._chain }, null, 2)}`,
+      `%c ${JSON.stringify({ accessControlConditions, encryptedSymmetricKey, chain: this._chain }, null, 2)}`,
       'background: #222; color: #bada55'
     )
+
+    const authSig = await checkAndSignAuthMessage({ chain: this._chain })
 
     const symmetricKey = await this.litNodeClient.getEncryptionKey({
       accessControlConditions,

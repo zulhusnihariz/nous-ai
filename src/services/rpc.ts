@@ -1,4 +1,4 @@
-import { AuthSig } from '@lit-protocol/types'
+import { AccessControlConditions } from '@lit-protocol/types'
 import rpc from 'adapter/jsonrpc'
 import { Metadata } from 'lib'
 import { formatDataKey } from 'utils'
@@ -57,7 +57,7 @@ export type Transaction = {
 export interface LitProtocolEncryption {
   encrypted_string: string
   encrypted_symmetric_key: string
-  auth_sig: AuthSig
+  access_control_conditions: AccessControlConditions
 }
 
 export interface NousMetadata {
