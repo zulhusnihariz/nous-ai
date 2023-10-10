@@ -3,7 +3,6 @@ import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
 import NftMetadataModal from 'components/Modal/NftMetadata'
 import { useGetNousNfts } from 'repositories/rpc.repository'
 import { LitProtocolEncryption } from 'services/rpc'
-import { v4 } from 'uuid'
 import NousMetadataModal from 'components/Modal/NousMetadata'
 
 const PageAdmin = () => {
@@ -21,7 +20,7 @@ const PageAdmin = () => {
         token_id: `${tokenId}`,
         chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
-        version: metadata?.version ?? v4(),
+        version: metadata?.version ?? '',
         metadata,
       },
     })
@@ -39,7 +38,7 @@ const PageAdmin = () => {
         token_id: `${tokenId}`,
         chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
-        version: lit_protocol?.version ?? v4(),
+        version: lit_protocol?.version ?? '',
         encryption: lit_protocol as LitProtocolEncryption,
       },
     })
@@ -57,13 +56,11 @@ const PageAdmin = () => {
         token_id: `${tokenId}`,
         chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
-        version: nous?.version ?? v4(),
+        version: nous?.version ?? '',
         metadata: nous,
       },
     })
   }
-
-  console.log(nfts)
 
   return (
     <div className="h-screen w-full flex justify-center items-start">
