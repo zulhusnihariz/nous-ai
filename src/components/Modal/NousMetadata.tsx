@@ -39,7 +39,7 @@ const NousMetadataModal = () => {
       chain_id: chain_id as string,
       data: content,
       mcdata: '',
-      meta_contract_id: import.meta.env.VITE_NOUS_METADATA_META_CONTRACT_ID,
+      meta_contract_id: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID,
       method: 'metadata',
       public_key: address.full,
       signature,

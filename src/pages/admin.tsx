@@ -89,7 +89,7 @@ const PageAdmin = () => {
                 <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
                   <div>
                     <div className="text-center font-semibold">
-                      {nft.metadata.attributes.find(el => el.trait_type === 'name')?.value ?? '-'}
+                      {nft.metadata?.attributes.find(el => el.trait_type === 'name')?.value ?? '-'}
                     </div>
                   </div>
                 </td>

@@ -247,8 +247,10 @@ export function convertCamelToSnakeCase(obj: Record<string, any>) {
 
 const snakeToCamelCase = (str: string) => str.replace(/(\_\w)/g, k => k[1].toUpperCase())
 
-export function convertSnakeToCamelCase(obj: Record<string, any>) {
-  if (typeof obj === 'object' && obj !== null) {
+export function convertSnakeToCamelCase(obj: Record<string, any>): any {
+  if (Array.isArray(obj)) {
+    return obj.map((el: any) => convertSnakeToCamelCase(el))
+  } else if (typeof obj === 'object' && obj !== null) {
     const newObj: Record<string, any> = {}
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {

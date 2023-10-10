@@ -65,11 +65,6 @@ class LitProtocol {
   async decryptString({ encryptedString, encryptedSymmetricKey, accessControlConditions }: DecryptStringArgs) {
     if (!this.litNodeClient) await this.connect()
 
-    console.log(
-      `%c ${JSON.stringify({ accessControlConditions, encryptedSymmetricKey, chain: this._chain }, null, 2)}`,
-      'background: #222; color: #bada55'
-    )
-
     const authSig = await checkAndSignAuthMessage({ chain: this._chain })
 
     const symmetricKey = await this.litNodeClient.getEncryptionKey({

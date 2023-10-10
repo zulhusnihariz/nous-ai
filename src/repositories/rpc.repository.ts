@@ -131,16 +131,12 @@ const useGetNousNfts = (chain: string) => {
 
       const results = await Promise.all(promises)
 
-      const reduced = results.reduce(
+      let reduced = results.reduce(
         (prev, curr) => {
           if (curr === undefined) return prev
 
           let { tokenId, alias, ...rest } = curr
-
-          if (!prev[tokenId]) {
-            const nft = nfts?.find(el => el.token_id === tokenId)
-            prev[tokenId] = { ...nft }
-          }
+          if (!prev[tokenId]) prev[tokenId] = {}
 
           if (alias === '') {
             prev[tokenId]['metadata'] = rest
@@ -153,10 +149,84 @@ const useGetNousNfts = (chain: string) => {
         {} as Record<string, any>
       )
 
-      return Object.values(reduced)
+      const totalNft = nfts?.length ?? 0
+      let res: (Nft & NousNft)[] = []
+
+      for (let i = 0; i < totalNft; i++) {
+        const nft = { ...nfts?.[i], ...reduced[i + 1] }
+        res.push(nft)
+      }
+
+      return res
     },
     enabled: Boolean(nfts && nfts?.length > 0),
   })
 }
 
-export { useGetCompleteTransactions, useGetTransactions, usePublishTransaction, useStoreBlob, useGetNousNfts }
+const useGetSingleNousNft = (nftKey: string) => {
+  return useQuery<NousNft>({
+    queryKey: [RQ_KEY.GET_METADATAS, nftKey],
+    queryFn: async () => {
+      const result = await rpc.searchMetadatas({
+        query: [
+          {
+            column: 'token_key',
+            op: '=',
+            query: formatTokenKey(import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN, import.meta.env.VITE_NOUS_AI_NFT),
+          },
+          {
+            column: 'data_key',
+            op: '=',
+            query: nftKey,
+          },
+        ],
+      })
+
+      const promises = result?.map(async (curr: Metadata) => {
+        if (curr.alias === 'lineage_key') return
+
+        const res = await rpc.getContentFromIpfs(curr.cid)
+        const content = JSON.parse(res.data.result.content as string)
+        const data = content.content as { text: string; image: string }
+
+        return {
+          ...data,
+          tokenId: curr.token_id,
+          alias: curr.alias,
+          version: curr.version,
+        }
+      })
+
+      const results = await Promise.all(promises)
+
+      let reduced = results.reduce(
+        (prev, curr) => {
+          if (curr === undefined) return prev
+
+          let { tokenId, alias, ...rest } = curr
+          if (!prev[tokenId]) prev[tokenId] = {}
+
+          if (alias === '') {
+            prev[tokenId]['metadata'] = rest
+          } else {
+            prev[tokenId][alias] = rest
+          }
+
+          return prev
+        },
+        {} as Record<string, any>
+      )
+
+      return Object.values(reduced)[0] as NousNft
+    },
+  })
+}
+
+export {
+  useGetCompleteTransactions,
+  useGetTransactions,
+  usePublishTransaction,
+  useStoreBlob,
+  useGetNousNfts,
+  useGetSingleNousNft,
+}
