@@ -1,5 +1,5 @@
 import { ErrorMessage, SuccessMessage } from '../components/Icons/icons'
-import React, { createContext, useState, ReactNode, useEffect } from 'react'
+import React, { createContext, useState, ReactNode, useEffect, useContext } from 'react'
 
 interface AlertMessageContextInterface {
   errorMessage: string | null
@@ -19,6 +19,14 @@ export const AlertMessageContext = createContext<AlertMessageContextInterface>({
 
 interface AlertMessageProviderProps {
   children: ReactNode
+}
+
+export const useAlertMessage = () => {
+  const context = useContext(AlertMessageContext)
+  if (!context) {
+    throw new Error('useAlertMessage must be used within a ApiProvider')
+  }
+  return context
 }
 
 export const AlertMessageProvider = ({ children }: AlertMessageProviderProps) => {

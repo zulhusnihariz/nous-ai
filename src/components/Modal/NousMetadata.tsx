@@ -4,6 +4,7 @@ import { useBoundStore } from 'store'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { NousMetadata } from 'services/rpc'
+import { useAlertMessage } from 'hooks/use-alert-message'
 
 const initialNousMetadata: NousMetadata = {
   id: '',
@@ -12,6 +13,7 @@ const initialNousMetadata: NousMetadata = {
 const NousMetadataModal = () => {
   const { modal, setModalState } = useBoundStore()
   const { isOpen, metadata, token_id, chain_id, token_address, version } = modal.nousMetadata
+  const { showSuccess } = useAlertMessage()
 
   const [nousMetadata, setNousMetadata] = useState<NousMetadata>(initialNousMetadata)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,6 +51,7 @@ const NousMetadataModal = () => {
     })
 
     closeDialog()
+    showSuccess('Success')
     setIsLoading(false)
   }
 

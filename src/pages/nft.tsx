@@ -10,12 +10,14 @@ import { useLitProtocol } from 'hooks/use-lit-protocol'
 import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
 import { useBoundStore } from 'store'
 import { AccessControlConditions } from '@lit-protocol/types'
+import { useAlertMessage } from 'hooks/use-alert-message'
 
 const PageNft = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { rpc } = useApi()
   const { setModalState } = useBoundStore()
+  const { showError } = useAlertMessage()
 
   const { nft } = location.state || {}
 
@@ -81,14 +83,20 @@ const PageNft = () => {
     if (!nft?.lit_protocol) return
     const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = nft.lit_protocol
     const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
+    try {
+      const decrypted = await decrypt({
+        accessControlConditions,
+        encryptedString: encrypted_string,
+        encryptedSymmetricKey: encrypted_symmetric_key,
+      })
 
-    const decrypted = await decrypt({
-      accessControlConditions,
-      encryptedString: encrypted_string,
-      encryptedSymmetricKey: encrypted_symmetric_key,
-    })
-    if (decrypted) {
-      setModalState({ viewKnowledge: { isOpen: true, url: decrypted } })
+      if (decrypted) {
+        setModalState({ viewKnowledge: { isOpen: true, url: decrypted } })
+      } else {
+        showError('No available data')
+      }
+    } catch (e) {
+      showError('Unauthorized')
     }
   }
 

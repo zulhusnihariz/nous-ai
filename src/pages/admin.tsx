@@ -4,11 +4,21 @@ import NftMetadataModal from 'components/Modal/NftMetadata'
 import { useGetNousNfts } from 'repositories/rpc.repository'
 import { LitProtocolEncryption } from 'services/rpc'
 import NousMetadataModal from 'components/Modal/NousMetadata'
+import { useAlertMessage } from 'hooks/use-alert-message'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 
 const PageAdmin = () => {
+  const { showError } = useAlertMessage()
+  const { address } = useConnectedWallet()
+
   const { setModalState } = useBoundStore()
   const { data: nfts } = useGetNousNfts('mumbai')
   const openNftMetadataModal = (tokenId: string, index: number) => {
+    if (!address?.full) {
+      showError('Connect your wallet to proceed')
+      return
+    }
+
     if (!nfts?.[index]) return
 
     const token = nfts[index]?.token
@@ -27,6 +37,11 @@ const PageAdmin = () => {
   }
 
   const openEncryptKnowledgeModal = (tokenId: string, index: number) => {
+    if (!address?.full) {
+      showError('Connect your wallet to proceed')
+      return
+    }
+
     if (!nfts?.[index]) return
 
     const token = nfts[index]?.token
@@ -45,6 +60,11 @@ const PageAdmin = () => {
   }
 
   const openNousMetadataModal = (tokenId: string, index: number) => {
+    if (!address?.full) {
+      showError('Connect your wallet to proceed')
+      return
+    }
+
     if (!nfts?.[index]) return
 
     const token = nfts[index]?.token

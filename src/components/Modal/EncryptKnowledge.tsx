@@ -6,10 +6,12 @@ import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { convertCamelToSnakeCase, convertSnakeToCamelCase } from 'utils'
+import { useAlertMessage } from 'hooks/use-alert-message'
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
   const { isOpen, encryption, token_id, chain_id, token_address, version } = modal.encryptKnowledge
+  const { showSuccess } = useAlertMessage()
 
   const [knowledgeBaseURL, setKnowledgeBaseURL] = useState('')
 
@@ -64,6 +66,7 @@ const EncryptKnowledgeModal = () => {
     })
 
     closeDialog()
+    showSuccess('Success')
   }
 
   const onDecrypt = async () => {

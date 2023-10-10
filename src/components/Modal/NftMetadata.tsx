@@ -4,6 +4,7 @@ import { useBoundStore } from 'store'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { ImageUploader } from 'components/ImageUploader'
+import { useAlertMessage } from 'hooks/use-alert-message'
 
 interface NftMetadata {
   name: string
@@ -25,6 +26,7 @@ const initialNftMetadata: NftMetadata = {
 const NftMetadataModal = () => {
   const { modal, setModalState } = useBoundStore()
   const { isOpen, metadata, token_id, chain_id, token_address, version } = modal.nftMetadata
+  const { showSuccess } = useAlertMessage()
 
   const [nftMetadata, setNftMetadata] = useState<NftMetadata>(initialNftMetadata)
   const [isLoading, setIsLoading] = useState(false)
@@ -81,6 +83,7 @@ const NftMetadataModal = () => {
     })
 
     closeDialog()
+    showSuccess('Success')
   }
 
   const closeDialog = () => {
