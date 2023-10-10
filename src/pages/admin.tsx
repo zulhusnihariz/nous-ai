@@ -63,6 +63,8 @@ const PageAdmin = () => {
     })
   }
 
+  console.log(nfts)
+
   return (
     <div className="h-screen w-full flex justify-center items-start">
       <table className="table-auto min-w-full divide-y-2 divide-gray-200 bg-gray-800 text-sm">

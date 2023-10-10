@@ -69,9 +69,10 @@ const EncryptKnowledgeModal = () => {
   const onDecrypt = async () => {
     if (!encryption || !address?.full) return
     const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = encryption
+    const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
 
     let decrypted = await decrypt({
-      accessControlConditions: convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions,
+      accessControlConditions,
       encryptedString: encrypted_string,
       encryptedSymmetricKey: encrypted_symmetric_key,
     })

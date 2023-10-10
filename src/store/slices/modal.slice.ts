@@ -13,6 +13,9 @@ export type Modal = {
   encryptKnowledge: ModalState & Partial<Transaction> & { encryption?: LitProtocolEncryption }
   nftMetadata: ModalState & Partial<Transaction> & { metadata?: NftMetadata }
   nousMetadata: ModalState & Partial<Transaction> & { metadata?: NousMetadata }
+  viewKnowledge: ModalState & {
+    url: string
+  }
 }
 
 export interface ModalSlice {
@@ -42,6 +45,10 @@ const initialModal = {
       isOpen: false,
       ...initialTransaction,
       metadata: undefined,
+    },
+    viewKnowledge: {
+      isOpen: false,
+      url: '',
     },
   },
 }

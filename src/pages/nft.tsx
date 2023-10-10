@@ -7,11 +7,15 @@ import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { ChatIcon, DatabaseIcon } from 'components/Icons/icons'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
+import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
+import { useBoundStore } from 'store'
+import { AccessControlConditions } from '@lit-protocol/types'
 
 const PageNft = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { rpc } = useApi()
+  const { setModalState } = useBoundStore()
 
   const { nft } = location.state || {}
 
@@ -59,7 +63,7 @@ const PageNft = () => {
   // init
   useEffect(() => {
     const init = () => {
-      const key = formatDataKey(nft.chain_id, nft.address, nft.token_id)
+      const key = formatDataKey(nft.chain_id, nft.token_address, nft.token_id)
       setNftKey(key)
     }
 
@@ -74,16 +78,18 @@ const PageNft = () => {
   }
 
   const goToKnowledge = async () => {
-    // load metadata from network for lit-protocol
+    if (!nft?.lit_protocol) return
+    const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = nft.lit_protocol
+    const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
 
-    // if not empty
-    const metadata = convertSnakeToCamelCase(JSON.parse(nft.data))
-
-    if (!metadata) return
-
-    const { encryptedString, encryptedSymmetricKey, accessControlConditions } = metadata
-    const decrypted = await decrypt({ accessControlConditions, encryptedString, encryptedSymmetricKey })
-    if (decrypted) console.log(decrypted)
+    const decrypted = await decrypt({
+      accessControlConditions,
+      encryptedString: encrypted_string,
+      encryptedSymmetricKey: encrypted_symmetric_key,
+    })
+    if (decrypted) {
+      setModalState({ viewKnowledge: { isOpen: true, url: decrypted } })
+    }
   }
 
   return (
@@ -103,7 +109,7 @@ const PageNft = () => {
                   <div>
                     <div className="flex justify-between text-gray-400 text-sm my-2">
                       <div className="">
-                        Address: {nft.address} <span className="mx-3">&#8226;</span> #{nft.token_id}{' '}
+                        Address: {nft.address} <span className="mx-3">&#8226;</span> #{nft.token_id}
                         <span className="mx-3">&#8226;</span> <ChainName chainId="56" />
                       </div>
                     </div>
@@ -136,6 +142,8 @@ const PageNft = () => {
                 </button>
               </div>
             </div>
+
+            <ViewKnowledgeModal />
 
             {shareDialogState.opened && (
               <ShareDialog
