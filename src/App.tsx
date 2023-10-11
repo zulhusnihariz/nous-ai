@@ -88,7 +88,7 @@ const { chains, publicClient } = configureChains(currentChain, [
 ])
 
 const wagmiConfig = createConfig({
-  autoConnect: false,
+  autoConnect: true,
   connectors: [new MetaMaskConnector({ chains }), new PhantomConnector({ chains })],
   publicClient,
 })
