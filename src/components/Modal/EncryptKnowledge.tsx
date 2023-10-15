@@ -37,7 +37,7 @@ const EncryptKnowledgeModal = () => {
     ]
 
     const { encryptedString, encryptedSymmetricKey } = await encrypt({
-      text: knowledgeBaseURL as string,
+      text: knowledgeBaseURL,
       accessControlConditions,
     })
 
@@ -58,7 +58,7 @@ const EncryptKnowledgeModal = () => {
       mcdata: '',
       meta_contract_id: import.meta.env.VITE_LIT_PROTOCOL_META_CONTRACT_ID,
       method: 'metadata',
-      public_key: address.full,
+      public_key: address.full.toLowerCase(),
       signature,
       token_address: token_address as string,
       token_id: token_id as string,
@@ -74,7 +74,7 @@ const EncryptKnowledgeModal = () => {
     const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = encryption
     const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
 
-    let decrypted = await decrypt({
+    const decrypted = await decrypt({
       accessControlConditions,
       encryptedString: encrypted_string,
       encryptedSymmetricKey: encrypted_symmetric_key,
@@ -151,7 +151,7 @@ const EncryptKnowledgeModal = () => {
                     name="knowledgeBaseUrl"
                     type="text"
                     placeholder="Knowledge Base URL"
-                    value={knowledgeBaseURL as string}
+                    value={knowledgeBaseURL}
                     onChange={e => setKnowledgeBaseURL(e.target.value)}
                   />
                   <div className="mt-4 flex gap-4 justify-center">

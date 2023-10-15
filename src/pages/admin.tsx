@@ -1,7 +1,7 @@
 import { useBoundStore } from 'store'
 import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
 import NftMetadataModal from 'components/Modal/NftMetadata'
-import { useGetNousNfts } from 'repositories/rpc.repository'
+import { useGetNousMetadatas } from 'repositories/rpc.repository'
 import { LitProtocolEncryption } from 'services/rpc'
 import NousMetadataModal from 'components/Modal/NousMetadata'
 import { useAlertMessage } from 'hooks/use-alert-message'
@@ -12,7 +12,8 @@ const PageAdmin = () => {
   const { address } = useConnectedWallet()
 
   const { setModalState } = useBoundStore()
-  const { data: nfts } = useGetNousNfts('mumbai')
+  const { data: nfts } = useGetNousMetadatas(address.full, 0)
+
   const openNftMetadataModal = (tokenId: string, index: number) => {
     if (!address?.full) {
       showError('Connect your wallet to proceed')
@@ -97,49 +98,57 @@ const PageAdmin = () => {
 
         <tbody className="divide-y divide-gray-200">
           {nfts?.map((nft, index) => {
-            return (
-              <tr key={index}>
-                <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
-                  <div>
-                    <div className="text-center font-semibold">{nft.token_id}</div>
-                  </div>
-                </td>
-
-                <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
-                  <div>
-                    <div className="text-center font-semibold">
-                      {nft.metadata?.attributes.find(el => el.trait_type === 'name')?.value ?? '-'}
+            if (nft) {
+              return (
+                <tr key={index}>
+                  <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
+                    <div>
+                      <div className="text-center font-semibold">{nft.token_id}</div>
                     </div>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
-                  <button
-                    className="border border-gray-200 p-3"
-                    onClick={() => openNftMetadataModal(`${nft.token_id}`, index)}
-                  >
-                    +
-                  </button>
-                </td>
+                  </td>
 
-                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
-                  <button
-                    className="border border-gray-200 p-3"
-                    onClick={() => openEncryptKnowledgeModal(`${nft.token_id}`, index)}
-                  >
-                    +
-                  </button>
-                </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-white text-lg text-left">
+                    <div>
+                      <div className="text-center font-semibold">
+                        {nft.metadata &&
+                          nft.metadata.attributes &&
+                          (nft.metadata?.attributes.find(el => el.trait_type === 'name')?.value ?? '-')}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-white text-center">
+                    <button
+                      className={`border p-3 ${
+                        nft.metadata.description.length > 0 ? 'bg-green-200 text-green-700' : 'border-gray-200'
+                      }`}
+                      onClick={() => openNftMetadataModal(`${nft.token_id}`, index)}
+                    >
+                      +
+                    </button>
+                  </td>
 
-                <td className="whitespace-nowrap px-4 py-2 text-white text-center">
-                  <button
-                    className="border border-gray-200 p-3"
-                    onClick={() => openNousMetadataModal(`${nft.token_id}`, index)}
-                  >
-                    +
-                  </button>
-                </td>
-              </tr>
-            )
+                  <td className="whitespace-nowrap px-4 py-2 text-white text-center">
+                    <button
+                      className={`border p-3 ${
+                        nft.lit_protocol.encrypted_string ? 'bg-green-200 text-green-700' : 'border-gray-200'
+                      }`}
+                      onClick={() => openEncryptKnowledgeModal(`${nft.token_id}`, index)}
+                    >
+                      +
+                    </button>
+                  </td>
+
+                  <td className="whitespace-nowrap px-4 py-2 text-white text-center">
+                    <button
+                      className="border border-gray-200 p-3"
+                      onClick={() => openNousMetadataModal(`${nft.token_id}`, index)}
+                    >
+                      +
+                    </button>
+                  </td>
+                </tr>
+              )
+            }
           })}
         </tbody>
       </table>

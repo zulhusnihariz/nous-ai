@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import rpc, { JSONRPCFilter, NftMetadata, Transaction, LitProtocolEncryption, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
-import { formatTokenKey } from 'utils'
+import { formatDataKey, formatTokenKey } from 'utils'
 import { Metadata, Nft } from 'lib'
 import { useGetNftByContractAddress } from './moralis.repository'
 
@@ -31,22 +31,6 @@ export type DataTypeNone = {
   data: string
 }
 
-export async function parseString(input: string): Promise<DataTypeMetadata | DataTypeNone | DataTypeMedia> {
-  try {
-    const parsed = JSON.parse(input)
-    if (typeof parsed === 'object') return { type: 'metadata', data: parsed }
-  } catch (e) {}
-
-  try {
-    const response = await fetch(input)
-    const contentType = response.headers.get('content-type')
-    if (contentType?.startsWith('image/')) return { type: 'image', data: input }
-    if (contentType?.startsWith('audio/')) return { type: 'audio', data: input }
-  } catch (e) {}
-
-  return { type: 'none', data: input }
-}
-
 const useGetTransactions = (data: JSONRPCFilter<Transaction> & { address?: `0x${string}` | undefined }) => {
   const { address, ...filter } = data
 
@@ -64,9 +48,8 @@ const usePublishTransaction = () => {
     mutationFn: async (data: Transaction) => {
       return await rpc.publish(data)
     },
-    onSuccess: async () => {
-      let timeout: NodeJS.Timeout
-      timeout = setTimeout(async () => {
+    onSuccess: () => {
+      const timeout: NodeJS.Timeout = setTimeout(async () => {
         await queryClient.invalidateQueries([RQ_KEY.GET_METADATAS])
         if (timeout) clearTimeout(timeout)
       }, 5000)
@@ -95,6 +78,121 @@ type NousNft = {
     chain: string
     id: string
   }
+}
+
+const useGetNousMetadatas = (public_key: string, start_index: number) => {
+  return useQuery<(Nft & NousNft)[]>({
+    queryKey: [RQ_KEY.GET_METADATAS],
+    queryFn: async () => {
+      const nfts: (Nft & NousNft)[] = []
+
+      const end_index = start_index + 5 <= 555 ? start_index + 5 : 555
+
+      for (let x = start_index; x < end_index; x++) {
+        const json = {
+          owner: '',
+          token_address: import.meta.env.VITE_NOUS_AI_NFT as string,
+          token_id: x,
+          chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+          metadata: {
+            name: '',
+            image: '',
+            description: '',
+            attributes: [
+              {
+                trait_type: 'name',
+                value: '',
+              },
+              {
+                trait_type: 'personality',
+                value: '',
+              },
+            ],
+            version: '',
+          },
+          lit_protocol: {} as any,
+          nous: {
+            version: '',
+          } as any,
+          token: {
+            address: import.meta.env.VITE_NOUS_AI_NFT as string,
+            chain: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+            id: `${x}`,
+          },
+        }
+
+        const data_key = formatDataKey(
+          import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN as string,
+          import.meta.env.VITE_NOUS_AI_NFT as string,
+          `${x}`
+        )
+
+        const [result_metadata, result_lit_protocol] = await Promise.all([
+          rpc.searchMetadatas({
+            query: [
+              {
+                column: 'data_key',
+                op: '=',
+                query: data_key,
+              },
+              {
+                column: 'meta_contract_id',
+                op: '=',
+                query: '0x01',
+              },
+            ],
+          }),
+          rpc.searchMetadatas({
+            query: [
+              {
+                column: 'data_key',
+                op: '=',
+                query: data_key,
+              },
+              {
+                column: 'meta_contract_id',
+                op: '=',
+                query: import.meta.env.VITE_LIT_PROTOCOL_META_CONTRACT_ID as string,
+              },
+              {
+                column: 'public_key',
+                op: '=',
+                query: public_key.toLowerCase(),
+              },
+            ],
+          }),
+        ])
+
+        const cid_metadata: string = result_metadata && result_metadata.length == 1 ? result_metadata[0].cid : ''
+        const cid_lit_protocol: string =
+          result_lit_protocol && result_lit_protocol.length == 1 ? result_lit_protocol[0].cid : ''
+
+        if (cid_metadata || cid_lit_protocol) {
+          const promises = []
+
+          if (cid_metadata) promises.push(rpc.getContentFromIpfs(cid_metadata))
+          if (cid_lit_protocol) promises.push(rpc.getContentFromIpfs(cid_lit_protocol))
+
+          const [contentFromMetadata, contentFromLitProtocol] = await Promise.all(promises)
+
+          if (contentFromMetadata) {
+            const data = JSON.parse(contentFromMetadata.data.result.content as string)
+            json.metadata = data.content
+          }
+
+          if (contentFromLitProtocol) {
+            const data = JSON.parse(contentFromLitProtocol.data.result.content as string)
+            json.lit_protocol = data.content
+          }
+        }
+
+        nfts.push(json)
+      }
+
+      return nfts
+    },
+    enabled: Boolean(public_key),
+  })
 }
 
 const useGetNousNfts = (chain: string) => {
@@ -131,11 +229,11 @@ const useGetNousNfts = (chain: string) => {
 
       const results = await Promise.all(promises)
 
-      let reduced = results.reduce(
+      const reduced = results.reduce(
         (prev, curr) => {
           if (curr === undefined) return prev
 
-          let { tokenId, alias, ...rest } = curr
+          const { tokenId, alias, ...rest } = curr
           if (!prev[tokenId]) prev[tokenId] = {}
 
           if (alias === '') {
@@ -150,7 +248,7 @@ const useGetNousNfts = (chain: string) => {
       )
 
       const totalNft = nfts?.length ?? 0
-      let res: (Nft & NousNft)[] = []
+      const res: (Nft & NousNft)[] = []
 
       for (let i = 0; i < totalNft; i++) {
         const nft = { ...nfts?.[i], ...reduced[i + 1] }
@@ -199,11 +297,11 @@ const useGetSingleNousNft = (nftKey: string) => {
 
       const results = await Promise.all(promises)
 
-      let reduced = results.reduce(
+      const reduced = results.reduce(
         (prev, curr) => {
           if (curr === undefined) return prev
 
-          let { tokenId, alias, ...rest } = curr
+          const { tokenId, alias, ...rest } = curr
           if (!prev[tokenId]) prev[tokenId] = {}
 
           if (alias === '') {
@@ -229,4 +327,5 @@ export {
   useStoreBlob,
   useGetNousNfts,
   useGetSingleNousNft,
+  useGetNousMetadatas,
 }

@@ -11,4 +11,5 @@ export enum RQ_KEY {
   GET_METADATAS = 'get_metadatas',
   GET_METADATA = 'get_metadata',
   GET_NFTS = 'get_nfts',
+  GET_PRESET_METADATAS = 'get_preset_metadatas',
 }

@@ -15,7 +15,7 @@ interface NftMetadata {
 
 const initialNftMetadata: NftMetadata = {
   name: 'Nous Psyche',
-  description: '',
+  description: 'Collection of Nous chatbot using Malaya LLM',
   image: '',
   attributes: [
     { trait_type: 'name', value: '' },
@@ -41,20 +41,6 @@ const NftMetadataModal = () => {
     }))
   }
 
-  const handleRemoveAttribute = (idx: number) => {
-    setNftMetadata(prev => ({
-      ...prev,
-      attributes: prev.attributes.filter((_, index) => index !== idx),
-    }))
-  }
-
-  const handleAddAttribute = () => {
-    setNftMetadata(prev => ({
-      ...prev,
-      attributes: [...prev.attributes, { trait_type: '', value: '' }],
-    }))
-  }
-
   const handleAttributeChange = (e: any, idx: number) => {
     setNftMetadata(prev => ({
       ...prev,
@@ -75,7 +61,7 @@ const NftMetadataModal = () => {
       mcdata: '',
       meta_contract_id: import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID,
       method: 'metadata',
-      public_key: address.full,
+      public_key: address.full.toLowerCase(),
       signature,
       token_address: token_address as string,
       token_id: token_id as string,
@@ -93,7 +79,17 @@ const NftMetadataModal = () => {
   }
 
   useEffect(() => {
-    if (metadata) setNftMetadata(metadata)
+    if (metadata) {
+      if (!metadata.name) {
+        metadata.name = `${initialNftMetadata.name} #${token_id}`
+      }
+
+      if (!metadata.description) {
+        metadata.description = initialNftMetadata.description
+      }
+
+      setNftMetadata(metadata)
+    }
   }, [metadata])
 
   return (
@@ -133,16 +129,16 @@ const NftMetadataModal = () => {
                     name="name"
                     type="text"
                     placeholder="Name"
-                    value={nftMetadata.name as string}
-                    disabled={true}
+                    onChange={e => handleChange(e)}
+                    value={nftMetadata.name}
                   />
 
-                  <input
+                  <textarea
                     className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
                     name="description"
-                    type="text"
+                    rows={4}
                     placeholder="Description"
-                    value={nftMetadata.description as string}
+                    value={nftMetadata.description}
                     onChange={e => handleChange(e)}
                   />
 
@@ -178,28 +174,25 @@ const NftMetadataModal = () => {
                             value={attribute.value}
                             onChange={e => handleAttributeChange(e, idx)}
                           />
-                          {/* <button
-                            className="ml-5 text-center border border-black px-3 py-1"
-                            onClick={() => handleRemoveAttribute(idx)}
-                          >
-                            -
-                          </button> */}
                         </div>
                       )
                     })}
 
-                  <ImageUploader
-                    url={nftMetadata.image as string}
-                    setIsLoading={bool => setIsLoading(bool)}
-                    setImageURL={(url: string) => {
-                      handleChange({
-                        target: {
-                          name: 'image',
-                          value: url,
-                        },
-                      })
-                    }}
-                  />
+                  <div className="text-left mb-3 font-semibold">
+                    <label>PFP</label>
+                    <ImageUploader
+                      url={nftMetadata.image}
+                      setIsLoading={bool => setIsLoading(bool)}
+                      setImageURL={(url: string) => {
+                        handleChange({
+                          target: {
+                            name: 'image',
+                            value: url,
+                          },
+                        })
+                      }}
+                    />
+                  </div>
 
                   <div className="mt-4">
                     <button
