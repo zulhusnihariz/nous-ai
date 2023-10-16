@@ -6,13 +6,15 @@ import { LitProtocolEncryption } from 'services/rpc'
 import NousMetadataModal from 'components/Modal/NousMetadata'
 import { useAlertMessage } from 'hooks/use-alert-message'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
+import { useEffect, useState } from 'react'
 
 const PageAdmin = () => {
   const { showError } = useAlertMessage()
   const { address } = useConnectedWallet()
+  const [currentPage, setCurrentPage] = useState(0)
 
   const { setModalState } = useBoundStore()
-  const { data: nfts } = useGetNousMetadatas(address.full, 0)
+  const { data: nfts } = useGetNousMetadatas(address.full, currentPage, 10)
 
   const openNftMetadataModal = (tokenId: string, index: number) => {
     if (!address?.full) {
@@ -83,16 +85,22 @@ const PageAdmin = () => {
     })
   }
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const startPage = urlParams.get('start') || '1'
+    setCurrentPage(parseInt(startPage))
+  }, [])
+
   return (
-    <div className="h-screen w-full flex justify-center items-start">
+    <div className="h-full pb-[30px] w-full">
       <table className="table-auto min-w-full divide-y-2 divide-gray-200 bg-gray-800 text-sm">
         <thead className="bg-gray-600 w-full text-white">
           <tr>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Token ID</th>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Name</th>
             <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nft Metadata</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Encryption</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nous Metadata</th>
+            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Knowledge Base</th>
+            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nous ID</th>
           </tr>
         </thead>
 
@@ -152,6 +160,16 @@ const PageAdmin = () => {
           })}
         </tbody>
       </table>
+      <div className="mt-4 flex justify-center">
+        {currentPage > 0 && (
+          <a href={`/admin?start=${currentPage - 1}`} className="mr-4 p-4 bg-yellow-300 text-black">
+            Previous 10
+          </a>
+        )}
+        <a href={`/admin?start=${currentPage + 1}`} className="mr-4 p-4 bg-yellow-300 text-black">
+          Next 10
+        </a>
+      </div>
       <NftMetadataModal />
       <EncryptKnowledgeModal />
       <NousMetadataModal />

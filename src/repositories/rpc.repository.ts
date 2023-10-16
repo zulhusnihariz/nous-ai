@@ -80,15 +80,15 @@ type NousNft = {
   }
 }
 
-const useGetNousMetadatas = (public_key: string, start_index: number) => {
+const useGetNousMetadatas = (public_key: string, page_index: number, item_per_page: number) => {
   return useQuery<(Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_METADATAS],
     queryFn: async () => {
       const nfts: (Nft & NousNft)[] = []
 
-      const end_index = start_index + 5 <= 555 ? start_index + 5 : 555
+      const end_index = page_index * item_per_page + 10 <= 555 ? page_index * item_per_page + 10 : 555
 
-      for (let x = start_index; x < end_index; x++) {
+      for (let x = page_index * item_per_page; x < end_index; x++) {
         const json = {
           owner: '',
           token_address: import.meta.env.VITE_NOUS_AI_NFT as string,

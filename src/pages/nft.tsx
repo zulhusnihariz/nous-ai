@@ -109,15 +109,10 @@ const PageNft = () => {
       return
     }
 
-    const content = `
-
-    Click to sign in and accept the Nous Psyche Terms of Service () and Privacy Policy ().
-    
-    This request will not trigger a blockchain transaction or cost any gas fees.
-    `
+    const content = 'Hi'
     try {
-      const signature = (await signMessage(JSON.stringify(content))) as string
-      setModalState({ apiKey: { isOpen: true, key: signature } })
+      const signature = (await signMessage(content)) as string
+      setModalState({ apiKey: { isOpen: true, key: `/register ${signature}/${nft.token_id}` } })
     } catch (e) {
       showError(`${e}`)
     }
