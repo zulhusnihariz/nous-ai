@@ -1,13 +1,62 @@
 import { PlusIcon } from 'components/Icons/icons'
 import { useNavigate } from 'react-router-dom'
 import { useGetNousNfts } from 'repositories/rpc.repository'
+import RPC from 'utils/ethers'
+
+const contractABI = [
+  {
+    inputs: [],
+    name: 'mintPrice',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+]
 
 const PageInventory = () => {
   const navigate = useNavigate()
 
   const { data: nfts } = useGetNousNfts('mumbai')
+  const handleOnMintClicked = async () => {
+    const mintPrice = await getMintPrice()
+    const rpc = new RPC(window?.ethereum as any)
 
-  const handleOnMintClicked = () => {}
+    await rpc.callContractMethod({
+      contractABI,
+      contractAddress: import.meta.env.VITE_NOUS_AI_UTILITY,
+      method: 'mint',
+      data: [],
+      options: {
+        value: mintPrice,
+      },
+    })
+  }
+
+  const getMintPrice = async () => {
+    const rpc = new RPC(window?.ethereum as any)
+
+    const mintPrice = await rpc.readContractData({
+      contractABI,
+      contractAddress: import.meta.env.VITE_NOUS_AI_UTILITY,
+      method: 'mintPrice',
+      data: [],
+    })
+
+    return mintPrice
+  }
 
   return (
     <div className="flex justify-center">
