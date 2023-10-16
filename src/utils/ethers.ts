@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers } from 'ethers'
 
-type CallMethodArgs = {
-  contractABI: string
+export type CallContractMethodArgs = {
+  contractABI: any[]
   contractAddress: string
   data: string[]
   method: string
+  options?: {
+    value: string
+  }
 }
 
 export default class EthereumRpc {
@@ -75,25 +78,27 @@ export default class EthereumRpc {
     }
   }
 
-  async contractMethod({ contractABI, contractAddress, data, method }: CallMethodArgs): Promise<any> {
-    try {
-      const ethersProvider = new ethers.BrowserProvider(this.provider)
-      const signer = await ethersProvider.getSigner()
-      const contract = new ethers.Contract(contractAddress, contractABI, signer)
+  async callContractMethod({
+    contractABI,
+    contractAddress,
+    data,
+    method,
+    options,
+  }: CallContractMethodArgs): Promise<any> {
+    const ethersProvider = new ethers.BrowserProvider(this.provider)
+    const signer = await ethersProvider.getSigner()
+    const contract = new ethers.Contract(contractAddress, contractABI, signer)
 
-      // Submit transaction to the blockchain
-      const tx = await contract[method](...data)
+    // Submit transaction to the blockchain
+    const tx = await contract[method](...data, options)
 
-      // Wait for transaction to be mined
-      const receipt = await tx.wait()
+    // Wait for transaction to be mined
+    const receipt = await tx.wait()
 
-      return receipt
-    } catch (error) {
-      return error as string
-    }
+    return receipt
   }
 
-  async readContractData({ contractABI, contractAddress, data, method }: CallMethodArgs): Promise<any> {
+  async readContractData({ contractABI, contractAddress, data, method }: CallContractMethodArgs): Promise<any> {
     try {
       const ethersProvider = new ethers.BrowserProvider(this.provider)
       const contract = new ethers.Contract(contractAddress, contractABI, ethersProvider)

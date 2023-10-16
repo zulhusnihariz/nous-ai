@@ -4,7 +4,7 @@ import ConnectSolana from 'components/Connect/ConnectSolana'
 import ConnectWallet from 'components/Connect/ConnectWallet'
 import ConnectNear from 'components/Connect/ConnectNear'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
-import { arbitrum, bsc, celo, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
+import { polygon, polygonMumbai } from 'wagmi/chains'
 import { useState } from 'react'
 
 const chains = [
@@ -43,20 +43,8 @@ export default function SignInModal() {
                 and understood the disclaimers therein.
               </p>
               <div className="mt-5">
-                <div className={chains[selectedIndex].name == 'Ethereum' ? '' : 'hidden'}>
-                  <ConnectWallet chain={CURRENT_CHAIN.ETHEREUM} chainId={mainnet.id} />
-                </div>
                 <div className={chains[selectedIndex].name == 'Polygon' ? '' : 'hidden'}>
                   <ConnectWallet chain={CURRENT_CHAIN.POLYGON} chainId={polygon.id} />
-                </div>
-                <div className={chains[selectedIndex].name == 'BNB Smart Chain' ? '' : 'hidden'}>
-                  <ConnectWallet chain={CURRENT_CHAIN.BINANCE} chainId={bsc.id} />
-                </div>
-                <div className={chains[selectedIndex].name == 'Arbitrum' ? '' : 'hidden'}>
-                  <ConnectWallet chain={CURRENT_CHAIN.ARBITRUM} chainId={arbitrum.id} />
-                </div>
-                <div className={chains[selectedIndex].name == 'Celo' ? '' : 'hidden'}>
-                  <ConnectWallet chain={CURRENT_CHAIN.CELO} chainId={celo.id} />
                 </div>
 
                 <div className={chains[selectedIndex].name == 'Mumbai' ? '' : 'hidden'}>
