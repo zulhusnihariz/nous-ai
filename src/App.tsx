@@ -36,6 +36,8 @@ import { LitProtocolProvider } from 'hooks/use-lit-protocol'
 import SignInModal from 'components/Modal/SignInModal'
 import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
+import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 
 const App = () => {
   return (
@@ -59,19 +61,9 @@ const App = () => {
 
 const currentChain = [
   // mainnet
-  arbitrum,
-  bsc,
-  celo,
-  mainnet,
   polygon,
-  bsc,
   // tesnet
-  arbitrumGoerli,
-  bscTestnet,
-  celoAlfajores,
-  goerli,
   polygonMumbai,
-  bscTestnet,
 ]
 
 // Web3 Configs
@@ -87,9 +79,21 @@ const { chains, publicClient } = configureChains(currentChain, [
   publicProvider(),
 ])
 
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Recommended',
+    wallets: [
+      metaMaskWallet({
+        chains,
+        projectId: '_',
+      }),
+    ],
+  },
+])
+
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [new MetaMaskConnector({ chains }), new PhantomConnector({ chains })],
+  connectors,
   publicClient,
 })
 
@@ -101,10 +105,11 @@ export function Web3Wrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <IpfsProvider>
-        <AlertMessageProvider>{children}</AlertMessageProvider>
-      </IpfsProvider>
-      <SignInModal />
+      <RainbowKitProvider modalSize="compact" chains={chains}>
+        <IpfsProvider>
+          <AlertMessageProvider>{children}</AlertMessageProvider>
+        </IpfsProvider>
+      </RainbowKitProvider>
     </WagmiConfig>
   )
 }

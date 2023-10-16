@@ -1,16 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Disclosure } from '@headlessui/react'
 
-import logo from 'assets/img/logo.png'
-import {Link} from 'react-router-dom'
-import { ConnectedWalletInfo } from './ConnectedWalletInfo';
+import { Link } from 'react-router-dom'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore } from 'store'
-import { useConnectedWallet } from 'hooks/use-connected-wallet'
+import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 
 export default function Header() {
+  const { setCurrentWalletState, setWalletState } = useBoundStore()
+  const { address, isConnected } = useAccount()
+  const { chain } = useNetwork()
 
-  const { setModalState, current } = useBoundStore();
-  useConnectedWallet();
+  useEffect(() => {
+    if (isConnected) {
+      setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
+      setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
+    }
+
+    if (!isConnected) setCurrentWalletState({ chain: undefined })
+  }, [isConnected])
 
   return (
     <Disclosure as="nav" className="bg-transparent">
@@ -24,18 +33,7 @@ export default function Header() {
               </Link>
             </div>
           </div>
-          <div className="absolute inset-y-0 right-0 flex items-center gap-4 pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {current.chain ? (
-              <ConnectedWalletInfo />
-            ) : (
-              <button
-                onClick={() => setModalState({ signUpMain: { isOpen: true } })}
-                className="rounded-sm bg-gradient-to-t from-[#7224A7] to-[#FF3065] px-4 py-2"
-              >
-                Connect Wallet
-              </button>
-            )}
-          </div>
+          <ConnectButton />
         </div>
       </div>
     </Disclosure>

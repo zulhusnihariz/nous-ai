@@ -20,7 +20,7 @@
     "@lit-protocol/types": "^2.2.54",
     "@near-wallet-selector/modal-ui": "^8.5.0",
     "@near-wallet-selector/my-near-wallet": "^8.5.0",
-    "@rainbow-me/rainbowkit": "^1.0.4",
+    "@rainbow-me/rainbowkit": "^1.1.2",
     "@tailwindcss/typography": "^0.5.9",
     "@tanstack/react-query": "^4.35.3",
     "@tanstack/react-query-devtools": "^4.35.3",
