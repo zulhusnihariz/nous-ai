@@ -93,6 +93,19 @@ export default class EthereumRpc {
     }
   }
 
+  async readContractData({ contractABI, contractAddress, data, method }: CallMethodArgs): Promise<any> {
+    try {
+      const ethersProvider = new ethers.BrowserProvider(this.provider)
+      const contract = new ethers.Contract(contractAddress, contractABI, ethersProvider)
+
+      const result = await contract[method](...data)
+
+      return result
+    } catch (error) {
+      return error as string
+    }
+  }
+
   async signMessage(message: string) {
     try {
       const ethersProvider = new ethers.BrowserProvider(this.provider)

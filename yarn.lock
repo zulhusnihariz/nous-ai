@@ -1746,7 +1746,7 @@
     bn.js "5.2.1"
     borsh "^0.7.0"
 
-"@near-wallet-selector/core@8.5.2", "@near-wallet-selector/core@^8.5.0":
+"@near-wallet-selector/core@8.5.2":
   version "8.5.2"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-8.5.2.tgz#26242b666f527d7dd3c9cfab1ee29a7d9b3224f6"
   integrity sha512-7014bUdO7bUB+wZEI4ru4DLx8+kN1D2S7knTdSZuBCmarmi2ayvHO2YsYkJBebrk00Q+eI7JfqZaahKGLPEjwQ==
@@ -1980,7 +1980,7 @@
   dependencies:
     buffer "~6.0.3"
 
-"@solana/web3.js@^1.70.1", "@solana/web3.js@^1.78.4":
+"@solana/web3.js@^1.70.1":
   version "1.78.5"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.78.5.tgz#591cd47423cdb0b5e5cb7e8dc4dc70b2abe02f80"
   integrity sha512-2ZHsDNqkKdglJQrIvJ3p2DmgS3cGnary3VJyqt9C1SPrpAtLYzcElr3xyXJOznyQTU/8AMw+GoF11lFoKbicKg==

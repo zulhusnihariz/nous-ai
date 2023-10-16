@@ -3,16 +3,8 @@ import { resetters } from '..'
 
 export enum CURRENT_CHAIN {
   // mainnet
-  ETHEREUM = 'homestead',
   POLYGON = 'matic',
-  BINANCE = 'bsc',
-  SOLANA = 'solana',
-  ARBITRUM = 'arbitrum',
-  CELO = 'celo',
-  EVM = 'evm',
-  NEAR = 'near',
   // testnet
-  GOERLI = 'goerli',
   MUMBAI = 'mumbai',
   MATIC_MUMBAI = 'maticmum',
 }
@@ -30,7 +22,7 @@ export type Wallet = {
 
 type CurrentWallet = Omit<Wallet, 'provider'> & { chain?: CURRENT_CHAIN }
 
-type WalletType = 'evm' | 'phantom' | 'near'
+type WalletType = 'evm' | 'phantom'
 
 export interface WalletSlice {
   current: CurrentWallet

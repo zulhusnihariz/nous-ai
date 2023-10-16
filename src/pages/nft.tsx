@@ -5,12 +5,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { convertSnakeToCamelCase, formatDataKey } from 'utils'
 import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
-import { ChatIcon, DatabaseIcon } from 'components/Icons/icons'
+import { AccessKeyIcon, ChatIcon, DatabaseIcon } from 'components/Icons/icons'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
 import { useBoundStore } from 'store'
 import { AccessControlConditions } from '@lit-protocol/types'
 import { useAlertMessage } from 'hooks/use-alert-message'
+import ApiKeyModal from 'components/Modal/ApiKeyModal'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 
 const PageNft = () => {
   const location = useLocation()
@@ -18,6 +20,7 @@ const PageNft = () => {
   const { rpc } = useApi()
   const { setModalState } = useBoundStore()
   const { showError } = useAlertMessage()
+  const { address, signMessage } = useConnectedWallet()
 
   const { nft } = location.state || {}
 
@@ -100,6 +103,26 @@ const PageNft = () => {
     }
   }
 
+  const goToKey = async () => {
+    if (!address.full) {
+      showError('Unauthorized')
+      return
+    }
+
+    const content = `
+
+    Click to sign in and accept the Nous Psyche Terms of Service () and Privacy Policy ().
+    
+    This request will not trigger a blockchain transaction or cost any gas fees.
+    `
+    try {
+      const signature = (await signMessage(JSON.stringify(content))) as string
+      setModalState({ apiKey: { isOpen: true, key: signature } })
+    } catch (e) {
+      showError(`${e}`)
+    }
+  }
+
   return (
     <>
       {nft && (
@@ -117,8 +140,10 @@ const PageNft = () => {
                   <div>
                     <div className="flex justify-between text-gray-400 text-sm my-2">
                       <div className="">
-                        Address: {nft.address} <span className="mx-3">&#8226;</span> #{nft.token_id}
-                        <span className="mx-3">&#8226;</span> <ChainName chainId="56" />
+                        Address: {import.meta.env.VITE_NOUS_AI_NFT} <span className="mx-3">&#8226;</span> #
+                        {nft.token_id}
+                        <span className="mx-3">&#8226;</span>{' '}
+                        <ChainName chainId={import.meta.env.VITE_DEFAULT_CHAIN_ID} />
                       </div>
                     </div>
                     <p className="">{nft.metadata.description}</p>
@@ -131,7 +156,7 @@ const PageNft = () => {
               <div className="text-2xl font-semibold mb-4">Tools</div>
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
                 <button
-                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center cursor-pointer hover:border hover:border-white"
+                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center cursor-pointer border border-red-900 hover:border-white"
                   onClick={() => goToChatroom()}
                 >
                   <div className="block text-left">
@@ -140,7 +165,7 @@ const PageNft = () => {
                   </div>
                 </button>
                 <button
-                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer hover:border hover:border-white"
+                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
                   onClick={() => goToKnowledge()}
                 >
                   <div>
@@ -148,10 +173,42 @@ const PageNft = () => {
                     <div className="text-sm mt-1">Knowledge</div>
                   </div>
                 </button>
+                <button
+                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
+                  onClick={() => goToKey()}
+                >
+                  <div>
+                    <AccessKeyIcon />
+                    <div className="text-sm mt-1">API Key</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 bg-[#181818] rounded p-4">
+              <div className="text-2xl font-semibold mb-4">Bots</div>
+              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-6">
+                <button
+                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center cursor-pointer border border-red-900 hover:border-white"
+                  onClick={() => goToChatroom()}
+                >
+                  <div className="block text-left">
+                    <div className="text-sm mt-1">Telegram</div>
+                  </div>
+                </button>
+                <button
+                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
+                  onClick={() => goToKnowledge()}
+                >
+                  <div>
+                    <div className="text-sm mt-1">Discord</div>
+                  </div>
+                </button>
               </div>
             </div>
 
             <ViewKnowledgeModal />
+            <ApiKeyModal />
 
             {shareDialogState.opened && (
               <ShareDialog

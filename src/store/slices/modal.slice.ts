@@ -16,6 +16,7 @@ export type Modal = {
   viewKnowledge: ModalState & {
     url: string
   }
+  apiKey: ModalState & { key: string }
 }
 
 export interface ModalSlice {
@@ -24,7 +25,7 @@ export interface ModalSlice {
   resetModal: () => void
 }
 
-let initialTransaction = {
+const initialTransaction = {
   token_id: '',
   chain_id: '',
   token_address: '',
@@ -49,6 +50,10 @@ const initialModal = {
     viewKnowledge: {
       isOpen: false,
       url: '',
+    },
+    apiKey: {
+      isOpen: false,
+      key: '',
     },
   },
 }

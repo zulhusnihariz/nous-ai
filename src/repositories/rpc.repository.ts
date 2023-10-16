@@ -122,7 +122,7 @@ const useGetNousMetadatas = (public_key: string, start_index: number) => {
         }
 
         const data_key = formatDataKey(
-          import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN as string,
+          import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
           import.meta.env.VITE_NOUS_AI_NFT as string,
           `${x}`
         )
@@ -139,6 +139,11 @@ const useGetNousMetadatas = (public_key: string, start_index: number) => {
                 column: 'meta_contract_id',
                 op: '=',
                 query: '0x01',
+              },
+              {
+                column: 'public_key',
+                op: '=',
+                query: public_key.toLowerCase(),
               },
             ],
           }),
@@ -206,7 +211,15 @@ const useGetNousNfts = (chain: string) => {
           {
             column: 'token_key',
             op: '=',
-            query: formatTokenKey(import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN, import.meta.env.VITE_NOUS_AI_NFT),
+            query: formatTokenKey(
+              import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN as string,
+              import.meta.env.VITE_NOUS_AI_NFT as string
+            ),
+          },
+          {
+            column: 'public_key',
+            op: '=',
+            query: import.meta.env.VITE_NOUS_LINEAGE_PK,
           },
         ],
         ordering: [{ column: 'token_id', sort: 'asc' }],
@@ -254,6 +267,8 @@ const useGetNousNfts = (chain: string) => {
         const nft = { ...nfts?.[i], ...reduced[i + 1] }
         res.push(nft)
       }
+
+      console.log(res)
 
       return res
     },
