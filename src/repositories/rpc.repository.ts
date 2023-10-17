@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import rpc, { JSONRPCFilter, NftMetadata, Transaction, LitProtocolEncryption, NousMetadata } from '../services/rpc'
+import rpc, { JSONRPCFilter, NftMetadata, Transaction, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { formatDataKey, formatTokenKey } from 'utils'
@@ -71,7 +71,7 @@ const useStoreBlob = () => {
 
 type NousNft = {
   metadata: NftMetadata & { version: string }
-  lit_protocol: LitProtocolEncryption & { version: string }
+  knowledge: string[]
   nous: NousMetadata & { version: string }
   token: {
     address: string
@@ -110,7 +110,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
             ],
             version: '',
           },
-          lit_protocol: {} as any,
+          knowledge: [] as any,
           nous: {
             version: '',
           } as any,
@@ -127,7 +127,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
           `${x}`
         )
 
-        const [result_metadata, result_lit_protocol, result_nous_metadata] = await Promise.all([
+        const [result_metadata, result_nous_storage, result_nous_metadata] = await Promise.all([
           rpc.searchMetadatas({
             query: [
               {
@@ -157,7 +157,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
               {
                 column: 'meta_contract_id',
                 op: '=',
-                query: import.meta.env.VITE_LIT_PROTOCOL_META_CONTRACT_ID as string,
+                query: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID as string,
               },
               {
                 column: 'public_key',
@@ -187,32 +187,32 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
           }),
         ])
 
-        let [metadata_exists, lit_protocol_exists, nous_metadata_exists] = [
+        let [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
           result_metadata && result_metadata.length == 1,
-          result_lit_protocol && result_lit_protocol.length == 1,
+          result_nous_storage && result_nous_storage.length == 1,
           result_nous_metadata && result_nous_metadata.length == 1,
         ]
 
         const cid_metadata: string = metadata_exists ? result_metadata[0].cid : ''
-        const cid_lit_protocol: string = lit_protocol_exists ? result_lit_protocol[0].cid : ''
+        const cid_nous_storage: string = nous_storage_exists ? result_nous_storage[0].cid : ''
         const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
 
         const promises: any[] = [
           cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
-          cid_lit_protocol ? rpc.getContentFromIpfs(cid_lit_protocol) : undefined,
+          cid_nous_storage ? rpc.getContentFromIpfs(cid_nous_storage) : undefined,
           cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
         ]
 
-        const [contentFromMetadata, contentFromLitProtocol, contentFromNousMetadata] = await Promise.all(promises)
+        const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await Promise.all(promises)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
           json.metadata = data.content
         }
 
-        if (contentFromLitProtocol) {
-          const data = JSON.parse(contentFromLitProtocol.data.result.content as string)
-          json.lit_protocol = data.content
+        if (contentFromNousStorage) {
+          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
+          json.knowledge = data.content
         }
 
         if (contentFromNousMetadata) {

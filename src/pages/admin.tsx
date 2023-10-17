@@ -2,7 +2,6 @@ import { useBoundStore } from 'store'
 import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
 import NftMetadataModal from 'components/Modal/NftMetadata'
 import { useGetNousMetadatas } from 'repositories/rpc.repository'
-import { LitProtocolEncryption } from 'services/rpc'
 import NousMetadataModal from 'components/Modal/NousMetadata'
 import { useAlertMessage } from 'hooks/use-alert-message'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
@@ -48,7 +47,7 @@ const PageAdmin = () => {
     if (!nfts?.[index]) return
 
     const token = nfts[index]?.token
-    const lit_protocol = nfts[index]?.lit_protocol
+    const knowledge = nfts[index]?.knowledge
 
     setModalState({
       encryptKnowledge: {
@@ -56,8 +55,8 @@ const PageAdmin = () => {
         token_id: `${tokenId}`,
         chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
-        version: lit_protocol?.version ?? '',
-        encryption: lit_protocol as LitProtocolEncryption,
+        version: '',
+        knowledge,
       },
     })
   }
@@ -138,7 +137,7 @@ const PageAdmin = () => {
                   <td className="whitespace-nowrap px-4 py-2 text-white text-center">
                     <button
                       className={`border p-3 ${
-                        nft.lit_protocol.encrypted_string ? 'bg-green-200 text-green-700' : 'border-gray-200'
+                        nft.knowledge?.length > 0 ? 'bg-green-200 text-green-700' : 'border-gray-200'
                       }`}
                       onClick={() => openEncryptKnowledgeModal(`${nft.token_id}`, index)}
                     >
