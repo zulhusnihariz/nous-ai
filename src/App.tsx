@@ -35,7 +35,7 @@ const App = () => {
             <Route path="/admin" element={<PageAdmin />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
-            <Route path="/room/:key" element={<PageRoom />} />
+            <Route path="/room/:key/:token_id" element={<PageRoom />} />
           </Route>
         </Routes>
       </LitProtocolProvider>

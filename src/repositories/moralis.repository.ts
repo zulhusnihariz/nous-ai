@@ -11,12 +11,12 @@ const useGetNftByWalletAddress = ({ address, chain }: { address: string; chain: 
     queryFn: async ({ queryKey }) => {
       const [_rqKey, chain] = queryKey
       try {
-        const response = await getNftsByWalletAddress(address, 'binance')
+        const response = await getNftsByWalletAddress(address, chain)
 
         const nfts = response.data.result.map(
           (d: { token_address: any; token_id: any; metadata: string; owner_of: string }) => {
             const meta = JSON.parse(d.metadata)
-            if (meta.image.startsWith('ipfs://')) {
+            if (meta?.image?.startsWith('ipfs://')) {
               meta.image = meta.image.replace('ipfs://', 'https://ipfs.io/ipfs/')
             }
 
@@ -36,7 +36,7 @@ const useGetNftByWalletAddress = ({ address, chain }: { address: string; chain: 
       }
       return []
     },
-    enabled: Boolean(chain),
+    enabled: Boolean(address),
   })
 }
 

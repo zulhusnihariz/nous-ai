@@ -5,16 +5,16 @@ import { useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
 import top from 'assets/img/top.svg'
 import avatar from 'assets/img/avatar.jpeg'
-import { useGetSingleNousNft } from 'repositories/rpc.repository'
+import { useGetSingleNousMetadata } from 'repositories/rpc.repository'
 import { useParams } from 'react-router-dom'
 
 const PageRoom = () => {
-  const { key } = useParams()
+  const { key, token_id } = useParams()
   const [chats, setChats] = useState<Chat[]>([])
   const [disableChat, setDisableChat] = useState(false)
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
-  const { data: nft } = useGetSingleNousNft(key as string)
+  const { data: nft } = useGetSingleNousMetadata(key as string, token_id as string)
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)

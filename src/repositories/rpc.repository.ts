@@ -2,10 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import rpc, { JSONRPCFilter, NftMetadata, Transaction, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
-import { formatDataKey, formatTokenKey } from 'utils'
-import { Metadata, Nft } from 'lib'
-import { useGetNftByContractAddress } from './moralis.repository'
-
+import { formatDataKey } from 'utils'
+import { Nft } from 'lib'
 const useGetCompleteTransactions = () => {
   return useQuery({
     queryKey: [RQ_KEY.GET_COMPLETED_TXS],
@@ -80,6 +78,126 @@ type NousNft = {
   }
 }
 
+const createDefaultMetadata = (token_id: string) => {
+  return {
+    owner: '',
+    token_address: import.meta.env.VITE_NOUS_AI_NFT as string,
+    token_id,
+    chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+    metadata: {
+      name: '',
+      image: '',
+      description: '',
+      attributes: [
+        {
+          trait_type: 'name',
+          value: '',
+        },
+        {
+          trait_type: 'personality',
+          value: '',
+        },
+      ],
+      version: '',
+    },
+    knowledge: [] as any,
+    nous: {
+      version: '',
+    } as any,
+    token: {
+      address: import.meta.env.VITE_NOUS_AI_NFT as string,
+      chain: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+      id: token_id,
+    },
+  }
+}
+
+const fetchNousMetadata = async (token_id: string, public_key: string) => {
+  const data_key = formatDataKey(
+    import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+    import.meta.env.VITE_NOUS_AI_NFT as string,
+    token_id
+  )
+
+  const [result_metadata, result_nous_storage, result_nous_metadata] = await Promise.all([
+    rpc.searchMetadatas({
+      query: [
+        {
+          column: 'data_key',
+          op: '=',
+          query: data_key,
+        },
+        {
+          column: 'meta_contract_id',
+          op: '=',
+          query: '0x01',
+        },
+        {
+          column: 'public_key',
+          op: '=',
+          query: public_key.toLowerCase(),
+        },
+      ],
+    }),
+    rpc.searchMetadatas({
+      query: [
+        {
+          column: 'data_key',
+          op: '=',
+          query: data_key,
+        },
+        {
+          column: 'meta_contract_id',
+          op: '=',
+          query: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID as string,
+        },
+        {
+          column: 'public_key',
+          op: '=',
+          query: public_key.toLowerCase(),
+        },
+      ],
+    }),
+    rpc.searchMetadatas({
+      query: [
+        {
+          column: 'data_key',
+          op: '=',
+          query: data_key,
+        },
+        {
+          column: 'meta_contract_id',
+          op: '=',
+          query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+        },
+        {
+          column: 'public_key',
+          op: '=',
+          query: public_key.toLowerCase(),
+        },
+      ],
+    }),
+  ])
+
+  let [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
+    result_metadata && result_metadata.length == 1,
+    result_nous_storage && result_nous_storage.length == 1,
+    result_nous_metadata && result_nous_metadata.length == 1,
+  ]
+
+  const cid_metadata: string = metadata_exists ? result_metadata[0].cid : ''
+  const cid_nous_storage: string = nous_storage_exists ? result_nous_storage[0].cid : ''
+  const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
+
+  const promises: any[] = [
+    cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
+    cid_nous_storage ? rpc.getContentFromIpfs(cid_nous_storage) : undefined,
+    cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
+  ]
+
+  return await Promise.all(promises)
+}
+
 const useGetNousMetadatas = (public_key: string, page_index: number, item_per_page: number) => {
   return useQuery<(Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_METADATAS],
@@ -89,121 +207,12 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
       const end_index = page_index * item_per_page + 10 <= 555 ? page_index * item_per_page + 10 : 555
 
       for (let x = page_index * item_per_page; x < end_index; x++) {
-        const json = {
-          owner: '',
-          token_address: import.meta.env.VITE_NOUS_AI_NFT as string,
-          token_id: x,
-          chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
-          metadata: {
-            name: '',
-            image: '',
-            description: '',
-            attributes: [
-              {
-                trait_type: 'name',
-                value: '',
-              },
-              {
-                trait_type: 'personality',
-                value: '',
-              },
-            ],
-            version: '',
-          },
-          knowledge: [] as any,
-          nous: {
-            version: '',
-          } as any,
-          token: {
-            address: import.meta.env.VITE_NOUS_AI_NFT as string,
-            chain: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
-            id: `${x}`,
-          },
-        }
+        const json = createDefaultMetadata(`${x}`)
 
-        const data_key = formatDataKey(
-          import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
-          import.meta.env.VITE_NOUS_AI_NFT as string,
-          `${x}`
+        const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await fetchNousMetadata(
+          `${x}`,
+          public_key
         )
-
-        const [result_metadata, result_nous_storage, result_nous_metadata] = await Promise.all([
-          rpc.searchMetadatas({
-            query: [
-              {
-                column: 'data_key',
-                op: '=',
-                query: data_key,
-              },
-              {
-                column: 'meta_contract_id',
-                op: '=',
-                query: '0x01',
-              },
-              {
-                column: 'public_key',
-                op: '=',
-                query: public_key.toLowerCase(),
-              },
-            ],
-          }),
-          rpc.searchMetadatas({
-            query: [
-              {
-                column: 'data_key',
-                op: '=',
-                query: data_key,
-              },
-              {
-                column: 'meta_contract_id',
-                op: '=',
-                query: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID as string,
-              },
-              {
-                column: 'public_key',
-                op: '=',
-                query: public_key.toLowerCase(),
-              },
-            ],
-          }),
-          rpc.searchMetadatas({
-            query: [
-              {
-                column: 'data_key',
-                op: '=',
-                query: data_key,
-              },
-              {
-                column: 'meta_contract_id',
-                op: '=',
-                query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
-              },
-              {
-                column: 'public_key',
-                op: '=',
-                query: public_key.toLowerCase(),
-              },
-            ],
-          }),
-        ])
-
-        let [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
-          result_metadata && result_metadata.length == 1,
-          result_nous_storage && result_nous_storage.length == 1,
-          result_nous_metadata && result_nous_metadata.length == 1,
-        ]
-
-        const cid_metadata: string = metadata_exists ? result_metadata[0].cid : ''
-        const cid_nous_storage: string = nous_storage_exists ? result_nous_storage[0].cid : ''
-        const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
-
-        const promises: any[] = [
-          cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
-          cid_nous_storage ? rpc.getContentFromIpfs(cid_nous_storage) : undefined,
-          cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
-        ]
-
-        const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await Promise.all(promises)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
@@ -229,138 +238,78 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetNousNfts = (chain: string) => {
-  const { data: nfts } = useGetNftByContractAddress(chain)
-
+const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
   return useQuery<(Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_METADATAS],
     queryFn: async () => {
-      const result = await rpc.searchMetadatas({
-        query: [
-          {
-            column: 'token_key',
-            op: '=',
-            query: formatTokenKey(
-              import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN as string,
-              import.meta.env.VITE_NOUS_AI_NFT as string
-            ),
-          },
-          {
-            column: 'public_key',
-            op: '=',
-            query: import.meta.env.VITE_NOUS_LINEAGE_PK,
-          },
-        ],
-        ordering: [{ column: 'token_id', sort: 'asc' }],
-      })
+      const nfts: (Nft & NousNft)[] = []
 
-      const promises = result?.map(async (curr: Metadata) => {
-        if (curr.alias === 'lineage_key') return
+      for (let i = 0; i < tokenIds.length; i++) {
+        const tokenId = tokenIds[i]
+        const json = createDefaultMetadata(tokenId)
 
-        const res = await rpc.getContentFromIpfs(curr.cid)
-        const content = JSON.parse(res.data.result.content as string)
-        const data = content.content as { text: string; image: string }
+        const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await fetchNousMetadata(
+          tokenId,
+          public_key
+        )
 
-        return {
-          ...data,
-          tokenId: curr.token_id,
-          alias: curr.alias,
-          version: curr.version,
+        if (contentFromMetadata) {
+          const data = JSON.parse(contentFromMetadata.data.result.content as string)
+          json.metadata = data.content
         }
-      })
 
-      const results = await Promise.all(promises)
+        if (contentFromNousStorage) {
+          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
+          json.knowledge = data.content
+        }
 
-      const reduced = results.reduce(
-        (prev, curr) => {
-          if (curr === undefined) return prev
+        if (contentFromNousMetadata) {
+          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
+          json.nous = data.content
+        }
 
-          const { tokenId, alias, ...rest } = curr
-          if (!prev[tokenId]) prev[tokenId] = {}
-
-          if (alias === '') {
-            prev[tokenId]['metadata'] = rest
-          } else {
-            prev[tokenId][alias] = rest
-          }
-
-          return prev
-        },
-        {} as Record<string, any>
-      )
-
-      const totalNft = nfts?.length ?? 0
-      const res: (Nft & NousNft)[] = []
-
-      for (let i = 0; i < totalNft; i++) {
-        const nft = { ...nfts?.[i], ...reduced[i + 1] }
-        res.push(nft)
+        nfts.push(json)
       }
 
-      console.log(res)
-
-      return res
+      return nfts
     },
-    enabled: Boolean(nfts && nfts?.length > 0),
+    enabled: Boolean(public_key) && tokenIds.length > 0,
   })
 }
 
-const useGetSingleNousNft = (nftKey: string) => {
+const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
   return useQuery<NousNft>({
-    queryKey: [RQ_KEY.GET_METADATAS, nftKey],
+    queryKey: [RQ_KEY.GET_METADATAS, data_key],
     queryFn: async () => {
-      const result = await rpc.searchMetadatas({
+      const json = createDefaultMetadata(token_id)
+
+      const metadata = await rpc.searchMetadatas({
         query: [
-          {
-            column: 'token_key',
-            op: '=',
-            query: formatTokenKey(import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN, import.meta.env.VITE_NOUS_AI_NFT),
-          },
           {
             column: 'data_key',
             op: '=',
-            query: nftKey,
+            query: data_key,
+          },
+          {
+            column: 'meta_contract_id',
+            op: '=',
+            query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
           },
         ],
       })
 
-      const promises = result?.map(async (curr: Metadata) => {
-        if (curr.alias === 'lineage_key') return
+      const cid = metadata && metadata.length == 1 ? metadata[0].cid : ''
 
-        const res = await rpc.getContentFromIpfs(curr.cid)
-        const content = JSON.parse(res.data.result.content as string)
-        const data = content.content as { text: string; image: string }
+      let contentFromNousMetadata = await rpc.getContentFromIpfs(cid)
 
-        return {
-          ...data,
-          tokenId: curr.token_id,
-          alias: curr.alias,
-          version: curr.version,
-        }
-      })
+      if (contentFromNousMetadata) {
+        const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
+        json.nous = data.content
+      }
 
-      const results = await Promise.all(promises)
-
-      const reduced = results.reduce(
-        (prev, curr) => {
-          if (curr === undefined) return prev
-
-          const { tokenId, alias, ...rest } = curr
-          if (!prev[tokenId]) prev[tokenId] = {}
-
-          if (alias === '') {
-            prev[tokenId]['metadata'] = rest
-          } else {
-            prev[tokenId][alias] = rest
-          }
-
-          return prev
-        },
-        {} as Record<string, any>
-      )
-
-      return Object.values(reduced)[0] as NousNft
+      return json
     },
+    enabled: Boolean(data_key) && Boolean(token_id),
   })
 }
 
@@ -369,7 +318,7 @@ export {
   useGetTransactions,
   usePublishTransaction,
   useStoreBlob,
-  useGetNousNfts,
-  useGetSingleNousNft,
+  useGetOwnedNousMetadatas,
+  useGetSingleNousMetadata,
   useGetNousMetadatas,
 }
