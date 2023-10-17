@@ -1,20 +1,5 @@
 import { useEffect, useState } from 'react'
-// import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
-// import { connectorsForWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
-import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
-import { PhantomConnector } from 'phantom-wagmi-connector'
-import {
-  arbitrum,
-  arbitrumGoerli,
-  bsc,
-  bscTestnet,
-  celo,
-  celoAlfajores,
-  goerli,
-  mainnet,
-  polygon,
-  polygonMumbai,
-} from 'wagmi/chains'
+import { polygon, polygonMumbai } from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
@@ -33,7 +18,6 @@ import PageInventory from 'pages/inventory'
 import PageRoom from 'pages/Room'
 import { ApiProvider } from 'hooks/use-api'
 import { LitProtocolProvider } from 'hooks/use-lit-protocol'
-import SignInModal from 'components/Modal/SignInModal'
 import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
 import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit'

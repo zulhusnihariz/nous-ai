@@ -7,7 +7,6 @@ import { abbreviateETHBalance, shortenAddress } from 'utils'
 
 export function useConnectedWallet() {
   const { current, wallet, setCurrentWalletState, setWalletState } = useBoundStore()
-  const { near, phantom } = wallet
 
   const [address, setAddress] = useState({ display: '', full: '' })
 
