@@ -127,7 +127,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
           `${x}`
         )
 
-        const [result_metadata, result_lit_protocol] = await Promise.all([
+        const [result_metadata, result_lit_protocol, result_nous_metadata] = await Promise.all([
           rpc.searchMetadatas({
             query: [
               {
@@ -166,29 +166,58 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
               },
             ],
           }),
+          rpc.searchMetadatas({
+            query: [
+              {
+                column: 'data_key',
+                op: '=',
+                query: data_key,
+              },
+              {
+                column: 'meta_contract_id',
+                op: '=',
+                query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+              },
+              {
+                column: 'public_key',
+                op: '=',
+                query: public_key.toLowerCase(),
+              },
+            ],
+          }),
         ])
 
-        const cid_metadata: string = result_metadata && result_metadata.length == 1 ? result_metadata[0].cid : ''
-        const cid_lit_protocol: string =
-          result_lit_protocol && result_lit_protocol.length == 1 ? result_lit_protocol[0].cid : ''
+        let [metadata_exists, lit_protocol_exists, nous_metadata_exists] = [
+          result_metadata && result_metadata.length == 1,
+          result_lit_protocol && result_lit_protocol.length == 1,
+          result_nous_metadata && result_nous_metadata.length == 1,
+        ]
 
-        if (cid_metadata || cid_lit_protocol) {
-          const promises = []
+        const cid_metadata: string = metadata_exists ? result_metadata[0].cid : ''
+        const cid_lit_protocol: string = lit_protocol_exists ? result_lit_protocol[0].cid : ''
+        const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
 
-          if (cid_metadata) promises.push(rpc.getContentFromIpfs(cid_metadata))
-          if (cid_lit_protocol) promises.push(rpc.getContentFromIpfs(cid_lit_protocol))
+        const promises: any[] = [
+          cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
+          cid_lit_protocol ? rpc.getContentFromIpfs(cid_lit_protocol) : undefined,
+          cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
+        ]
 
-          const [contentFromMetadata, contentFromLitProtocol] = await Promise.all(promises)
+        const [contentFromMetadata, contentFromLitProtocol, contentFromNousMetadata] = await Promise.all(promises)
 
-          if (contentFromMetadata) {
-            const data = JSON.parse(contentFromMetadata.data.result.content as string)
-            json.metadata = data.content
-          }
+        if (contentFromMetadata) {
+          const data = JSON.parse(contentFromMetadata.data.result.content as string)
+          json.metadata = data.content
+        }
 
-          if (contentFromLitProtocol) {
-            const data = JSON.parse(contentFromLitProtocol.data.result.content as string)
-            json.lit_protocol = data.content
-          }
+        if (contentFromLitProtocol) {
+          const data = JSON.parse(contentFromLitProtocol.data.result.content as string)
+          json.lit_protocol = data.content
+        }
+
+        if (contentFromNousMetadata) {
+          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
+          json.nous = data.content
         }
 
         nfts.push(json)

@@ -127,7 +127,7 @@ const PageAdmin = () => {
                   <td className="whitespace-nowrap px-4 py-2 text-white text-center">
                     <button
                       className={`border p-3 ${
-                        nft.metadata.description.length > 0 ? 'bg-green-200 text-green-700' : 'border-gray-200'
+                        nft.metadata.description?.length > 0 ? 'bg-green-200 text-green-700' : 'border-gray-200'
                       }`}
                       onClick={() => openNftMetadataModal(`${nft.token_id}`, index)}
                     >

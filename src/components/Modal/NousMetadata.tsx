@@ -43,7 +43,7 @@ const NousMetadataModal = () => {
       mcdata: '',
       meta_contract_id: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID,
       method: 'metadata',
-      public_key: address.full,
+      public_key: address.full.toLowerCase(),
       signature,
       token_address: token_address as string,
       token_id: token_id as string,
