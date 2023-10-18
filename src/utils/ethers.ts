@@ -107,6 +107,7 @@ export default class EthereumRpc {
 
       return result
     } catch (error) {
+      if (error.value === '0x') return 0
       return error as string
     }
   }
