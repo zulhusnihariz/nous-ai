@@ -4,7 +4,6 @@ import { Chat } from 'lib'
 import { useEffect, useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
 import top from 'assets/img/top.svg'
-import avatar from 'assets/img/avatar.jpeg'
 import { useGetSingleNousMetadata } from 'repositories/rpc.repository'
 import { useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
@@ -37,7 +36,7 @@ const PageRoom = () => {
     }
 
     try {
-      const res = await chatWithNous(nft?.nous.id as string, '0x3zero', message)
+      const res = await chatWithNous(nft?.nous.id as string, name, message)
       if (res.data.length <= 0) {
         return
       }
@@ -45,16 +44,15 @@ const PageRoom = () => {
       let allText = ''
 
       for (const d of res.data) {
-        if (res.data[0].recipient_id === '0x3zero') {
+        if (res.data[0].recipient_id === name) {
           allText += `${d.text} <br /><br />`
         }
       }
 
       const resChat = {
-        avatar:
-          'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80',
+        avatar: nft?.metadata.image as String,
         text: allText,
-        name: 'Arjuna',
+        name: nft?.metadata.attributes.find(e => e.trait_type === 'name')?.value as String,
         className: 'bg-[#1C1C1C] rounded-md border-[1px] border-[#333335]',
       }
 
@@ -91,7 +89,7 @@ const PageRoom = () => {
                 <img className="scale-125 border-b-4 md:border-b-0 md:scale-90" src={top} />
               </div>
               <div className="absolute z-30 w-14 h-14 md:w-20 md:h-20 top-4 flex justify-center gap-x-4">
-                <img className="rounded-full border-[1px]" src={avatar} />
+                <img className="rounded-full border-[1px]" src={nft?.metadata.image} />
               </div>
             </div>
           </header>

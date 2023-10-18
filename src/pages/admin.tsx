@@ -86,7 +86,7 @@ const PageAdmin = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
-    const startPage = urlParams.get('start') || '1'
+    const startPage = urlParams.get('start') || '0'
     setCurrentPage(parseInt(startPage))
   }, [])
 

@@ -179,7 +179,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
     }),
   ])
 
-  let [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
+  const [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
     result_metadata && result_metadata.length == 1,
     result_nous_storage && result_nous_storage.length == 1,
     result_nous_metadata && result_nous_metadata.length == 1,
@@ -283,28 +283,73 @@ const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
     queryFn: async () => {
       const json = createDefaultMetadata(token_id)
 
-      const metadata = await rpc.searchMetadatas({
-        query: [
-          {
-            column: 'data_key',
-            op: '=',
-            query: data_key,
-          },
-          {
-            column: 'meta_contract_id',
-            op: '=',
-            query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
-          },
-        ],
-      })
+      const [result_nous, result_metadata] = await Promise.all([
+        rpc.searchMetadatas({
+          query: [
+            {
+              column: 'data_key',
+              op: '=',
+              query: data_key,
+            },
+            {
+              column: 'meta_contract_id',
+              op: '=',
+              query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+            },
+            {
+              column: 'public_key',
+              op: '=',
+              query: import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as string,
+            },
+          ],
+        }),
+        rpc.searchMetadatas({
+          query: [
+            {
+              column: 'data_key',
+              op: '=',
+              query: data_key,
+            },
+            {
+              column: 'meta_contract_id',
+              op: '=',
+              query: import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as string,
+            },
+            {
+              column: 'public_key',
+              op: '=',
+              query: import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as string,
+            },
+          ],
+        }),
+      ])
 
-      const cid = metadata && metadata.length == 1 ? metadata[0].cid : ''
+      const needToLoadFromIpfs = []
 
-      let contentFromNousMetadata = await rpc.getContentFromIpfs(cid)
+      if (result_nous) {
+        const cid = result_nous && result_nous.length == 1 ? result_nous[0].cid : ''
+        if (cid) {
+          needToLoadFromIpfs.push(rpc.getContentFromIpfs(cid))
+        }
+      }
 
-      if (contentFromNousMetadata) {
-        const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
+      if (result_metadata) {
+        const cid = result_metadata && result_metadata.length == 1 ? result_metadata[0].cid : ''
+        if (cid) {
+          needToLoadFromIpfs.push(rpc.getContentFromIpfs(cid))
+        }
+      }
+
+      const [nous_ipfs, metadata_ipfs] = await Promise.all(needToLoadFromIpfs)
+
+      if (nous_ipfs) {
+        const data = JSON.parse(nous_ipfs.data.result.content as string)
         json.nous = data.content
+      }
+
+      if (metadata_ipfs) {
+        const data = JSON.parse(metadata_ipfs.data.result.content as string)
+        json.metadata = data.content
       }
 
       return json

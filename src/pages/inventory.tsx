@@ -89,10 +89,10 @@ const PageInventory = () => {
                     <>
                       <img
                         className="rounded-lg w-full bg-white object-cover h-48 hover:scale-105 transition duration-500"
-                        src={(nft.metadata as any).image}
-                        alt={(nft.metadata as any).name}
+                        src={nft.metadata.image}
+                        alt={nft.metadata.name}
                       />
-                      <div className="font-semibold mt-2 truncate">{(nft.metadata as any).name}</div>
+                      <div className="font-semibold mt-2 truncate">{nft.metadata.name}</div>
                       <div className="">Polygon</div>
                     </>
                   )}
