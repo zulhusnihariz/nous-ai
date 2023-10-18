@@ -1,8 +1,6 @@
 import { Dialog } from '@headlessui/react'
 import { useBoundStore } from 'store'
-import ConnectSolana from 'components/Connect/ConnectSolana'
 import ConnectWallet from 'components/Connect/ConnectWallet'
-import ConnectNear from 'components/Connect/ConnectNear'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 import { polygon, polygonMumbai } from 'wagmi/chains'
 import { useState } from 'react'
@@ -49,12 +47,6 @@ export default function SignInModal() {
 
                 <div className={chains[selectedIndex].name == 'Mumbai' ? '' : 'hidden'}>
                   <ConnectWallet chain={CURRENT_CHAIN.MUMBAI} chainId={polygonMumbai.id} />
-                </div>
-                <div className={chains[selectedIndex].name == 'Solana' ? '' : 'hidden'}>
-                  <ConnectSolana />
-                </div>
-                <div className={chains[selectedIndex].name == 'Near' ? '' : 'hidden'}>
-                  <ConnectNear />
                 </div>
               </div>
             </div>

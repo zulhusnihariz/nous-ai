@@ -53,26 +53,6 @@ const initialWallet = {
         symbol: '',
       },
     },
-    phantom: {
-      address: '',
-      publicKey: '',
-      provider: undefined,
-      balance: {
-        decimals: 0,
-        formatted: '',
-        symbol: 'SOL',
-      },
-    },
-    near: {
-      address: '',
-      publicKey: '',
-      provider: undefined,
-      balance: {
-        decimals: 0,
-        formatted: '',
-        symbol: 'NEAR',
-      },
-    },
   },
 }
 

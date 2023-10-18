@@ -1,20 +1,22 @@
 import ChatBubble from 'components/ChatBubble'
 import ChatSubmit from 'components/ChatSubmit'
 import { Chat } from 'lib'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
 import top from 'assets/img/top.svg'
 import avatar from 'assets/img/avatar.jpeg'
-import { useGetSingleNousNft } from 'repositories/rpc.repository'
+import { useGetSingleNousMetadata } from 'repositories/rpc.repository'
 import { useParams } from 'react-router-dom'
+import { v4 } from 'uuid'
 
 const PageRoom = () => {
-  const { key } = useParams()
+  const { key, token_id } = useParams()
   const [chats, setChats] = useState<Chat[]>([])
   const [disableChat, setDisableChat] = useState(false)
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const [name, setName] = useState('')
 
-  const { data: nft } = useGetSingleNousNft(key as string)
+  const { data: nft } = useGetSingleNousMetadata(key as string, token_id as string)
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)
@@ -26,7 +28,7 @@ const PageRoom = () => {
     const newChat = {
       avatar: '',
       text: message,
-      name: '0x3zero',
+      name,
     }
 
     setChats(prevChats => [...prevChats, newChat])
@@ -65,6 +67,10 @@ const PageRoom = () => {
       console.log(e)
     }
   }
+
+  useEffect(() => {
+    if (!name) setName(v4())
+  }, [])
 
   return (
     <div className="flex justify-center h-screen">

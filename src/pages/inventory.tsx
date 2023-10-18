@@ -1,6 +1,8 @@
 import { PlusIcon } from 'components/Icons/icons'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useNavigate } from 'react-router-dom'
-import { useGetNousNfts } from 'repositories/rpc.repository'
+import { useGetNftByWalletAddress } from 'repositories/moralis.repository'
+import { useGetOwnedNousMetadatas } from 'repositories/rpc.repository'
 import RPC from 'utils/ethers'
 
 const contractABI = [
@@ -28,8 +30,10 @@ const contractABI = [
 
 const PageInventory = () => {
   const navigate = useNavigate()
+  const { address } = useConnectedWallet()
+  const { data: owned } = useGetNftByWalletAddress({ address: address?.full, chain: 'mumbai' })
+  const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
 
-  const { data: nfts } = useGetNousNfts('mumbai')
   const handleOnMintClicked = async () => {
     const mintPrice = await getMintPrice()
     const rpc = new RPC(window?.ethereum as any)

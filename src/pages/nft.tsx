@@ -34,10 +34,10 @@ const PageNft = () => {
 
       const response = await rpc.getMetadataUseKeyByBlock(nftKey, import.meta.env.VITE_META_CONTRACT_ID as String, '')
 
-      const metadatas = response.data.result.metadatas as Metadata[]
+      const metadatas = response?.data?.result?.metadatas as Metadata[]
 
       const uniqueVersions: String[] = []
-      metadatas.map(item => {
+      metadatas?.map(item => {
         if (!uniqueVersions.includes(item.version)) {
           uniqueVersions.push(item.version)
         }
@@ -79,7 +79,7 @@ const PageNft = () => {
 
   const goToChatroom = () => {
     if (!nftKey) return
-    navigate(`/room/${nftKey}`)
+    navigate(`/room/${nftKey}/${nft.token_id}`)
   }
 
   const goToKnowledge = async () => {

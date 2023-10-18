@@ -1,62 +1,35 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useBoundStore } from 'store'
-import { AccessControlConditions } from '@lit-protocol/types'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
-import { useLitProtocol } from 'hooks/use-lit-protocol'
 import { usePublishTransaction } from 'repositories/rpc.repository'
-import { convertCamelToSnakeCase, convertSnakeToCamelCase } from 'utils'
 import { useAlertMessage } from 'hooks/use-alert-message'
+import { FileUploader } from 'components/FileUploader'
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
-  const { isOpen, encryption, token_id, chain_id, token_address, version } = modal.encryptKnowledge
+  const { isOpen, token_id, chain_id, token_address, version, knowledge } = modal.encryptKnowledge
   const { showSuccess } = useAlertMessage()
 
-  const [knowledgeBaseURL, setKnowledgeBaseURL] = useState('')
+  const [cids, setCids] = useState<string[]>([])
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const { address, signMessage } = useConnectedWallet()
-  const { encrypt, decrypt } = useLitProtocol()
   const { mutateAsync: publish } = usePublishTransaction()
 
   const onEncrypt = async () => {
-    if (!knowledgeBaseURL || !address?.full) return
+    if (cids.length <= 0 || !address?.full) return
 
-    const accessControlConditions: AccessControlConditions = [
-      {
-        contractAddress: import.meta.env.VITE_NOUS_AI_NFT,
-        standardContractType: 'ERC721',
-        chain: import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
-        method: 'ownerOf',
-        parameters: [token_id],
-        returnValueTest: {
-          comparator: '=',
-          value: ':userAddress',
-        },
-      },
-    ]
-
-    const { encryptedString, encryptedSymmetricKey } = await encrypt({
-      text: knowledgeBaseURL,
-      accessControlConditions,
-    })
-
-    const content = JSON.stringify(
-      convertCamelToSnakeCase({
-        encryptedString,
-        encryptedSymmetricKey,
-        accessControlConditions,
-      })
-    )
-
-    const signature = (await signMessage(JSON.stringify(content))) as string
+    const content = JSON.stringify(cids)
+    const signature = (await signMessage(content)) as string
 
     await publish({
-      alias: 'lit_protocol',
+      alias: '',
       chain_id: chain_id as string,
       data: content,
       mcdata: '',
-      meta_contract_id: import.meta.env.VITE_LIT_PROTOCOL_META_CONTRACT_ID,
+      meta_contract_id: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID,
       method: 'metadata',
       public_key: address.full.toLowerCase(),
       signature,
@@ -69,19 +42,9 @@ const EncryptKnowledgeModal = () => {
     showSuccess('Success')
   }
 
-  const onDecrypt = async () => {
-    if (!encryption || !address?.full) return
-    const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = encryption
-    const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
-
-    const decrypted = await decrypt({
-      accessControlConditions,
-      encryptedString: encrypted_string,
-      encryptedSymmetricKey: encrypted_symmetric_key,
-    })
-
-    setKnowledgeBaseURL(decrypted)
-  }
+  useEffect(() => {
+    setCids(knowledge ?? [])
+  }, [knowledge])
 
   const closeDialog = () => {
     setModalState({ encryptKnowledge: { isOpen: false } })
@@ -89,7 +52,7 @@ const EncryptKnowledgeModal = () => {
 
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment} afterLeave={() => setKnowledgeBaseURL('')}>
+      <Transition appear show={isOpen} as={Fragment} afterLeave={() => setCids([])}>
         <Dialog as="div" className="relative z-10" onClose={closeDialog}>
           <Transition.Child
             as={Fragment}
@@ -116,62 +79,26 @@ const EncryptKnowledgeModal = () => {
               >
                 <Dialog.Panel className="w-full text-center max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 align-middle shadow-xl transition-all">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 gap-5 mb-4">
-                    Encrypt Knowlege Base Encryption
+                    Upload Knowledge For Chat AI
                   </Dialog.Title>
-                  {/*      <input
-                    className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
-                    name="tokenAddress"
-                    type="text"
-                    placeholder="Token Address"
-                    value={modal.encryptKnowledge.tokenAddress as string}
-                    disabled={true}
-                  />
 
-                  <div className="flex gap-2">
-                    <input
-                      className="w-1/2 rounded-lg border-black border p-3  text-sm shadow-sm text-black"
-                      name="chain"
-                      type="text"
-                      placeholder="Chain"
-                      value={modal.encryptKnowledge.chainId as string}
-                      disabled={true}
-                    />
-                    <input
-                      className="w-1/2 rounded-lg border-black border p-3 text-sm shadow-sm text-black "
-                      name="tokenId"
-                      type="text"
-                      placeholder="Token ID"
-                      value={modal.encryptKnowledge.tokenId as string}
-                      disabled={true}
+                  <div className="flex justify-center">
+                    <FileUploader
+                      cids={cids}
+                      setIsLoading={bool => setIsLoading(bool)}
+                      setCid={cid => setCids(prev => [...prev, cid])}
                     />
                   </div>
- */}
-                  <input
-                    className="w-full rounded-lg border-black border p-3 text-sm shadow-sm block text-black mt-2"
-                    name="knowledgeBaseUrl"
-                    type="text"
-                    placeholder="Knowledge Base URL"
-                    value={knowledgeBaseURL}
-                    onChange={e => setKnowledgeBaseURL(e.target.value)}
-                  />
+
                   <div className="mt-4 flex gap-4 justify-center">
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={() => onEncrypt()}
+                      disabled={isLoading}
                     >
-                      Encrypt
+                      {isLoading ? 'Processing...' : 'Upload'}
                     </button>
-
-                    {encryption && (
-                      <button
-                        type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={() => onDecrypt()}
-                      >
-                        Decrypt
-                      </button>
-                    )}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
