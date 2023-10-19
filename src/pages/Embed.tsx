@@ -93,9 +93,7 @@ const EmbedRoom = () => {
       <div className="flex flex-col w-full h-screen bg-[#212129]">
         <div className="w-full bg-purple-300 p-2 flex text-black items-center gap-3">
           {/* <img className="rounded-full border-[1px] border-black w-14 h-14" src={nft?.metadata.image} /> */}
-          <a target="_blank" href="https://nouspsyche.com" className="font-semibold cursor-pointer">
-            Find us on Nous Psyche
-          </a>
+          <div className="font-semibold cursor-pointer">Find us on Nous Psyche</div>
         </div>
         <div className="flex-1 overflow-y-auto p-2 text-satoshi">
           {chats.map((chat, index) => {
@@ -118,8 +116,6 @@ const EmbedRoom = () => {
               {' '}
               Search{' '}
             </label>
-
-            <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
           </div>
         </div>
       </div>
