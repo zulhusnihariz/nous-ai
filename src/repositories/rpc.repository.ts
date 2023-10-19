@@ -277,11 +277,11 @@ const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
   })
 }
 
-const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
+const useGetSingleNousMetadata = (data_key: string) => {
   return useQuery<NousNft>({
     queryKey: [RQ_KEY.GET_METADATAS, data_key],
     queryFn: async () => {
-      const json = createDefaultMetadata(token_id)
+      const json = createDefaultMetadata('')
 
       const [result_nous, result_metadata] = await Promise.all([
         rpc.searchMetadatas({
@@ -303,25 +303,13 @@ const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
             },
           ],
         }),
-        rpc.searchMetadatas({
-          query: [
-            {
-              column: 'data_key',
-              op: '=',
-              query: data_key,
-            },
-            {
-              column: 'meta_contract_id',
-              op: '=',
-              query: import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as string,
-            },
-            {
-              column: 'public_key',
-              op: '=',
-              query: import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as string,
-            },
-          ],
-        }),
+        await rpc.getMetadata(
+          data_key,
+          import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
+          import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as String,
+          '',
+          ''
+        ),
       ])
 
       const needToLoadFromIpfs = []
@@ -334,9 +322,8 @@ const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
       }
 
       if (result_metadata) {
-        const cid = result_metadata && result_metadata.length == 1 ? result_metadata[0].cid : ''
-        if (cid) {
-          needToLoadFromIpfs.push(rpc.getContentFromIpfs(cid))
+        if (result_metadata.cid) {
+          needToLoadFromIpfs.push(rpc.getContentFromIpfs(result_metadata.cid))
         }
       }
 
@@ -354,7 +341,31 @@ const useGetSingleNousMetadata = (data_key: string, token_id: string) => {
 
       return json
     },
-    enabled: Boolean(data_key) && Boolean(token_id),
+    enabled: Boolean(data_key),
+  })
+}
+
+/**
+ * Retrieve metadata of NFT at Lineage 0x01 registry
+ * @param data_key lineage data key
+ * @returns nft metadata following ERC721 or ERC1155 format
+ */
+const useGetNftMetadata = (data_key: string) => {
+  return useQuery<any>({
+    queryKey: [RQ_KEY.GET_NFT_METADATA, data_key],
+    queryFn: async () => {
+      const nft_metadata = await rpc.getMetadata(
+        data_key,
+        import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
+        import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as String,
+        '',
+        ''
+      )
+
+      const content = await rpc.getContentFromIpfs(nft_metadata.cid)
+      return JSON.parse(content.data.result.content as string)
+    },
+    enabled: Boolean(data_key),
   })
 }
 
@@ -366,4 +377,5 @@ export {
   useGetOwnedNousMetadatas,
   useGetSingleNousMetadata,
   useGetNousMetadatas,
+  useGetNftMetadata,
 }

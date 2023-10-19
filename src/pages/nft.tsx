@@ -3,10 +3,8 @@ import ShareDialog from 'components/ShareDialog'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatDataKey } from 'utils'
-import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { AccessKeyIcon, ChatIcon, DatabaseIcon } from 'components/Icons/icons'
-import { useLitProtocol } from 'hooks/use-lit-protocol'
 import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
 import { useBoundStore } from 'store'
 import { useAlertMessage } from 'hooks/use-alert-message'
@@ -29,29 +27,10 @@ const PageNft = () => {
   const [isDataLoaded, setIsDataLoaded] = useState(false)
 
   useEffect(() => {
-    const loadVersion = async () => {
-      const nftKey = formatDataKey(nft.chain_id as String, nft.address as String, nft.token_id as String)
-
-      const response = await rpc.getMetadataUseKeyByBlock(nftKey, import.meta.env.VITE_META_CONTRACT_ID as String, '')
-
-      const metadatas = response?.data?.result?.metadatas as Metadata[]
-
-      const uniqueVersions: String[] = []
-      metadatas?.map(item => {
-        if (!uniqueVersions.includes(item.version)) {
-          uniqueVersions.push(item.version)
-        }
-      })
-
-      setIsDataLoaded(true)
-    }
-
     if (!nft) {
       navigate('/inventory')
-    }
-
-    if (nft && !isDataLoaded && !nftKey) {
-      loadVersion()
+    } else {
+      setIsDataLoaded(true)
     }
   }, [nft, navigate, isDataLoaded, nftKey, rpc])
 
@@ -62,8 +41,6 @@ const PageNft = () => {
     version: '',
     opened: false,
   })
-
-  const { decrypt } = useLitProtocol()
 
   // init
   useEffect(() => {
@@ -79,7 +56,7 @@ const PageNft = () => {
 
   const goToChatroom = () => {
     if (!nftKey) return
-    navigate(`/room/${nftKey}/${nft.token_id}`)
+    navigate(`/room/${nftKey}`)
   }
 
   const goToKnowledge = () => {

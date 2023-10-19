@@ -22,6 +22,7 @@ import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
 import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
+import EmbedRoom from 'pages/Embed'
 
 const App = () => {
   return (
@@ -35,7 +36,8 @@ const App = () => {
             <Route path="/admin" element={<PageAdmin />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
-            <Route path="/room/:key/:token_id" element={<PageRoom />} />
+            <Route path="/room/:key" element={<PageRoom />} />
+            <Route path="/embed/:key" element={<EmbedRoom />} />
           </Route>
         </Routes>
       </LitProtocolProvider>
