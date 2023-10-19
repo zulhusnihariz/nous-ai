@@ -69,7 +69,7 @@ const EmbedRoom = () => {
       const resChat = {
         avatar: nft?.metadata.image as String,
         text: allText,
-        name: nft?.metadata.attributes.find(e => e.trait_type === 'name')?.value as String,
+        name: nft?.metadata.attributes.find((e: { trait_type: string }) => e.trait_type === 'name')?.value as String,
         className: '',
         isBot: true,
       }
@@ -93,7 +93,7 @@ const EmbedRoom = () => {
       <div className="flex flex-col w-full h-screen bg-[#212129]">
         <div className="w-full bg-purple-300 p-2 flex text-black items-center gap-3">
           {/* <img className="rounded-full border-[1px] border-black w-14 h-14" src={nft?.metadata.image} /> */}
-          <a href="https://nouspsyche.com" className="font-semibold cursor-pointer">
+          <a target="_blank" href="https://nouspsyche.com" className="font-semibold cursor-pointer">
             Find us on Nous Psyche
           </a>
         </div>

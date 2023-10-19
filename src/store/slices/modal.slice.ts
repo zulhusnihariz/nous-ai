@@ -1,6 +1,7 @@
 import { StateCreator } from 'zustand'
 import { resetters } from '..'
-import { NftMetadata, Transaction, NousMetadata } from 'services/rpc'
+import { Transaction, NousMetadata } from 'services/rpc'
+import { NftMetadata } from 'lib'
 
 export type ModalState = {
   isOpen: boolean

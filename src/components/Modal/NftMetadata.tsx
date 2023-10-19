@@ -5,18 +5,22 @@ import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { ImageUploader } from 'components/ImageUploader'
 import { useAlertMessage } from 'hooks/use-alert-message'
+import { formatDataKey } from 'utils'
+import { NftMetadata } from 'lib'
 
-interface NftMetadata {
-  name: string
-  description: string
-  image: string
-  attributes: { trait_type: string; value: string }[]
-}
+// interface NftMetadata {
+//   name: string
+//   description: string
+//   image: string
+//   animation_url: string
+//   attributes: { trait_type: string; value: string }[]
+// }
 
 const initialNftMetadata: NftMetadata = {
   name: 'Nous Psyche',
   description: 'Collection of Nous chatbot using Malaya LLM',
   image: '',
+  animation_url: '',
   attributes: [
     { trait_type: 'name', value: '' },
     { trait_type: 'personality', value: '' },
@@ -50,6 +54,10 @@ const NftMetadataModal = () => {
 
   const onCreateMetadata = async () => {
     if (!address?.full) return
+
+    const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
+    nftMetadata.animation_url = `http://${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
+
     const content = JSON.stringify(nftMetadata)
 
     const signature = (await signMessage(JSON.stringify(content))) as string
@@ -90,7 +98,7 @@ const NftMetadataModal = () => {
 
       setNftMetadata(metadata)
     }
-  }, [metadata])
+  }, [metadata, token_id])
 
   return (
     <>

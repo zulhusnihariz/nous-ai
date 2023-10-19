@@ -12,14 +12,6 @@ export type RPCResponse<T> = {
   } & T
 }
 
-export type NftMetadata = {
-  attributes: Array<{ trait_type: string; value: string }>
-  external_url?: string
-  description: string
-  image: string
-  name: string
-}
-
 export type JSONRPCFilter<C> = {
   query?: Array<{ column: keyof C; op: '='; query: string }>
   ordering?: Array<{ column: keyof C; sort: 'desc' | 'asc' }>
