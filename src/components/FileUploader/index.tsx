@@ -28,8 +28,8 @@ export const FileUploader = (prop: Prop) => {
   useEffect(() => {
     async function upload() {
       prop.setIsLoading(true)
-      let results = await storeBlob(new Blob([file as File]))
-      let split = results.split('/')
+      const results = await storeBlob(new Blob([file as File]))
+      const split = results.split('/')
       const cid = split[split.length - 1]
       prop.setCid(cid)
       prop.setIsLoading(false)
@@ -42,9 +42,9 @@ export const FileUploader = (prop: Prop) => {
 
   return (
     <div className={`w-full text-center`}>
-      {prop.cids?.map(cid => {
+      {prop.cids?.map((cid, index) => {
         return (
-          <ul className="mb-2">
+          <ul className="mb-2" key={index}>
             <li className="flex">
               <p className="text-ellipsis overflow-hidden">{cid}</p>
               <a href={`${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${cid}`} download target="_blank">

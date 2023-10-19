@@ -2,17 +2,17 @@ import ChainName from 'components/ChainName'
 import ShareDialog from 'components/ShareDialog'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { convertSnakeToCamelCase, formatDataKey } from 'utils'
+import { formatDataKey } from 'utils'
 import { Metadata } from 'lib'
 import { useApi } from 'hooks/use-api'
 import { AccessKeyIcon, ChatIcon, DatabaseIcon } from 'components/Icons/icons'
 import { useLitProtocol } from 'hooks/use-lit-protocol'
 import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
 import { useBoundStore } from 'store'
-import { AccessControlConditions } from '@lit-protocol/types'
 import { useAlertMessage } from 'hooks/use-alert-message'
 import ApiKeyModal from 'components/Modal/ApiKeyModal'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
+import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
 
 const PageNft = () => {
   const location = useLocation()
@@ -82,25 +82,17 @@ const PageNft = () => {
     navigate(`/room/${nftKey}/${nft.token_id}`)
   }
 
-  const goToKnowledge = async () => {
-    if (!nft?.lit_protocol) return
-    const { encrypted_string, encrypted_symmetric_key, access_control_conditions } = nft.lit_protocol
-    const accessControlConditions = convertSnakeToCamelCase(access_control_conditions) as AccessControlConditions
-    try {
-      const decrypted = await decrypt({
-        accessControlConditions,
-        encryptedString: encrypted_string,
-        encryptedSymmetricKey: encrypted_symmetric_key,
-      })
-
-      if (decrypted) {
-        setModalState({ viewKnowledge: { isOpen: true, url: decrypted } })
-      } else {
-        showError('No available data')
-      }
-    } catch (e) {
-      showError('Unauthorized')
-    }
+  const goToKnowledge = () => {
+    setModalState({
+      encryptKnowledge: {
+        isOpen: true,
+        token_id: `${nft.token_id}`,
+        chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID,
+        token_address: import.meta.env.VITE_NOUS_AI_NFT,
+        version: '',
+        knowledge: [],
+      },
+    })
   }
 
   const goToKey = async () => {
@@ -225,6 +217,7 @@ const PageNft = () => {
           </div>
         </div>
       )}
+      <EncryptKnowledgeModal />
     </>
   )
 }
