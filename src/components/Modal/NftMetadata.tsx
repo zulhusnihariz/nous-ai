@@ -56,7 +56,7 @@ const NftMetadataModal = () => {
     if (!address?.full) return
 
     const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
-    nftMetadata.animation_url = `http://${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
+    nftMetadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
 
     const content = JSON.stringify(nftMetadata)
 
