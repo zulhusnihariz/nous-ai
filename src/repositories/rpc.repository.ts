@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import rpc, { JSONRPCFilter, NftMetadata, Transaction, NousMetadata } from '../services/rpc'
+import rpc, { JSONRPCFilter, Transaction, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { formatDataKey } from 'utils'
-import { Nft } from 'lib'
+import { Nft, NftMetadata } from 'lib'
 const useGetCompleteTransactions = () => {
   return useQuery({
     queryKey: [RQ_KEY.GET_COMPLETED_TXS],

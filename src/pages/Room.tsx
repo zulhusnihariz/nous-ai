@@ -56,7 +56,7 @@ const PageRoom = () => {
       const resChat = {
         avatar: nft?.metadata.image as String,
         text: allText,
-        name: nft?.metadata.attributes.find(e => e.trait_type === 'name')?.value as String,
+        name: nft?.metadata.attributes.find((e: { trait_type: string }) => e.trait_type === 'name')?.value as String,
         className: 'bg-[#1C1C1C] rounded-md border-[1px] border-[#333335]',
       }
 
