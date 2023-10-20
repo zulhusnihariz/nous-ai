@@ -55,9 +55,8 @@ const NftMetadataModal = () => {
   const onCreateMetadata = async () => {
     if (!address?.full) return
 
-    // const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
-    // nftMetadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
-    nftMetadata.animation_url = `https://w3wall.com/wall/0x46bd26526842ce131dce9f397b4f97f19cd46c0a/19/137/9V3HUY4eQHtkHm8bSbpT4RMasfUkH2RoAJ6USrkDBqU9/`
+    const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
+    nftMetadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
 
     const content = JSON.stringify(nftMetadata)
 
