@@ -94,7 +94,7 @@ const EmbedRoom = () => {
 
   return (
     <div className="flex justify-center h-screen">
-      <div className="flex flex-col w-full h-screen bg-[#212129]">
+      <div className="flex flex-col w-full h-full bg-[#212129] text-white">
         <div className="w-full bg-purple-300 p-2 flex text-black items-center gap-3">
           {/* <img className="rounded-full border-[1px] border-black w-14 h-14" src={nft?.metadata.image} /> */}
           <div className="font-semibold cursor-pointer">Find us on Nous Psyche</div>
