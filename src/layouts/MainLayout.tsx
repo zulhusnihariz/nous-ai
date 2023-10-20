@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+/* import { Outlet } from 'react-router-dom'
 import Header from '../components/Header'
 import { Web3Wrapper } from 'App'
 
@@ -13,4 +13,4 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export default MainLayout
+export default MainLayout */
