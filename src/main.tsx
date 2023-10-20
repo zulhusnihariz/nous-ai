@@ -21,7 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       {window.self === window.top && <App />}
-
       <EmbedApp />
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />
