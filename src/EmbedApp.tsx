@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { ApiProvider } from 'hooks/use-api'
 import PublicLayout from 'layouts/PublicLayout'
 import EmbedRoom from 'pages/Embed'
-import 'EmbedApp.css'
+import './EmbedApp.css'
 
 const EmbedApp = () => {
   return (
