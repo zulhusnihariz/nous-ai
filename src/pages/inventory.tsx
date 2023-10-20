@@ -36,7 +36,7 @@ const PageInventory = () => {
 
   const handleOnMintClicked = async () => {
     const mintPrice = await getMintPrice()
-    const rpc = new RPC('')
+    const rpc = new RPC(window?.ethereum as any)
 
     await rpc.callContractMethod({
       contractABI,
@@ -50,7 +50,7 @@ const PageInventory = () => {
   }
 
   const getMintPrice = async () => {
-    const rpc = new RPC('')
+    const rpc = new RPC(window?.ethereum as any)
 
     const mintPrice = await rpc.readContractData({
       contractABI,

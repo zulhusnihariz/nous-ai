@@ -54,7 +54,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
             onClick={onSubmit}
             disabled={prop.disable}
           >
-            Submit
+            <SubmitChat />
           </button>
         </span>
       </div>
