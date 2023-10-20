@@ -117,9 +117,10 @@ const EmbedRoom = () => {
         <div className="relative">
           <div className="">
             <label htmlFor="Search" className="sr-only">
-              {' '}
-              Search{' '}
+              Search
             </label>
+
+            <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
           </div>
         </div>
       </div>

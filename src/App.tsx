@@ -37,7 +37,6 @@ const App = () => {
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
             <Route path="/room/:key" element={<PageRoom />} />
-            <Route path="/embed/:key" element={<EmbedRoom />} />
           </Route>
         </Routes>
       </LitProtocolProvider>

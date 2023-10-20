@@ -312,20 +312,10 @@ const useGetSingleNousMetadata = (data_key: string) => {
         ),
       ])
 
-      const needToLoadFromIpfs = []
-
-      if (result_nous) {
-        const cid = result_nous && result_nous.length == 1 ? result_nous[0].cid : ''
-        if (cid) {
-          needToLoadFromIpfs.push(rpc.getContentFromIpfs(cid))
-        }
-      }
-
-      if (result_metadata) {
-        if (result_metadata.cid) {
-          needToLoadFromIpfs.push(rpc.getContentFromIpfs(result_metadata.cid))
-        }
-      }
+      const needToLoadFromIpfs = [
+        result_nous && result_nous.length == 1 ? rpc.getContentFromIpfs(result_nous[0].cid) : undefined,
+        result_metadata && result_metadata?.cid ? rpc.getContentFromIpfs(result_metadata.cid) : undefined,
+      ]
 
       const [nous_ipfs, metadata_ipfs] = await Promise.all(needToLoadFromIpfs)
 
