@@ -1,4 +1,3 @@
-import { AccessControlConditions } from '@lit-protocol/types'
 import rpc from 'adapter/jsonrpc'
 import { Metadata } from 'lib'
 import { formatDataKey } from 'utils'
@@ -45,13 +44,6 @@ export type Transaction = {
   token_key?: string
   version: string
 }
-
-export interface LitProtocolEncryption {
-  encrypted_string: string
-  encrypted_symmetric_key: string
-  access_control_conditions: AccessControlConditions
-}
-
 export interface NousMetadata {
   id: string
 }
