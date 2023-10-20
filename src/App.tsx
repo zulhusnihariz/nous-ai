@@ -1,4 +1,4 @@
-/* import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { polygon, polygonMumbai } from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -99,4 +99,4 @@ export function Web3Wrapper({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default App */
+export default App
