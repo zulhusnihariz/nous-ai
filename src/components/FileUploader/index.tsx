@@ -1,5 +1,5 @@
 import GenericButton from 'components/Button/GenericButton'
-import { PlusIcon } from 'components/Icons/icons'
+import { DownloadIcon, PlusIcon, TrashIcon } from 'components/Icons/icons'
 import { useEffect, useRef, useState } from 'react'
 import { useStoreBlob } from 'repositories/rpc.repository'
 
@@ -7,6 +7,7 @@ interface Prop {
   cids: string[]
   setIsLoading: (bool: boolean) => void
   setCid: (cid: string) => void
+  onEncrypt: () => void
 }
 
 export const FileUploader = (prop: Prop) => {
@@ -40,43 +41,55 @@ export const FileUploader = (prop: Prop) => {
     }
   }, [file])
 
+  const onClickUpload = () => {
+    inputFileRef?.current?.click()
+    prop.onEncrypt()
+  }
+
   return (
-    <div className={`w-full text-center`}>
+    <div className={`w-full flex flex-col text-white p-2`}>
       {prop.cids?.map((cid, index) => {
         return (
-          <ul className="mb-2" key={index}>
-            <li className="flex">
-              <p className="text-ellipsis overflow-hidden">{cid}</p>
-              <a href={`${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${cid}`} download target="_blank">
-                Download
-              </a>
+          <ul className="" key={index}>
+            <li className="">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">Upload: {cid}</div>
+              <div className="flex justify-end gap-3 p-2">
+                <a
+                  href={`${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${cid}`}
+                  download
+                  target="_blank"
+                  className="h-8 w-8 bg-green-500 hover:bg-green-300 flex justify-center items-center rounded-lg"
+                >
+                  <DownloadIcon />
+                </a>
+                <button
+                  className="h-8 w-8 bg-red-900 hover:bg-red-700 flex justify-center items-center rounded-lg"
+                  onClick={() => console.log('JK')}
+                >
+                  <TrashIcon />
+                </button>
+              </div>
             </li>
           </ul>
         )
       })}
 
-      <div className="flex justify-center gap-4">
-        <GenericButton
-          onClick={() => {
-            inputFileRef?.current?.click()
-          }}
-          name=""
-          icon={<PlusIcon />}
-          className=""
-        />
+      <div className="absolute flex justify-center items-center text-white right-4 bottom-4 h-8 w-8 bg-red-900 hover:bg-red-700 p-6 rounded-full ">
+        <button onClick={onClickUpload} className="flex gap-1">
+          <PlusIcon />
+        </button>
       </div>
 
-      <div className="flex gap-5 justify-left p-3">
-        <input
-          id="file"
-          ref={inputFileRef}
-          name="picker"
-          type="file"
-          accept=".pdf"
-          onChange={() => onSelectFile()}
-          className="bg-gray-400 p-3 hidden"
-        />
-      </div>
+      {/* File input hidden */}
+      <input
+        id="file"
+        ref={inputFileRef}
+        name="picker"
+        type="file"
+        accept=".pdf"
+        onChange={() => onSelectFile()}
+        className="bg-gray-400 p-3 absolute top-[-99999px] left-[-99999px] hidden"
+      />
     </div>
   )
 }

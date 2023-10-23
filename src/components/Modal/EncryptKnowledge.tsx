@@ -5,6 +5,7 @@ import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { useAlertMessage } from 'hooks/use-alert-message'
 import { FileUploader } from 'components/FileUploader'
+import { CloseIcon } from 'components/Icons/icons'
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
@@ -53,56 +54,46 @@ const EncryptKnowledgeModal = () => {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment} afterLeave={() => setCids([])}>
-        <Dialog as="div" className="relative z-10" onClose={closeDialog}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center gap-5">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full text-center max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 gap-5 mb-4">
-                    Upload Knowledge For Chat AI
-                  </Dialog.Title>
-
-                  <div className="flex justify-center">
-                    <FileUploader
-                      cids={cids}
-                      setIsLoading={bool => setIsLoading(bool)}
-                      setCid={cid => setCids(prev => [...prev, cid])}
-                    />
+        <Dialog as="div" className="relative z-50" onClose={closeDialog}>
+          <div className="fixed inset-0 flex w-screen items-center justify-center overflow-hidden backdrop-blur-sm">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className=" h-full sm:h-3/4 md:w-3/4 w-full rounded bg-white border">
+                <header className="flex justify-between items-center h-[10%] p-3 bg-black text-white">
+                  <div className="font-semibold">
+                    <Dialog.Title>Resource for Bot Development</Dialog.Title>
                   </div>
 
-                  <div className="mt-4 flex gap-4 justify-center">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => onEncrypt()}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Processing...' : 'Upload'}
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                  <button onClick={closeDialog} className="p-2 hover:text-red-900">
+                    <CloseIcon />
+                  </button>
+                </header>
+                <main className="h-[90%] bg-[#181818] overflow-hidden">
+                  {isLoading && (
+                    <div className="flex justify-center">
+                      <p className=" w-full rounded-md bg-green-500 text-green-100 text-center font-semibold tracking-wide p-2">
+                        Processing...
+                      </p>
+                    </div>
+                  )}
+                  <h3 className=" font-semibold tracking-wide text-white p-2 text-center">Your Upload</h3>
+                  {/* file upload */}
+                  <FileUploader
+                    cids={cids}
+                    setIsLoading={bool => setIsLoading(bool)}
+                    setCid={cid => setCids(prev => [...prev, cid])}
+                    onEncrypt={onEncrypt}
+                  />
+                </main>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition>

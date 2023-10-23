@@ -128,15 +128,17 @@ const PageNft = () => {
                     <div className="text-sm mt-1">Chat</div>
                   </div>
                 </button>
+
                 <button
                   className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
                   onClick={() => goToKnowledge()}
-                >
+                > 
                   <div>
                     <DatabaseIcon />
                     <div className="text-sm mt-1">Knowledge</div>
                   </div>
                 </button>
+
                 <button
                   className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
                   onClick={() => goToKey()}
