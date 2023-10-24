@@ -19,9 +19,7 @@ const EncryptKnowledgeModal = () => {
   const { address, signMessage } = useConnectedWallet()
   const { mutateAsync: publish } = usePublishTransaction()
 
-  const onEncrypt = async () => {
-    if (cids.length <= 0 || !address?.full) return
-
+  const onEncrypt = async (cids: string[]) => {
     const content = JSON.stringify(cids)
     const signature = (await signMessage(content)) as string
 
@@ -39,7 +37,6 @@ const EncryptKnowledgeModal = () => {
       version: version as string,
     })
 
-    closeDialog()
     showSuccess('Success')
   }
 
@@ -49,6 +46,20 @@ const EncryptKnowledgeModal = () => {
 
   const closeDialog = () => {
     setModalState({ encryptKnowledge: { isOpen: false } })
+  }
+
+  const onUploadFile = async (cid: string) => {
+    if (!address?.full) return
+
+    const newCids = [...cids, cid]
+    await onEncrypt(newCids)
+    setCids(newCids)
+  }
+
+  const onDeleteFile = async (cid: string) => {
+    const newCids = cids.filter(el => el !== cid)
+    await onEncrypt(newCids)
+    setCids(newCids)
   }
 
   return (
@@ -71,9 +82,11 @@ const EncryptKnowledgeModal = () => {
                     <Dialog.Title>Resource for Bot Development</Dialog.Title>
                   </div>
 
-                  <button onClick={closeDialog} className="p-2 hover:text-red-900">
-                    <CloseIcon />
-                  </button>
+                  <div className="flex justify-center">
+                    <button onClick={closeDialog} className="p-2 hover:text-red-900">
+                      <CloseIcon />
+                    </button>
+                  </div>
                 </header>
                 <main className="h-[90%] bg-[#181818] overflow-hidden">
                   {isLoading && (
@@ -88,8 +101,8 @@ const EncryptKnowledgeModal = () => {
                   <FileUploader
                     cids={cids}
                     setIsLoading={bool => setIsLoading(bool)}
-                    setCid={cid => setCids(prev => [...prev, cid])}
-                    onEncrypt={onEncrypt}
+                    onUploadFile={onUploadFile}
+                    onDeleteFile={onDeleteFile}
                   />
                 </main>
               </Dialog.Panel>
