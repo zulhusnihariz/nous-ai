@@ -1,4 +1,3 @@
-import GenericButton from 'components/Button/GenericButton'
 import { DownloadIcon, PlusIcon, TrashIcon } from 'components/Icons/icons'
 import { useEffect, useRef, useState } from 'react'
 import { useStoreBlob } from 'repositories/rpc.repository'
@@ -6,8 +5,8 @@ import { useStoreBlob } from 'repositories/rpc.repository'
 interface Prop {
   cids: string[]
   setIsLoading: (bool: boolean) => void
-  setCid: (cid: string) => void
-  onEncrypt: () => void
+  onDeleteFile: (cid: string) => Promise<void>
+  onUploadFile: (cid: string) => Promise<void>
 }
 
 export const FileUploader = (prop: Prop) => {
@@ -32,7 +31,7 @@ export const FileUploader = (prop: Prop) => {
       const results = await storeBlob(new Blob([file as File]))
       const split = results.split('/')
       const cid = split[split.length - 1]
-      prop.setCid(cid)
+      prop.onUploadFile(cid)
       prop.setIsLoading(false)
     }
 
@@ -43,7 +42,6 @@ export const FileUploader = (prop: Prop) => {
 
   const onClickUpload = () => {
     inputFileRef?.current?.click()
-    prop.onEncrypt()
   }
 
   return (
@@ -64,7 +62,7 @@ export const FileUploader = (prop: Prop) => {
                 </a>
                 <button
                   className="h-8 w-8 bg-red-900 hover:bg-red-700 flex justify-center items-center rounded-lg"
-                  onClick={() => console.log('JK')}
+                  onClick={async () => prop.onDeleteFile(cid)}
                 >
                   <TrashIcon />
                 </button>
