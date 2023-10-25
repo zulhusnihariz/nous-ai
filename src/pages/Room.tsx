@@ -113,7 +113,7 @@ const PageRoom = () => {
             </div>
           </header>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 text-satoshi">
+        <div className="flex-1 overflow-y-auto p-2">
           {chats.map((chat, index) => {
             return (
               <ChatBubble
