@@ -30,7 +30,7 @@ const PageAdmin = () => {
       nftMetadata: {
         isOpen: true,
         token_id: `${tokenId}`,
-        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_CHAIN_ID,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
         version: metadata?.version ?? '',
         metadata,
@@ -53,7 +53,7 @@ const PageAdmin = () => {
       encryptKnowledge: {
         isOpen: true,
         token_id: `${tokenId}`,
-        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_CHAIN_ID,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
         version: '',
         knowledge,
@@ -76,7 +76,7 @@ const PageAdmin = () => {
       nousMetadata: {
         isOpen: true,
         token_id: `${tokenId}`,
-        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_CHAIN_ID,
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
         version: nous?.version ?? '',
         metadata: nous,

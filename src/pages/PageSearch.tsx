@@ -131,11 +131,11 @@ const PageSearch = () => {
   }, [faqs])
 
   return (
-    <div className="flex mx-auto w-3/4 justify-center overflow-auto">
+    <div className="flex mx-auto w-4/5 md:w-3/4 justify-center overflow-auto">
       <main className="w-full h-screen">
         {faqs.map((faq, index) => (
-          <>
-            <div key={index}>
+          <div key={index}>
+            <div>
               <h1 className="text-3xl">{faq.question}</h1>
               <div className="mt-4">
                 <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3">
@@ -151,7 +151,7 @@ const PageSearch = () => {
               </button> */}
             </div>
             <hr className="h-px mb-8 bg-gray-700 border-0 dark:bg-gray-700" />
-          </>
+          </div>
         ))}
 
         <section className="pb-60">

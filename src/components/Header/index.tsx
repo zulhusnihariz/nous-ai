@@ -29,12 +29,18 @@ export default function Header() {
           <div className="flex flex-1 items-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
               <Link to="/">
-                <img className="block h-10 w-auto lg:hidden" src={logo} alt="Collabeat" />
-                <img className="hidden h-20 w-auto lg:block" src={logo} alt="Collabeat" />
+                <img className="block h-10 w-auto lg:hidden" src={logo} alt="Nous Psyche" />
+                <img className="hidden h-20 w-auto lg:block" src={logo} alt="Nous Psyche" />
               </Link>
             </div>
           </div>
-          <ConnectButton />
+          <ConnectButton
+            chainStatus={'none'}
+            accountStatus={{
+              smallScreen: 'avatar',
+              largeScreen: 'avatar',
+            }}
+          />
         </div>
       </div>
     </Disclosure>

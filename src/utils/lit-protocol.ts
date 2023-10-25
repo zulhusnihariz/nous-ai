@@ -23,7 +23,7 @@ export type DecryptStringArgs = {
 }
 
 // const client = new LitJsSdk.LitNodeClient({})
-// const chain = import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN
+// const chain = import.meta.env.VITE_DEFAULT_CHAIN_ID
 
 class LitProtocol {
   public litNodeClient: LitNodeClient

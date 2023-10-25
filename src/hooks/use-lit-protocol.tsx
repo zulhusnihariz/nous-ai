@@ -28,7 +28,7 @@ export const LitProtocolProvider: React.FC<LitProtocolProviderProps> = ({ childr
   useEffect(() => {
     async function init() {
       if (!isLitConnected) {
-        const client = new LitProtocol(import.meta.env.VITE_DEFAULT_LINEAGE_CHAIN)
+        const client = new LitProtocol(import.meta.env.VITE_DEFAULT_CHAIN_ID)
         await client.connect()
         setIsLitConnected(true)
         setClient(client)
