@@ -37,10 +37,10 @@ const App = () => {
             <Route path="/inventory" element={<PageInventory />} />
             <Route path="/admin" element={<PageAdmin />} />
             <Route path="/mint" element={<PageMint />} />
+            <Route path="/search" element={<PageSearch />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
             <Route path="/room/:key" element={<PageRoom />} />
-            <Route path='/search' element={<PageSearch />} />
           </Route>
         </Routes>
       </LitProtocolProvider>

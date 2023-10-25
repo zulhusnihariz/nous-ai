@@ -91,7 +91,7 @@ const PageRoom = () => {
 
   return (
     <div className="flex justify-center h-screen">
-      <div className="flex flex-col w-full h-screen bg-[#212129]">
+      <div className="flex flex-col w-full h-screen">
         <div>
           {/*   <header className="bg-white/10">
             <div className="px-4 py-2">

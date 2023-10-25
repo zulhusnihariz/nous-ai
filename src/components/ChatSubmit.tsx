@@ -32,7 +32,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
   }
 
   return (
-    <div className="relative bg-[#313138] py-6">
+    <div className="relative py-6">
       <div className="relative sm:w-full md:w-3/4 lg:w-1/2 mx-auto px-4 flex items-center">
         <textarea
           id="message"
