@@ -32,9 +32,9 @@ const EmbedRoom = () => {
     }
 
     if (nft) {
-      onSendChat('What knowledge do you have?')
+      onSendChat('Hello').catch(console.log)
     }
-  }, [bgColor])
+  }, [bgColor, nft])
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)
@@ -96,10 +96,9 @@ const EmbedRoom = () => {
     <div className="flex justify-center h-screen">
       <div className="flex flex-col w-full h-screen ">
         <div className="w-full bg-purple-300 p-2 flex text-black items-center gap-3">
-          {/* <img className="rounded-full border-[1px] border-black w-14 h-14" src={nft?.metadata.image} /> */}
-          <div className="font-semibold cursor-pointer">Find us on Nous Psyche</div>
+          <div className="font-semibold">Find us on Nous Psyche</div>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 text-satoshi">
+        <div className="flex-1 overflow-y-auto p-2">
           {chats.map((chat, index) => {
             return (
               <ChatBubble

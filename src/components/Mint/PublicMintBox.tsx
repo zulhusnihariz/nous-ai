@@ -62,6 +62,21 @@ const PublicMintBox = () => {
     }
   }
 
+  const showDate = () => {
+    const d = new Date(import.meta.env.VITE_PUBLIC_MINT_AFTER_DATE as string)
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+    const date = d.getUTCDate().toString().padStart(2, '0') // Pad single digits with 0
+    const month = months[d.getUTCMonth()]
+    const year = d.getUTCFullYear()
+
+    const hours = d.getUTCHours()
+    const minutes = d.getUTCMinutes().toString().padStart(2, '0') // Pad single digits with 0
+
+    return `${date} ${month}, ${year} ${hours}:${minutes} PM UTC`
+  }
+
   useEffect(() => {
     const getMintPrice = async () => {
       const rpc = new RPC(window?.ethereum as any)
@@ -111,7 +126,7 @@ const PublicMintBox = () => {
         <div>
           <div className="text-lg font-semibold">Public Sale</div>
           <div className="text-xs">
-            Minting is LIVE from <b className="font-bold">07 Oct, 2023 1:00 PM UTC</b>
+            Minting is LIVE from <b className="font-bold">{showDate()}</b>
           </div>
         </div>
         {isLoaded && !isDisabled && address && (
@@ -124,6 +139,19 @@ const PublicMintBox = () => {
             <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
             <span className="flex rounded-md items-center relative border border-current bg-white px-8 py-3">
               {price && <span>Mint for {ethers.formatEther(price)}</span>}E
+            </span>
+          </button>
+        )}
+        {isLoaded && isDisabled && (
+          <button
+            className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
+              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+            }`}
+            onClick={e => handleOnMintClicked()}
+          >
+            <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
+            <span className="flex rounded-md items-center relative border border-gray-800 bg-white px-8 py-3">
+              {'Mint Disabled'}
             </span>
           </button>
         )}

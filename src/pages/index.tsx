@@ -1,7 +1,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const quickLinks = ['What is Nous Pysche?', 'What is the mission of Nous Psyche?', 'Benefits of Nous Psyche']
+const quickLinks = [
+  'What is Nous Pysche?',
+  'Who is Mesolitica?',
+  'What is Nous Psyche community bot?',
+  'Share me your roadmap?',
+  'What is your mission?',
+  'Benefits of holding Nous Psyche',
+  'Tell me about Nous Psyche NFT',
+  'How to mint',
+  'How you plan to make chatbot free forever?',
+]
 
 const PageIndex = () => {
   const navigate = useNavigate()
@@ -19,10 +29,10 @@ const PageIndex = () => {
   }
 
   return (
-    <div className="h-full w-full flex flex-col justify-center items-center">
+    <div className="h-full w-4/5 mx-auto flex flex-col justify-center items-center">
       <section className="">
         <h3 className=" w-full p-5 text-center font-semibold text-4xl">
-          Welcome to <span className="text-red-700">Nous Psyche</span>
+          Welcome to <span className="text-yellow-700">Nous Psyche</span>
         </h3>
       </section>
       <div className="w-full h-[600px]">
@@ -58,7 +68,7 @@ const PageIndex = () => {
             Don't know what to ask? Try asking this:
           </p>
 
-          <div className="flex gap-2 flex-wrap px-7 md:p-3">
+          <div className="flex gap-2 flex-wrap px-7 md:p-3 justify-center">
             {quickLinks.map((link, index) => (
               <button
                 key={index}

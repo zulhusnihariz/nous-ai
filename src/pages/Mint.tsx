@@ -63,6 +63,7 @@ const PageMint = () => {
         <div className="h-32 rounded-lg lg:col-span-2">
           <div className="rounded-lg border border-gray-700 bg-orange-300 text-black p-4">
             <div className="text-lg font-bold">Mint your NOUS Bot</div>
+            <div className="text-sm">Contract: {import.meta.env.VITE_NOUS_AI_NFT}</div>
             <PublicMintBox />
             <WhitelistMintBox />
           </div>

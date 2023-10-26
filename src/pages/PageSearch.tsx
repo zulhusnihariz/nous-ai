@@ -1,12 +1,10 @@
 import { useLocation } from 'react-router-dom'
-import { AnswerIcon, CopyIcon, ModuleIcon, StackIcon, SubmitChat } from 'components/Icons/icons'
+import { AnswerIcon, StackIcon } from 'components/Icons/icons'
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import { chatWithNous } from 'services/nous'
 import ChatSubmit from 'components/ChatSubmit'
 import Typewriter from 'components/Typewriter'
-
-const quickLinks = ['What is Nous Pysche?', 'What is the mission of Nous Psyche?', 'Benefits of Nous Psyche']
 
 interface FAQ {
   question: string
@@ -73,6 +71,7 @@ const PageSearch = () => {
     setFAQs(prev => [...prev, newFAQ])
   }
 
+  // Ask nous
   const askBot = async (question: string) => {
     try {
       const res = await chatWithNous(nousId, session, question)
@@ -81,12 +80,19 @@ const PageSearch = () => {
       }
 
       const newAnswers: string[] = []
+      let chatContext = ''
 
       for (const d of res.data) {
-        if (res.data[0].recipient_id === session) {
-          newAnswers.push(d.text as string)
+        if (d.recipient_id === session) {
+          const strings = d.text.split('\n')
+          for (const s of strings) {
+            newAnswers.push(s as string)
+            chatContext += s
+          }
         }
       }
+
+      getRelatedQuestions(chatContext).catch(console.log)
 
       setFAQs(prev =>
         prev.map(faq => {
@@ -104,6 +110,28 @@ const PageSearch = () => {
     }
   }
 
+  const getRelatedQuestions = async (chatContext: string) => {
+    try {
+      const query = 'Derivate questions in the context of Nous Psyche from from the text after this. ' + chatContext
+      const res = await chatWithNous(nousId, session, query)
+
+      const questions: string[] = []
+
+      for (const d of res.data) {
+        if (d.recipient_id === session) {
+          const strings = d.text.split('\n')
+          for (const s of strings) {
+            questions.push(s.replace(/^\d+\.\s/, '') as string)
+          }
+        }
+      }
+
+      setLinks(questions)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   useEffect(() => {
     const chatbotInHook = (question: string) => {
       if (!question || !session) return
@@ -115,7 +143,6 @@ const PageSearch = () => {
       setFAQs(prev => [...prev, newFAQ])
     }
 
-    setLinks(quickLinks)
     if (!session) setSession(v4())
     if (initialQ && faqs.length <= 0 && nousId && session) {
       chatbotInHook(initialQ as string)
@@ -160,17 +187,17 @@ const PageSearch = () => {
               <StackIcon />
               Related
             </h3>
-            <div className="text-md pb-4 flex gap-2">
+            <div className="text-md pb-4">
               {links.map((link, index) => (
-                <button
+                <div
                   key={index}
                   onClick={() => {
-                    // goToSearch(link)
+                    chatQuestion(link as string)
                   }}
-                  className=" text-sm hover:bg-[#181818] hover:text-white text-gray-400 bg-white/10 rounded-md p-2"
+                  className="text-md border-b border-b-gray-700 py-2 hover:text-yellow-400 text-gray-500 cursor-pointer"
                 >
                   {link}
-                </button>
+                </div>
               ))}
             </div>
           </div>

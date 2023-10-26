@@ -18,6 +18,16 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
     }
   }
 
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        setMessage(prevMessage => prevMessage + '\n')
+      } else {
+        onSubmit()
+      }
+    }
+  }
+
   useEffect(() => {
     handleResize()
   }, [])
@@ -42,6 +52,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
             setMessage(e.target.value)
             handleResize()
           }}
+          onKeyUp={handleKeyUp}
           placeholder={prop.disable ? 'Processing...' : 'Type a message'}
           className="w-full py-3 px-3 text-black rounded-md border-gray-200  shadow-sm text-xs sm:text-sm bg-white"
           rows={2}
