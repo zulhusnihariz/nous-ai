@@ -32,7 +32,7 @@ const EmbedRoom = () => {
     }
 
     if (nft) {
-      onSendChat('What knowledge do you have?').catch(console.log)
+      onSendChat('Hello').catch(console.log)
     }
   }, [bgColor, nft])
 

@@ -17,7 +17,7 @@ const contractABI = [
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'whitelistBuy', outputs: [], stateMutability: 'payable', type: 'function' },
+  { inputs: [], name: 'communityBuy', outputs: [], stateMutability: 'payable', type: 'function' },
 ]
 
 const WhitelistMintBox = () => {
@@ -33,7 +33,7 @@ const WhitelistMintBox = () => {
     await rpc.callContractMethod({
       contractABI,
       contractAddress: import.meta.env.VITE_NOUS_AI_NFT,
-      method: 'whitelistBuy',
+      method: 'communityBuy',
       data: [],
       options: {
         value: '0',
@@ -77,23 +77,35 @@ const WhitelistMintBox = () => {
 
   return (
     <>
-      {isWhitelisted && isWhitelistClaimed && (
+      {isWhitelisted && (
         <div className="border-black border-2 rounded-lg p-4 flex items-center justify-between">
           <div>
             <div className="text-lg font-semibold">Full Discount Eligibility</div>
             <div className="text-xs">You qualify for 100% discount</div>
           </div>
-          <button
-            className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
-              !isLoaded ? 'cursor-not-allowed' : 'cursor-pointer'
-            }`}
-            onClick={e => handleOnMintClicked()}
-          >
-            <span className="absolute inset-0 translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
-            <span className="flex items-center relative border border-current bg-white px-8 py-3">
-              <span>Mint</span>
-            </span>
-          </button>
+          {!isWhitelistClaimed && (
+            <button
+              className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
+                !isLoaded ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
+              onClick={e => handleOnMintClicked()}
+            >
+              <span className="absolute inset-0 rounded-lg translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
+              <span className="flex items-center rounded-lg relative border border-current bg-white px-8 py-3">
+                <span>Mint</span>
+              </span>
+            </button>
+          )}
+          {isWhitelistClaimed && (
+            <button
+              className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 cursor-not-allowed`}
+            >
+              <span className="absolute inset-0 rounded-lg translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
+              <span className="flex items-center rounded-lg relative border border-gray-800 bg-white px-8 py-3">
+                <span>Minted</span>
+              </span>
+            </button>
+          )}
         </div>
       )}
     </>

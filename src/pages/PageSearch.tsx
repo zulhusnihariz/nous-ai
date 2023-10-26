@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom'
-import { AnswerIcon, CopyIcon, ModuleIcon, StackIcon, SubmitChat } from 'components/Icons/icons'
+import { AnswerIcon, StackIcon } from 'components/Icons/icons'
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import { chatWithNous } from 'services/nous'
