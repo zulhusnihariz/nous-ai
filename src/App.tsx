@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { polygon, polygonMumbai } from 'wagmi/chains'
+import { mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
@@ -48,12 +48,7 @@ const App = () => {
   )
 }
 
-const currentChain = [
-  // mainnet
-  polygon,
-  // tesnet
-  polygonMumbai,
-]
+const currentChain = [mainnet, polygonMumbai]
 
 // Web3 Configs
 const { chains, publicClient } = configureChains(currentChain, [
