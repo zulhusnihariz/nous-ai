@@ -1,3 +1,4 @@
+import { ExclamationIcon } from 'components/Icons/icons'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -51,31 +52,18 @@ const PageIndex = () => {
         {/* FAQ Section */}
         <section className=" flex flex-col items-center justify-center">
           <p className="flex gap-2 justify-center p-1 w-3/4 font-medium">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-              />
-            </svg>
+            <ExclamationIcon />
             Don't know what to ask? Try asking this:
           </p>
 
-          <div className="flex gap-2 flex-wrap px-7 md:p-3 justify-center">
+          <div className={`grid grid-cols-2  sm:flex sm:gap-2 sm:flex-wrap px-7 md:p-3 justify-center `}>
             {quickLinks.map((link, index) => (
               <button
                 key={index}
                 onClick={() => {
                   goToSearch(link)
                 }}
-                className=" text-sm hover:bg-[#181818] hover:text-white text-gray-400 rounded-md p-2"
+                className={`text-sm hover:bg-[#181818] hover:text-white text-gray-400 rounded-md p-2 ${quickLinks.length % 2 !== 0 && " last:col-span-2"}`}
               >
                 {link}
               </button>

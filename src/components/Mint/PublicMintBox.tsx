@@ -27,7 +27,10 @@ const contractABI = [
   },
 ]
 
-const PublicMintBox = () => {
+interface Props {
+  isCompleted: boolean
+}
+const PublicMintBox = (prop: Props) => {
   const [price, setPrice] = useState('')
   const [isDisabled, setDisabled] = useState(true)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -122,40 +125,48 @@ const PublicMintBox = () => {
 
   return (
     <>
-      <div className="border-black border-2 rounded-lg p-6 flex items-center justify-between mt-4 mb-4 bg-white/40">
-        <div>
-          <div className="text-lg font-semibold">Public Sale</div>
-          <div className="text-xs">
-            Minting is LIVE from <b className="font-bold">{showDate()}</b>
-          </div>
+      <div className="border-black border-2 rounded-lg p-3 sm:p-6 md:flex-row  flex-col items-center justify-between mt-4 mb-4 bg-white/40">
+        <div className="md:flex md:justify-between gap-2 items-center ">
+          <div className="text-lg font-semibold whitespace-nowrap pr-5 ">Public Sale</div>
+          {prop.isCompleted ? (
+            <div className="text-xs">SOLD OUT</div>
+          ) : (
+            <div className="text-xs">Minting is LIVE from {<b className="font-bold">{showDate()}</b>}</div>
+          )}
         </div>
-        {isLoaded && !isDisabled && address && (
-          <button
-            className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
-              !price || isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-            }`}
-            onClick={e => handleOnMintClicked()}
-          >
-            <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
-            <span className="flex rounded-md items-center relative border border-current bg-white px-8 py-3">
-              {price && <span>Mint for {ethers.formatEther(price)}</span>}E
-            </span>
-          </button>
-        )}
-        {isLoaded && isDisabled && (
-          <button
-            className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
-              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-            }`}
-            onClick={e => handleOnMintClicked()}
-          >
-            <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
-            <span className="flex rounded-md items-center relative border border-gray-800 bg-white px-8 py-3">
-              {'Mint Disabled'}
-            </span>
-          </button>
-        )}
-        {!address && <span className="text-gray-800">Please connect to your wallet</span>}
+        <div className="flex flex-col md:flex-row gap-2 justify-center md:justify-end pt-1 ">
+          <div className="flex justify-center">
+            {isLoaded && !isDisabled && address && !prop.isCompleted && (
+              <button
+                className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
+                  !price || isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                onClick={e => handleOnMintClicked()}
+              >
+                <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
+
+                <span className="flex rounded-md items-center relative border border-current bg-white px-8 py-3">
+                  {price && <span>Mint for {ethers.formatEther(price)}</span>}E
+                </span>
+              </button>
+            )}
+
+            {isLoaded && (isDisabled || prop.isCompleted) && (
+              <button
+                className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
+                  isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                onClick={e => handleOnMintClicked()}
+              >
+                <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
+                <span className="flex rounded-md items-center relative border border-gray-800 bg-white px-8 py-3">
+                  {'Mint Disabled'}
+                </span>
+              </button>
+            )}
+          </div>
+          {!address && <span className="text-gray-800 grid place-content-center">Please connect to your wallet</span>}
+        </div>
       </div>
     </>
   )
