@@ -7,7 +7,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore } from 'store'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 import logo from '/img/logo.png'
-import { InventoryIcon, MintIcon } from 'components/Icons/icons'
+import { CommunityIcon, InventoryIcon, MintIcon } from 'components/Icons/icons'
 
 export default function Header() {
   const { setCurrentWalletState, setWalletState } = useBoundStore()
@@ -50,6 +50,14 @@ export default function Header() {
                 </Link>
               </>
             )}
+
+            <Link
+              to="/community"
+              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+            >
+              <CommunityIcon />
+              Community
+            </Link>
           </div>
           <ConnectButton
             chainStatus={'none'}

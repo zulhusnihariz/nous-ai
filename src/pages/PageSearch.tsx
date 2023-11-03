@@ -11,7 +11,7 @@ interface FAQ {
   answers: string[]
 }
 
-const DisplayAnswer = (prop: { answers: string[] }) => {
+export const DisplayAnswer = (prop: { answers: string[] }) => {
   const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0)
 
   if (prop.answers.length <= 0) {
@@ -213,5 +213,4 @@ const PageSearch = () => {
     </div>
   )
 }
-
 export default PageSearch
