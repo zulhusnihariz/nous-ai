@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 const Typewriter = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
   const [displayedText, setDisplayedText] = useState('')
   const [currentIdx, setCurrentIdx] = useState(0)
+
   useEffect(() => {
     if (currentIdx < text.length) {
       setTimeout(() => {
