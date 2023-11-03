@@ -52,11 +52,11 @@ export default function Header() {
             )}
 
             <Link
-              to="/community"
+              to="/explorer"
               className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
             >
               <CommunityIcon />
-              Community
+              Explorer
             </Link>
           </div>
           <ConnectButton

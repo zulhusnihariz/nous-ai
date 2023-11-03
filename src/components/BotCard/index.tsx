@@ -1,20 +1,17 @@
+import { NftMetadata } from 'lib'
 import { useNavigate } from 'react-router-dom'
 
 interface Prop {
-  name: string
+  metadata: NftMetadata
 }
 
-const BotCard = ({ name }: Prop) => {
+const BotCard = ({ metadata }: Prop) => {
   const navigate = useNavigate()
 
   return (
-    <div
-      className="border-black border-2 rounded-lg p-6 flex items-center justify-between mt-4  bg-white/40 cursor-pointer"
-      onClick={() => navigate(`/community/bot/${name}`)}
-    >
-      <div>
-        <p className="text-lg font-semibold">Bot #{name}</p>
-      </div>
+    <div>
+      <img className="rounded-lg w-full bg-white object-cover h-48" src={metadata.image} alt={metadata.name} />
+      <div className="mt-2 truncate">{metadata.name}</div>
     </div>
   )
 }

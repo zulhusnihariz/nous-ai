@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import rpc, { JSONRPCFilter, Transaction, NousMetadata } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
-import { formatDataKey } from 'utils'
+import { chainIdToNetwork, formatDataKey } from 'utils'
 import { Nft, NftMetadata } from 'lib'
+import { getNftsByContractAddress } from 'services/nft'
 const useGetCompleteTransactions = () => {
   return useQuery({
     queryKey: [RQ_KEY.GET_COMPLETED_TXS],
@@ -84,6 +85,7 @@ const createDefaultMetadata = (token_id: string) => {
     token_address: import.meta.env.VITE_NOUS_AI_NFT as string,
     token_id,
     chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+    dataKey: '',
     metadata: {
       name: '',
       image: '',
@@ -277,6 +279,57 @@ const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
   })
 }
 
+const useGetAllBots = () => {
+  return useQuery<({ dataKey: string } & Nft & NousNft)[]>({
+    queryKey: [RQ_KEY.GET_ALL_NFTS],
+    queryFn: async () => {
+      const nfts: ({ dataKey: string } & Nft & NousNft)[] = []
+
+      const res = await getNftsByContractAddress(
+        import.meta.env.VITE_NOUS_AI_NFT as string,
+        chainIdToNetwork(import.meta.env.VITE_DEFAULT_CHAIN_ID as string)
+      )
+
+      const tokenIds = res.data.result.map((nft: any) => nft.token_id)
+
+      for (let i = 0; i < tokenIds.length; i++) {
+        const tokenId = tokenIds[i]
+        const json = createDefaultMetadata(tokenId)
+
+        const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await fetchNousMetadata(
+          tokenId as string,
+          import.meta.env.VITE_NOUS_LINEAGE_PK as string
+        )
+
+        if (contentFromMetadata) {
+          const data = JSON.parse(contentFromMetadata.data.result.content as string)
+          json.metadata = data.content
+        }
+
+        if (contentFromNousStorage) {
+          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
+          json.knowledge = data.content
+        }
+
+        if (contentFromNousMetadata) {
+          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
+          json.nous = data.content
+        }
+
+        json.dataKey = formatDataKey(
+          import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+          import.meta.env.VITE_NOUS_AI_NFT as string,
+          tokenId as string
+        )
+
+        nfts.push(json)
+      }
+
+      return nfts
+    },
+  })
+}
+
 const useGetSingleNousMetadata = (data_key: string) => {
   return useQuery<NousNft>({
     queryKey: [RQ_KEY.GET_METADATAS, data_key],
@@ -303,12 +356,12 @@ const useGetSingleNousMetadata = (data_key: string) => {
             },
           ],
         }),
-        await rpc.getMetadata(
+        rpc.getMetadata(
           data_key,
           import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
           import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as String,
           '',
-          ''
+          data_key
         ),
       ])
 
@@ -368,4 +421,5 @@ export {
   useGetSingleNousMetadata,
   useGetNousMetadatas,
   useGetNftMetadata,
+  useGetAllBots,
 }
