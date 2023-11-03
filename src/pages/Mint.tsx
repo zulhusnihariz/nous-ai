@@ -85,7 +85,7 @@ const PageMint = () => {
               <span aria-labelledby="ProgressLabel" className="block rounded-full bg-yellow-100">
                 <span
                   className="block h-4 pt-1 rounded-lg bg-[repeating-linear-gradient(45deg,_var(--tw-gradient-from)_0,_var(--tw-gradient-from)_20px,_var(--tw-gradient-to)_20px,_var(--tw-gradient-to)_40px)] from-orange-400 to-orange-500"
-                  style={{ width: `${(supply / max) * 100}%` }}
+                  style={{ width: `${(supply / max) * 100 < 3 ? 3 : (supply / max) * 100}%` }}
                 >
                   <span className="font-bold text-white"> </span>
                 </span>

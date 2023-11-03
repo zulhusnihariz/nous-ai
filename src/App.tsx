@@ -24,8 +24,9 @@ import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import PageSearch from 'pages/PageSearch'
 import PageMint from 'pages/Mint'
-import PageCommunity from 'pages/Community'
-import PageBot from 'pages/Bot'
+import PageBot from 'pages/Bot2'
+import PageExplorer from 'pages/Explorer'
+import PageContainer from 'pages/Container'
 
 const App = () => {
   return (
@@ -38,9 +39,10 @@ const App = () => {
             <Route path="/inventory" element={<PageInventory />} />
             <Route path="/admin" element={<PageAdmin />} />
             <Route path="/mint" element={<PageMint />} />
-            <Route path="/community" element={<PageCommunity />} />
-            <Route path="/community/bot/:name" element={<PageBot />} />
+            <Route path="/explorer" element={<PageExplorer />} />
+            <Route path="/bot/:name" element={<PageBot />} />
             <Route path="/search" element={<PageSearch />} />
+            <Route path="/container/:key" element={<PageContainer />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
             <Route path="/room/:key" element={<PageRoom />} />

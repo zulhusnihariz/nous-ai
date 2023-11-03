@@ -12,7 +12,7 @@ interface FAQ {
   relatedArticles: { title: string; url: string }[]
 }
 
-const PageBot = () => {
+const PageBot2 = () => {
   const [faqs, setFAQs] = useState<FAQ[]>([])
   const [disableChat, setDisableChat] = useState(false)
   const [nousId] = useState('nouspsyche-mesolitica-com-354-rasa')
@@ -34,7 +34,7 @@ const PageBot = () => {
 
   // Ask nous
   const askBot = async (question: string) => {
-    let session = v4()
+    const session = v4()
 
     try {
       const res = await chatWithNous(nousId, session, question)
@@ -66,8 +66,8 @@ const PageBot = () => {
 
       setDisableChat(false)
 
-      let properNouns = await getProperNouns(session)
-      let relatedArticles = await getRelatedArticles(session)
+      const properNouns = await getProperNouns(session)
+      const relatedArticles = await getRelatedArticles(session)
 
       setFAQs(prev =>
         prev.map(faq => {
@@ -84,7 +84,7 @@ const PageBot = () => {
   }
 
   const getProperNouns = async (session: string) => {
-    let question = `
+    const question = `
     Based on the your first answer for this session, 
     I want you to provide a short and concise description for all proper noun in the answers; and a follow up link to learn more about it.
     Please respond to this question strictly if your first answer is related to at least one of these topics: nft, web3, crypto news, and technologies. 
@@ -94,8 +94,8 @@ const PageBot = () => {
     `
     try {
       const res = await chatWithNous(nousId, session, question)
-      let stringified = res.data[0].text
-      let parsed = JSON.parse(stringified)
+      const stringified = res.data[0].text
+      const parsed = JSON.parse(stringified)
 
       return parsed
     } catch (e) {
@@ -104,7 +104,7 @@ const PageBot = () => {
   }
 
   const getRelatedArticles = async (session: string) => {
-    let question = `
+    const question = `
     Based on the your first answer for this session, 
     I want you to include links to related articles that are within the same topic with the answer. 
     Please respond to this question strictly if your first answer is related to at least one of these topic: nft, web3, crypto news, and technologies.
@@ -114,8 +114,8 @@ const PageBot = () => {
 
     try {
       const res = await chatWithNous(nousId, session, question)
-      let stringified = res.data[0].text
-      let parsed = JSON.parse(stringified)
+      const stringified = res.data[0].text
+      const parsed = JSON.parse(stringified)
 
       return parsed
     } catch (e) {
@@ -222,4 +222,4 @@ const PageBot = () => {
   )
 }
 
-export default PageBot
+export default PageBot2

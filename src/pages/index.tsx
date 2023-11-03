@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const quickLinks = [
-  'What is Nous Pysche?',
+  'What is Nous Psyche?',
   'Who is Mesolitica?',
-  'What is Nous Psyche community bot?',
+  'What is Nous Psyche bot?',
+  'Tell me about Nous Psyche NFT',
   'Share me your roadmap?',
   'What is your mission?',
   'Benefits of holding Nous Psyche',
-  'Tell me about Nous Psyche NFT',
   'How to mint',
   'How you plan to make chatbot free forever?',
 ]

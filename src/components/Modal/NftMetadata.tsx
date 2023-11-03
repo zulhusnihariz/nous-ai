@@ -55,9 +55,6 @@ const NftMetadataModal = () => {
   const onCreateMetadata = async () => {
     if (!address?.full) return
 
-    const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
-    nftMetadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
-
     const content = JSON.stringify(nftMetadata)
 
     const signature = (await signMessage(JSON.stringify(content))) as string
@@ -94,6 +91,11 @@ const NftMetadataModal = () => {
 
       if (!metadata.description) {
         metadata.description = initialNftMetadata.description
+      }
+
+      if (!metadata.animation_url) {
+        const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
+        metadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
       }
 
       setNftMetadata(metadata)
@@ -160,6 +162,15 @@ const NftMetadataModal = () => {
                       +
                     </button> */}
                   </div>
+
+                  <input
+                    className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
+                    name="animation_url"
+                    type="text"
+                    placeholder="Animation URL"
+                    onChange={e => handleChange(e)}
+                    value={nftMetadata.animation_url}
+                  />
 
                   {nftMetadata.attributes.length > 0 &&
                     nftMetadata.attributes.map((attribute, idx) => {
