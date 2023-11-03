@@ -158,7 +158,7 @@ const PageSearch = () => {
   }, [faqs])
 
   return (
-    <div className="flex mx-auto w-4/5 md:w-3/4 justify-center overflow-auto">
+    <div className="flex mx-auto w-4/5 md:w-3/4 justify-center">
       <main className="w-full h-screen">
         {faqs.map((faq, index) => (
           <div key={index}>
@@ -204,7 +204,7 @@ const PageSearch = () => {
         </section>
 
         {/* Input Section */}
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="fixed bottom-0 left-0 w-full ">
           <div className="relative py-6">
             <ChatSubmit onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
           </div>

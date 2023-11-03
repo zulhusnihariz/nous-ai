@@ -10,7 +10,7 @@ const PageInventory = () => {
   const { data: owned } = useGetNftByWalletAddress({ address: address?.full, chain: 'mumbai' })
   console.log(owned)
   const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
-
+  
   const goToMintPage = () => {
     navigate('/mint')
   }
@@ -25,7 +25,7 @@ const PageInventory = () => {
               <div className="text-sm border border-transparent hover:text-black p-2 rounded-lg cursor-pointer">
                 <div
                   onClick={() => goToMintPage()}
-                  className="rounded-lg w-full gap-2 text-white bg-black/20 border-2 border border-gray-800 text-black flex justify-center items-center h-48 hover:scale-105 transition duration-500"
+                  className="rounded-lg w-full gap-2 md:w-48 text-white bg-black/20 border-2 border border-gray-800 text-black flex justify-center items-center h-48 hover:scale-105 transition duration-500"
                 >
                   <div>
                     <PlusIcon />

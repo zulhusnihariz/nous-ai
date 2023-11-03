@@ -1,4 +1,6 @@
 import PublicMintBox from 'components/Mint/PublicMintBox'
+import TimelineMint from 'components/Mint/TimelineMint'
+import TransactionMint from 'components/Mint/TransactionMint'
 import WhitelistMintBox from 'components/Mint/WhitelistMintBox'
 import { useEffect, useState } from 'react'
 import RPC from 'utils/ethers'
@@ -68,7 +70,7 @@ const PageMint = () => {
             <WhitelistMintBox />
           </div>
         </div>
-        <div className="h-32 rounded-lg">
+        <div className="h-32 rounded-lg flex flex-col gap-y-2">
           <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
             <div className="text-lg font-bold mb-4">Progress</div>
             <div className="flex justify-between text-sm">
@@ -93,6 +95,8 @@ const PageMint = () => {
             </div>
             <div className="mt-3 text-xs">Minting remains open while supplies last.</div>
           </div>
+          {/* <TransactionMint /> */}
+          <TimelineMint />
         </div>
       </div>
     </>

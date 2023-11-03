@@ -20,6 +20,7 @@ const contractABI = [
   { inputs: [], name: 'communityBuy', outputs: [], stateMutability: 'payable', type: 'function' },
 ]
 
+
 const WhitelistMintBox = () => {
   const { address } = useAccount()
 
@@ -68,12 +69,13 @@ const WhitelistMintBox = () => {
       setIsWhitelistClaimed(flag)
     }
 
-    if (!isLoaded && address) {
-      getWhitelist().catch(e => console.log(e))
-      getWhitelistClaimed().catch(e => console.log(e))
-      setIsLoaded(true)
+    if (address) {
+      setIsLoaded(false);
+      getWhitelist().then(() => getWhitelistClaimed()).then(()=>setIsLoaded(true)).catch(e => console.log(e))
     }
-  }, [isLoaded, address])
+  }, [address])
+
+
 
   return (
     <>

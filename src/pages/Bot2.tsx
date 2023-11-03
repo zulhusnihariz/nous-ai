@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import { DisplayAnswer } from './PageSearch'
-import { AcademicCapIcon, AnswerIcon, StackIcon } from 'components/Icons/icons'
+import { AnswerIcon, StackIcon } from 'components/Icons/icons'
 import { chatWithNous } from 'services/nous'
 import ChatSubmit from 'components/ChatSubmit'
 
@@ -176,7 +176,7 @@ const PageBot2 = () => {
                   {faq.properNouns.length > 0 && (
                     <>
                       <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3">
-                        <AcademicCapIcon />
+                        {/* <AcademicCapIcon /> */}
                         Learn More
                       </h3>
                       <div className="text-md pb-4">
