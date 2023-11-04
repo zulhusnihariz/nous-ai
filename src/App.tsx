@@ -27,6 +27,7 @@ import PageMint from 'pages/Mint'
 import PageBot from 'pages/Bot2'
 import PageExplorer from 'pages/Explorer'
 import PageContainer from 'pages/Container'
+import PageBot2 from 'pages/Bot2'
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/mint" element={<PageMint />} />
             <Route path="/explorer" element={<PageExplorer />} />
             <Route path="/bot/:name" element={<PageBot />} />
+            <Route path="/bot2" element={<PageBot2 />} />
             <Route path="/search" element={<PageSearch />} />
             <Route path="/container/:key" element={<PageContainer />} />
           </Route>

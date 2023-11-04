@@ -384,7 +384,7 @@ const useGetSingleNousMetadata = (data_key: string) => {
 
       return json
     },
-    enabled: Boolean(data_key),
+    enabled: data_key !== '',
   })
 }
 
