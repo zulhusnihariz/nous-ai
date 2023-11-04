@@ -94,7 +94,7 @@ export function chainIdToNetwork(chain: string) {
   switch (chain) {
     case 'eth':
     case '1':
-      return 'homestead'
+      return 'eth'
     case '137':
       return 'matic'
     case '56':
