@@ -17,3 +17,7 @@
   overflow-y: auto;
   height: 100vh; /* or any other value that suits your design */
 }
+
+.content-display {
+  white-space: pre-line;
+}
