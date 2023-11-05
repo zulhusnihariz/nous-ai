@@ -122,25 +122,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
   )
 
   const [result_metadata, result_nous_storage, result_nous_metadata] = await Promise.all([
-    rpc.searchMetadatas({
-      query: [
-        {
-          column: 'data_key',
-          op: '=',
-          query: data_key,
-        },
-        {
-          column: 'meta_contract_id',
-          op: '=',
-          query: '0x01',
-        },
-        {
-          column: 'public_key',
-          op: '=',
-          query: public_key.toLowerCase(),
-        },
-      ],
-    }),
+    rpc.getMetadata(data_key, '0x01', public_key.toLowerCase(), '', data_key),
     rpc.searchMetadatas({
       query: [
         {
@@ -181,13 +163,12 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
     }),
   ])
 
-  const [metadata_exists, nous_storage_exists, nous_metadata_exists] = [
-    result_metadata && result_metadata.length == 1,
+  const [nous_storage_exists, nous_metadata_exists] = [
     result_nous_storage && result_nous_storage.length == 1,
     result_nous_metadata && result_nous_metadata.length == 1,
   ]
 
-  const cid_metadata: string = metadata_exists ? result_metadata[0].cid : ''
+  const cid_metadata = result_metadata ? result_metadata.cid : ''
   const cid_nous_storage: string = nous_storage_exists ? result_nous_storage[0].cid : ''
   const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
 
