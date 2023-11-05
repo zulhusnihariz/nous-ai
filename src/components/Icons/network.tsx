@@ -67,7 +67,7 @@ export const CeloIcon = () => {
 }
 
 export const networkIcons = {
-  homestead: <EthereumIcon />,
+  eth: <EthereumIcon />,
   matic: <PolygonIcon />,
   bsc: <BscIcon />,
   arbitrum: <ArbitrumIcon />,
