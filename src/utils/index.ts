@@ -59,7 +59,7 @@ export const catchAsync = async <T, A>(asyncFunction: (args: A) => Promise<T>, a
 export function networkToChainId(chain: string) {
   let chainId = ''
   switch (chain.toLowerCase()) {
-    case 'homestead':
+    case 'eth':
       chainId = '1'
       break
     case 'matic':
@@ -185,7 +185,7 @@ export function convertCamelToSnakeCase(obj: Record<string, any>) {
   return obj
 }
 
-const snakeToCamelCase = (str: string) => str.replace(/(\_\w)/g, k => k[1].toUpperCase())
+const snakeToCamelCase = (str: string) => str.replace(/(\\_\w)/g, k => k[1].toUpperCase())
 
 export function convertSnakeToCamelCase(obj: Record<string, any>): any {
   if (Array.isArray(obj)) {
