@@ -9,7 +9,8 @@ const useGetLatestCryptoNews = () => {
     queryFn: async ({ queryKey }) => {
       try {
         const response = await getLatestCryptoNews()
-        return response.data.results as News[]
+
+        return response.data as News[]
       } catch (e) {
         console.log(e)
       }
