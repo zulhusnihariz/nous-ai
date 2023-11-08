@@ -130,25 +130,8 @@ const PageBot2 = () => {
     setReadingNews(feed)
   }
 
-  const onHandleRelatedArticlesClick = (title: string, url: string) => {
-    setSession(v4())
-    setFAQs([
-      {
-        question: `Summarized content the url below in detail \n ${url}`,
-        answers: [],
-        refetch: true,
-      },
-    ])
-
-    setReadingNews({
-      author: '',
-      createdAt: '',
-      description: '',
-      origin: '',
-      content: '',
-      title,
-      url,
-    })
+  const onHandleRelatedArticlesClick = (title: string) => {
+    chatQuestion(title)
   }
 
   return (

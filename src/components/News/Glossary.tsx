@@ -12,7 +12,7 @@ interface Prop {
   doneRefetch: () => void
   summary: String
   chatQuestion: (prompt: string) => void
-  onHandleRelatedArticlesClick: (title: string, url: string) => void
+  onHandleRelatedArticlesClick: (title: string) => void
 }
 
 const NewsGlossary = (prop: Prop) => {
@@ -127,7 +127,7 @@ const NewsGlossary = (prop: Prop) => {
                           key={index}
                           className="text-md  hover:text-yellow-400 text-gray-500 cursor-pointer"
                           onClick={() => {
-                            prop.onHandleRelatedArticlesClick((article as any).title, (article as any).url)
+                            prop.onHandleRelatedArticlesClick((article as any).title as string)
                           }}
                         >
                           {(article as any).title}
