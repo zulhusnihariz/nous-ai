@@ -5,4 +5,5 @@ export interface News {
   content?: String
   createdAt: String
   url: String
+  origin: String
 }
