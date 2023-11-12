@@ -52,7 +52,7 @@ const SelectNousModal = () => {
                     className={`h-48 w-48 rounded-md cursor-pointer ${
                       nous?.token_id === nft.token_id ? 'ring-4 ring-green-300' : ''
                     }`}
-                    src="https://bafybeiaoeqlodqmdbcaiqg3wsh6xhpxrm7z33ijem5myfy4pgxorcfrkpq.ipfs.nftstorage.link/"
+                    src={nft.metadata.image}
                     onClick={() => onHandleClickSelect(nft)}
                   />
                 </div>

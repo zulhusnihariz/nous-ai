@@ -49,11 +49,14 @@ const PerkCard = (prop: Prop) => {
             </h5>
             {showButton && (
               <div className="flex gap-2">
-                <div className="w-1/4 rounded-md bg-white">
-                  <img
-                    src="https://bafybeiaoeqlodqmdbcaiqg3wsh6xhpxrm7z33ijem5myfy4pgxorcfrkpq.ipfs.nftstorage.link/"
-                    className="text-center rounded-md"
-                  />
+                <div
+                  className="w-1/4 rounded-md bg-white"
+                  onClick={e => {
+                    e.stopPropagation()
+                    setModalState({ selectNous: { isOpen: true } })
+                  }}
+                >
+                  <img src={selectedNous?.metadata.image} className="text-center rounded-md" />
                 </div>
                 <button
                   onClick={onHandleOpenPurchaseModal}
