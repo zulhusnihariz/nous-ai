@@ -28,6 +28,7 @@ import PageBot from 'pages/Bot2'
 import PageExplorer from 'pages/Explorer'
 import PageContainer from 'pages/Container'
 import PageBot2 from 'pages/Bot2'
+import PagePerks from 'pages/Perks'
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/bot/:name" element={<PageBot />} />
             <Route path="/bot2" element={<PageBot2 />} />
             <Route path="/search" element={<PageSearch />} />
+            <Route path="/perks" element={<PagePerks />} />
             <Route path="/container/:key" element={<PageContainer />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>

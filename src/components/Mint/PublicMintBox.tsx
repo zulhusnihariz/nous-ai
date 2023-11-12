@@ -7,17 +7,17 @@ const contractABI = [
   {
     inputs: [],
     name: 'mintPrice',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
-  { inputs: [], name: 'buy', outputs: [], stateMutability: 'payable', type: 'function' },
+  {
+    inputs: [],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
   {
     inputs: [],
     name: 'paused',
@@ -51,7 +51,7 @@ const PublicMintBox = () => {
       await rpc.callContractMethod({
         contractABI,
         contractAddress: import.meta.env.VITE_NOUS_AI_NFT,
-        method: 'buy',
+        method: 'mint',
         data: [],
         options: {
           value: mintPrice,
@@ -88,7 +88,7 @@ const PublicMintBox = () => {
         data: [],
       })
 
-      setPrice(mintPrice as string)
+      setPrice((mintPrice as string) || '0')
     }
 
     if (!price) {

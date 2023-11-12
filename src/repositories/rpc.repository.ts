@@ -223,7 +223,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
 
 const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
   return useQuery<(Nft & NousNft)[]>({
-    queryKey: [RQ_KEY.GET_METADATAS],
+    queryKey: [RQ_KEY.GET_METADATAS, tokenIds],
     queryFn: async () => {
       const nfts: (Nft & NousNft)[] = []
 

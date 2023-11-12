@@ -7,10 +7,12 @@ import { PlusIcon } from 'components/Icons/icons'
 const PageInventory = () => {
   const navigate = useNavigate()
   const { address } = useConnectedWallet()
-  const { data: owned } = useGetNftByWalletAddress({ address: address?.full, chain: 'mumbai' })
-  console.log(owned)
+  const { data: owned } = useGetNftByWalletAddress({
+    address: address?.full,
+    chain: import.meta.env.VITE_DEFAULT_CHAIN_NAME,
+  })
   const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
-  
+
   const goToMintPage = () => {
     navigate('/mint')
   }

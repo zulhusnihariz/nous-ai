@@ -10,13 +10,12 @@ export function useConnectedWallet() {
 
   const [address, setAddress] = useState({ display: '', full: '' })
 
-  // Wagmi hooks
   const { address: evmAddress } = useAccount()
   const evmChainId = useChainId()
   const { disconnectAsync: wagmiDisconnect, isSuccess } = useDisconnect()
   const { data: evmBalance } = useBalance({ address: evmAddress })
   const { signMessageAsync } = useSignMessage({})
-  // End Wagmi hooks
+
   function setConnectedAddress() {
     switch (current.chain) {
       case CURRENT_CHAIN.POLYGON:
@@ -44,6 +43,11 @@ export function useConnectedWallet() {
       default:
         break
     }
+  }
+
+  function refreshWallet() {
+    setConnectedAddress()
+    getBalance()
   }
 
   async function signMessage(message: string) {
@@ -87,5 +91,5 @@ export function useConnectedWallet() {
     setConnectedBalance()
   }, [current.chain, evmChainId])
 
-  return { address, disconnect, signMessage }
+  return { address, disconnect, signMessage, refreshWallet }
 }
