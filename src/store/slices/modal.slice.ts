@@ -3,6 +3,7 @@ import { resetters } from '..'
 import { Transaction, NousMetadata } from 'services/rpc'
 import { NftMetadata } from 'lib'
 import { Perk } from 'lib/Perk'
+import { Campaign } from 'lib/Quest'
 
 export type ModalState = {
   isOpen: boolean
@@ -21,6 +22,7 @@ export type Modal = {
   apiKey: ModalState & { key: string }
   purchasePerk: ModalState & { perk: Perk | undefined }
   selectNous: ModalState
+  campaign: ModalState & { campaign?: Campaign }
 }
 
 export interface ModalSlice {
@@ -69,6 +71,10 @@ const initialModal = {
     },
     selectNous: {
       isOpen: false,
+    },
+    campaign: {
+      isOpen: false,
+      campaign: undefined,
     },
   },
 }

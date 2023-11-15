@@ -16,4 +16,7 @@ export enum RQ_KEY {
   GET_PRESET_METADATAS = 'get_preset_metadatas',
   GET_LATEST_CRYPTO_NEWS = 'get_latest_crypto_news',
   GET_PERKS = 'get_perks',
+  GET_PERK_BY_ID = 'get_perk_by_id',
+  // Quest-System
+  GET_QUEST_CAMPAIGNS = 'get_quest_campaigns',
 }
