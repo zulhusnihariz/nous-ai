@@ -67,7 +67,6 @@ const PageMint = () => {
             <div className="text-lg font-bold">Mint your NOUS Bot</div>
             <div className="text-sm">Contract: {import.meta.env.VITE_NOUS_AI_NFT}</div>
             <PublicMintBox />
-            <WhitelistMintBox />
           </div>
         </div>
         <div className="h-32 rounded-lg flex flex-col gap-y-2">
@@ -96,7 +95,7 @@ const PageMint = () => {
             <div className="mt-3 text-xs">Minting remains open while supplies last.</div>
           </div>
           {/* <TransactionMint /> */}
-          <TimelineMint />
+          {/* <TimelineMint /> */}
         </div>
       </div>
     </>

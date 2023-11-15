@@ -1,15 +1,16 @@
 import { Dialog } from '@headlessui/react'
-import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { Nft } from 'lib'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGetNftByWalletAddress } from 'repositories/moralis.repository'
+import { useGetPerkByTokenId } from 'repositories/perk.repository'
 import { useGetOwnedNousMetadatas } from 'repositories/rpc.repository'
 import { useBoundStore, useNousStore } from 'store'
 import { useAccount } from 'wagmi'
 
 const SelectNousModal = () => {
+  const [tokenId, setTokenId] = useState(-1)
   const { modal, setModalState } = useBoundStore()
-  const { setSelectedNous } = useNousStore()
+  const { selectedNous, setSelectedNous, setOwnedPerks } = useNousStore()
 
   const { address } = useAccount()
   const { data: owned } = useGetNftByWalletAddress({
@@ -18,12 +19,14 @@ const SelectNousModal = () => {
   })
 
   const { data: nfts } = useGetOwnedNousMetadatas(address as string, owned?.map(el => `${el.token_id}`) ?? [])
+  const { data: token } = useGetPerkByTokenId(tokenId)
 
   const [nous, setNous] = useState<Nft | null>()
 
   const onHandleSelect = () => {
     if (!nous) return
     setSelectedNous(nous)
+    setTokenId(nous.token_id as number)
     setModalState({ selectNous: { isOpen: false } })
   }
 
@@ -35,6 +38,13 @@ const SelectNousModal = () => {
     }
   }
 
+  useEffect(() => {
+    if (token) {
+      const perks = token.map(perk => ({ id: (perk as any).perk.id }))
+      setOwnedPerks(perks)
+    }
+  }, [setOwnedPerks, token])
+
   return (
     <>
       <Dialog
@@ -42,14 +52,14 @@ const SelectNousModal = () => {
         onClose={() => setModalState({ purchasePerk: { isOpen: false, perk: undefined } })}
       >
         <div className="fixed inset-0 bg-black/80" aria-hidden="true" />
-        <div className="fixed left-1/2 md:w-2/4 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-slate-900 text-white h-2/4 w-full">
+        <div className="fixed left-1/2 md:w-2/4 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-slate-900 text-white h-2/5 w-full">
           <Dialog.Panel className="h-full p-4">
             <h3 className="font-semibold text-2xl">Select your Nous Psyche</h3>
-            <div className="flex gap-2 p-2 overflow-x-auto mt-2">
+            <div className="flex gap-2 p-2 overflow-x-auto mt-2 justify-center">
               {nfts?.map((nft, index) => (
                 <div key={index}>
                   <img
-                    className={`h-48 w-48 rounded-md cursor-pointer ${
+                    className={`h-32 w-32 rounded-md cursor-pointer ${
                       nous?.token_id === nft.token_id ? 'ring-4 ring-green-300' : ''
                     }`}
                     src={nft.metadata.image}

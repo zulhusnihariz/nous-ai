@@ -2,17 +2,19 @@ import { StateCreator } from 'zustand'
 import { resetters } from '..'
 import { NftToken } from 'lib/NftToken'
 import { Nft } from 'lib'
+import { TokenPerk } from 'lib/Perk'
 
 export interface TokenSlice {
-  ownedNfts: NftToken[]
+  ownedPerks: TokenPerk[]
   selectedNous: Nft | undefined
   setSelectedNous: (nft: Nft | undefined) => void
-  setOwnedNfts: (nfts: NftToken[]) => void
+  setOwnedPerks: (perks: TokenPerk[]) => void
 }
 
 const initialData = {
   selectedNous: undefined,
   ownedNfts: [],
+  ownedPerks: [],
 }
 
 export const createTokenSlice: StateCreator<TokenSlice, [], [], TokenSlice> = set => {
@@ -23,8 +25,8 @@ export const createTokenSlice: StateCreator<TokenSlice, [], [], TokenSlice> = se
     setSelectedNous: (nft: Nft | undefined) => {
       set(state => ({ ...state, selectedNous: nft }))
     },
-    setOwnedNfts: (nfts: NftToken[]) => {
-      set(state => ({ ...state, ownedNfts: nfts }))
+    setOwnedPerks: (perks: TokenPerk[]) => {
+      set(state => ({ ...state, ownedPerks: perks }))
     },
   }
 }

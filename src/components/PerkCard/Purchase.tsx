@@ -2,6 +2,8 @@ import { Dialog } from '@headlessui/react'
 import { useBoundStore, useNousStore } from 'store'
 import PurchaseButton from './PurchaseButton'
 import { useEffect, useState } from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const PurchaseModal = () => {
   const { modal, setModalState } = useBoundStore()
@@ -24,12 +26,14 @@ const PurchaseModal = () => {
         onClose={() => setModalState({ purchasePerk: { isOpen: false, perk: undefined } })}
       >
         <div className="fixed inset-0 bg-black/80" aria-hidden="true" />
-        <div className="fixed left-1/2 md:w-2/4 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-slate-900 text-white h-3/4 w-full">
+        <div className="fixed left-1/2 md:w-2/4 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-slate-900 text-white h-full w-full">
           <Dialog.Panel className="h-full">
-            <img className="rounded-t-md h-1/2 w-full object-cover" src={modal.purchasePerk.perk?.banner as string} />
+            <img className="rounded-t-md h-2/5 w-full object-cover" src={modal.purchasePerk.perk?.banner as string} />
             <div className="flex flex-col justify-center p-4">
               <h3 className="font-semibold text-2xl">{modal.purchasePerk.perk?.title}</h3>
-              <p className="mt-1 text-sm text-gray-400 line-clamp-2">{modal.purchasePerk.perk?.description}</p>
+              <Markdown className="mt-1 text-sm text-gray-400" remarkPlugins={[remarkGfm]}>
+                {modal.purchasePerk.perk?.longDescription}
+              </Markdown>
             </div>
             <div className="w-full pl-9 flex justify-between gap-2 fixed bottom-5 right-5">
               <button
@@ -38,11 +42,8 @@ const PurchaseModal = () => {
               >
                 Cancel
               </button>
-              {showButton && (
-                <PurchaseButton
-                  mintPrice={modal.purchasePerk.perk?.price as String}
-                  perkId={modal.purchasePerk.perk?.id as String}
-                />
+              {showButton && modal.purchasePerk.perk && modal.purchasePerk.perk.forSale && (
+                <PurchaseButton mintPrice={modal.purchasePerk.perk?.price} perk={modal.purchasePerk.perk} />
               )}
             </div>
           </Dialog.Panel>

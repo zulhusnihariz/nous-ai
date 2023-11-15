@@ -3,13 +3,14 @@ import ChatSubmit from 'components/ChatSubmit'
 import { Chat } from 'lib'
 import { useEffect, useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
-import top from '/img/top.svg'
-import { useGetSingleNousMetadata } from 'repositories/rpc.repository'
-import { useParams } from 'react-router-dom'
+import { useGetLineageNftMetadata, useGetSingleNousMetadata } from 'repositories/rpc.repository'
+import { useNavigate, useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
+import useCheckAccess from './hook/useCheckAccess'
 
 const PageRoom = () => {
   const { key } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {}, [])
   const [chats, setChats] = useState<Chat[]>([])
@@ -19,6 +20,13 @@ const PageRoom = () => {
   const [bgColor, setBgColor] = useState('')
 
   const { data: nft } = useGetSingleNousMetadata(key as string)
+
+  const { data: metadata } = useGetLineageNftMetadata(key as string)
+  console.log(metadata)
+  // const { hasAccess } = useCheckAccess({
+  //   dataKey: key as string,
+  //   tokenId: metadata?.token.id,
+  // })
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)
@@ -35,9 +43,6 @@ const PageRoom = () => {
     }
 
     setChats(prevChats => [...prevChats, newChat])
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
 
     try {
       const res = await chatWithNous(nft?.nous.id as string, name, message)
@@ -62,9 +67,6 @@ const PageRoom = () => {
 
       setChats(prevChats => [...prevChats, resChat])
       setDisableChat(false)
-      if (bottomRef.current) {
-        bottomRef.current.scrollIntoView({ behavior: 'smooth' })
-      }
     } catch (e) {
       console.log(e)
     }
@@ -72,7 +74,11 @@ const PageRoom = () => {
 
   useEffect(() => {
     if (!name) setName(v4())
-  }, [])
+
+    // if (!hasAccess) {
+    //   navigate('/')
+    // }
+  }, [name, navigate])
 
   useEffect(() => {
     const getRandomColor = () => {
@@ -90,51 +96,37 @@ const PageRoom = () => {
   }, [bgColor])
 
   return (
-    <div className="flex justify-center h-screen">
-      <div className="flex flex-col w-full h-screen">
-        <div>
-          {/*   <header className="bg-white/10">
-            <div className="px-4 py-2">
-              <div className="">
-                <div className="flex justify-between">
-                  <div className="relative flex items-center"></div>
-                </div>
-              </div>
-            </div>
-          </header> */}
-          <header>
-            <div className="relative flex justify-center pb-6 md:pb-0">
-              <div className="relative md:-translate-y-8 z-10 overflow-hidden">
-                <img className="scale-125 border-b-4 md:border-b-0 md:scale-90" src={top} />
-              </div>
-              <div className="absolute z-30 w-14 h-14 md:w-20 md:h-20 top-4 flex justify-center gap-x-4">
-                <img className="rounded-full border-[1px]" src={nft?.metadata.image} />
-              </div>
-            </div>
-          </header>
-        </div>
-        <div className="flex-1 overflow-y-auto p-2">
-          {chats.map((chat, index) => {
-            return (
-              <ChatBubble
-                name={chat.name}
-                key={index}
-                img={chat.avatar}
-                text={chat.text}
-                bgColor={chat.bgColor as string}
-              />
-            )
-          })}
-          <div ref={bottomRef}></div>
-        </div>
-        <div className="relative">
-          <div className="">
-            <label htmlFor="Search" className="sr-only">
-              {' '}
-              Search{' '}
-            </label>
+    <div className="min-h-screen ">
+      {/* <img
+        className="absolute top-0 left-0 w-screen h-auto z-0 opacity-50"
+        src="https://images.unsplash.com/photo-1699453223942-dfead4b64e24?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      /> */}
+      <div className="relative flex justify-center h-screen z-10 pb-[230px]">
+        <div className="flex flex-col w-full h-screen">
+          <div className="flex-1 p-2">
+            {chats.map((chat, index) => {
+              return (
+                <ChatBubble
+                  name={chat.name}
+                  key={index}
+                  img={chat.avatar}
+                  text={chat.text}
+                  bgColor={chat.bgColor as string}
+                  className=""
+                />
+              )
+            })}
+            <div ref={bottomRef}></div>
+          </div>
+          <div className="fixed bottom-0 left-0 w-full">
+            <div className="py-6">
+              <label htmlFor="Search" className="sr-only">
+                {' '}
+                Search{' '}
+              </label>
 
-            <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+              <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+            </div>
           </div>
         </div>
       </div>

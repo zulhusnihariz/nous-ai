@@ -393,6 +393,46 @@ const useGetNftMetadata = (data_key: string) => {
   })
 }
 
+const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: string) => {
+  return useQuery<any>({
+    queryKey: [RQ_KEY.GET_LINEAGE_NOUS_METADATA, data_key, alias],
+    queryFn: async () => {
+      const metadata = await rpc.getMetadata(
+        data_key,
+        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
+        public_key,
+        alias,
+        data_key
+      )
+
+      const content = await rpc.getContentFromIpfs(metadata.cid)
+      return JSON.parse(content.data.result.content as string)
+    },
+    enabled: data_key !== '',
+  })
+}
+
+const useGetLineageNftMetadata = (data_key: string) => {
+  return useQuery<any>({
+    queryKey: [RQ_KEY.GET_LINEAGE_NFT_METADATA, data_key],
+    queryFn: async () => {
+      const metadata = await rpc.getMetadata(
+        data_key,
+        import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
+        import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as String,
+        '',
+        data_key
+      )
+
+      console.log(metadata)
+
+      const content = await rpc.getContentFromIpfs(metadata.cid)
+      return JSON.parse(content.data.result.content as string)
+    },
+    enabled: data_key !== '',
+  })
+}
+
 export {
   useGetCompleteTransactions,
   useGetTransactions,
@@ -403,4 +443,6 @@ export {
   useGetNousMetadatas,
   useGetNftMetadata,
   useGetAllBots,
+  useGetLineageNousMetadata,
+  useGetLineageNftMetadata,
 }

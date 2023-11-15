@@ -1,6 +1,6 @@
 import { gql, OperationVariables, QueryOptions } from '@apollo/client'
 import apolloClientInstance from 'adapter/apollo'
-import { Perk } from 'lib/Perk'
+import { Perk, Token } from 'lib/Perk'
 
 export type ApolloClientResponse<T> = {
   data: T
@@ -36,5 +36,23 @@ export const getPerkById = async (perkId: number) => {
   return apolloQuery<{ perk: Perk }>({
     query,
     variables: { perkId },
+  })
+}
+
+export const getPerksByTokenId = async (tokenId: number) => {
+  const query = `
+    query PerksByTokenId($tokenId: String) {
+      token(id: $tokenId) {
+        tokenPerks {
+          perk {
+            id
+          }
+        }
+      }
+    }
+  `
+  return apolloQuery<{ token: Token }>({
+    query,
+    variables: { tokenId: `${tokenId}` },
   })
 }

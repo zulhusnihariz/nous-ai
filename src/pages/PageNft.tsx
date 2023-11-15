@@ -17,8 +17,6 @@ const PageNft = () => {
   const navigate = useNavigate()
   const { rpc } = useApi()
   const { setModalState } = useBoundStore()
-  const { showError } = useAlertMessage()
-  const { address, signMessage } = useConnectedWallet()
 
   const { nft } = location.state || {}
 
@@ -72,21 +70,6 @@ const PageNft = () => {
     })
   }
 
-  const goToKey = async () => {
-    if (!address.full) {
-      showError('Unauthorized')
-      return
-    }
-
-    const content = 'Hi'
-    try {
-      const signature = (await signMessage(content)) as string
-      setModalState({ apiKey: { isOpen: true, key: `/register ${signature}/${nft.token_id}` } })
-    } catch (e) {
-      showError(`${e}`)
-    }
-  }
-
   return (
     <>
       {nft && (
@@ -132,20 +115,10 @@ const PageNft = () => {
                 <button
                   className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
                   onClick={() => goToKnowledge()}
-                > 
+                >
                   <div>
                     <DatabaseIcon />
                     <div className="text-sm mt-1">Knowledge</div>
-                  </div>
-                </button>
-
-                <button
-                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
-                  onClick={() => goToKey()}
-                >
-                  <div>
-                    <AccessKeyIcon />
-                    <div className="text-sm mt-1">API Key</div>
                   </div>
                 </button>
               </div>

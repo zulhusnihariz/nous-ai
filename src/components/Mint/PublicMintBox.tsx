@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import RPC from 'utils/ethers'
 import { useAccount } from 'wagmi'
+import useMinting from './hooks'
 
 const contractABI = [
   {
@@ -31,7 +32,22 @@ const PublicMintBox = () => {
   const [price, setPrice] = useState('')
   const [isDisabled, setDisabled] = useState(true)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isAbleToMint, setIsAbleToMint] = useState(false)
   const { address } = useAccount()
+
+  const { canMint } = useMinting()
+
+  useEffect(() => {
+    const checkEligible = async () => {
+      const nos = (await canMint()) || 0
+      setIsAbleToMint(nos > 0 ? false : true)
+      setDisabled(nos > 0 ? true : false)
+    }
+
+    if (address) {
+      checkEligible().catch(console.log)
+    }
+  }, [canMint, address])
 
   const handleOnMintClicked = async () => {
     if (isDisabled) {
@@ -137,25 +153,28 @@ const PublicMintBox = () => {
             onClick={e => handleOnMintClicked()}
           >
             <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-black transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
-            <span className="flex rounded-md items-center relative border border-current bg-white px-8 py-3">
-              {price && <span>Mint for {ethers.formatEther(price)}</span>}E
+            <span className="flex rounded-md items-center relative border border-current bg-white px-10 py-3">
+              {price && <span>Mint</span>}
             </span>
           </button>
         )}
-        {isLoaded && isDisabled && (
-          <button
-            className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
-              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-            }`}
-            onClick={e => handleOnMintClicked()}
-          >
-            <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
-            <span className="flex rounded-md items-center relative border border-gray-800 bg-white px-8 py-3">
-              {'Mint Disabled'}
-            </span>
-          </button>
+        {isLoaded && isDisabled && address && (
+          <div className="flex flex-col gap-1">
+            <button
+              className={`group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500 ${
+                isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
+              onClick={e => handleOnMintClicked()}
+            >
+              <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-gray-500 transition-transform"></span>
+              <span className="flex rounded-md items-center relative border border-gray-800 bg-white px-8 py-3">
+                {'Mint Disabled'}
+              </span>
+            </button>
+            {!isAbleToMint && <span className="text-sm text-gray-600">Only ONE NFT per wallet</span>}
+          </div>
         )}
-        {!address && <span className="text-gray-800">Please connect to your wallet</span>}
+        {!address && <span className="text-sm text-gray-600">Connect to your wallet</span>}
       </div>
     </>
   )

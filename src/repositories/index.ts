@@ -17,6 +17,10 @@ export enum RQ_KEY {
   GET_LATEST_CRYPTO_NEWS = 'get_latest_crypto_news',
   GET_PERKS = 'get_perks',
   GET_PERK_BY_ID = 'get_perk_by_id',
+  GET_PERK_BY_TOKEN_ID = 'get_perk_by_token_id',
   // Quest-System
   GET_QUEST_CAMPAIGNS = 'get_quest_campaigns',
+  // Lineage
+  GET_LINEAGE_NOUS_METADATA = 'get_lineage_nous_metadata',
+  GET_LINEAGE_NFT_METADATA = 'get_lineage_nft_metadata',
 }
