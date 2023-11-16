@@ -134,8 +134,8 @@ const SingleCampaignBox = () => {
                       {modal.campaign.campaign?.perks.map((perk, index) => {
                         return (
                           <div key={index} className="p-3 bg-slate-800 rounded-lg text-md">
-                            <div>{perk.title}</div>
-                            <p className="text-xs text-gray-500">{perk.description}</p>
+                            <div>{perk?.title}</div>
+                            <p className="text-xs text-gray-500">{perk?.description}</p>
                           </div>
                         )
                       })}
