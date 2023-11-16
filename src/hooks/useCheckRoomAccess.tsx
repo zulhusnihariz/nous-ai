@@ -16,18 +16,18 @@ const contractABI = [
 interface Prop {
   dataKey: string
   tokenId: string
+  walletAddress: string
 }
 
-const useCheckAccess = ({ dataKey, tokenId }: Prop) => {
-  const { address: walletAddress } = useAccount()
-
+const useCheckAccess = ({ dataKey, tokenId, walletAddress }: Prop) => {
   const [error, setError] = useState(null)
   const [hasAccess, setHasAccess] = useState(false)
 
   const { data: pageAccess } = useGetLineageNousMetadata(
     dataKey,
     'access',
-    import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string
+    import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+    ''
   )
 
   useEffect(() => {

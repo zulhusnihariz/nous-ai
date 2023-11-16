@@ -121,8 +121,10 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
     token_id
   )
 
+  console.log(data_key)
+
   const [result_metadata, result_nous_storage, result_nous_metadata] = await Promise.all([
-    rpc.getMetadata(data_key, '0x01', public_key.toLowerCase(), '', data_key),
+    rpc.getMetadata(data_key, '0x01', import.meta.env.VITE_NOUS_METADATA_PK?.toLowerCase() as string, '', data_key),
     rpc.searchMetadatas({
       query: [
         {
@@ -279,7 +281,7 @@ const useGetAllBots = () => {
 
         const [contentFromMetadata, contentFromNousStorage, contentFromNousMetadata] = await fetchNousMetadata(
           tokenId as string,
-          import.meta.env.VITE_NOUS_LINEAGE_PK as string
+          import.meta.env.VITE_NOUS_METADATA_PK as string
         )
 
         if (contentFromMetadata) {
@@ -393,7 +395,7 @@ const useGetNftMetadata = (data_key: string) => {
   })
 }
 
-const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: string) => {
+const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: string, version: string) => {
   return useQuery<any>({
     queryKey: [RQ_KEY.GET_LINEAGE_NOUS_METADATA, data_key, alias],
     queryFn: async () => {
@@ -402,8 +404,11 @@ const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: 
         import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
         public_key,
         alias,
-        data_key
+        version
       )
+      if (!metadata.cid) {
+        return null
+      }
 
       const content = await rpc.getContentFromIpfs(metadata.cid)
       return JSON.parse(content.data.result.content as string)
@@ -412,21 +417,20 @@ const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: 
   })
 }
 
-const useGetLineageNftMetadata = (data_key: string) => {
+const useGetLineageNftToken = (data_key: string) => {
   return useQuery<any>({
-    queryKey: [RQ_KEY.GET_LINEAGE_NFT_METADATA, data_key],
+    queryKey: [RQ_KEY.GET_LINEAGE_NFT_TOKEN, data_key],
     queryFn: async () => {
       const metadata = await rpc.getMetadata(
         data_key,
         import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
-        import.meta.env.VITE_NOUS_LINEAGE_PK.toLowerCase() as String,
-        '',
+        import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID.toLowerCase() as String,
+        'token',
         data_key
       )
 
-      console.log(metadata)
-
       const content = await rpc.getContentFromIpfs(metadata.cid)
+
       return JSON.parse(content.data.result.content as string)
     },
     enabled: data_key !== '',
@@ -444,5 +448,5 @@ export {
   useGetNftMetadata,
   useGetAllBots,
   useGetLineageNousMetadata,
-  useGetLineageNftMetadata,
+  useGetLineageNftToken,
 }

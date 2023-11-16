@@ -46,6 +46,8 @@ export const getPerksByTokenId = async (tokenId: number) => {
         tokenPerks {
           perk {
             id
+            title
+            isActivable
           }
         }
       }

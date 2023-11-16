@@ -3,14 +3,16 @@ import ChatSubmit from 'components/ChatSubmit'
 import { Chat } from 'lib'
 import { useEffect, useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
-import { useGetLineageNftMetadata, useGetSingleNousMetadata } from 'repositories/rpc.repository'
+import { useGetLineageNftToken, useGetSingleNousMetadata } from 'repositories/rpc.repository'
 import { useNavigate, useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
-import useCheckAccess from './hook/useCheckAccess'
+import useCheckAccess from 'hooks/useCheckRoomAccess'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 
 const PageRoom = () => {
   const { key } = useParams()
   const navigate = useNavigate()
+  const { address } = useConnectedWallet()
 
   useEffect(() => {}, [])
   const [chats, setChats] = useState<Chat[]>([])
@@ -21,12 +23,12 @@ const PageRoom = () => {
 
   const { data: nft } = useGetSingleNousMetadata(key as string)
 
-  const { data: metadata } = useGetLineageNftMetadata(key as string)
-  console.log(metadata)
-  // const { hasAccess } = useCheckAccess({
-  //   dataKey: key as string,
-  //   tokenId: metadata?.token.id,
-  // })
+  const { data: metadata } = useGetLineageNftToken(key as string)
+  const { hasAccess } = useCheckAccess({
+    dataKey: key as string,
+    tokenId: metadata?.token ? metadata.token.id : '',
+    walletAddress: address.full,
+  })
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)
@@ -75,10 +77,10 @@ const PageRoom = () => {
   useEffect(() => {
     if (!name) setName(v4())
 
-    // if (!hasAccess) {
-    //   navigate('/')
-    // }
-  }, [name, navigate])
+    if (!hasAccess) {
+      navigate('/')
+    }
+  }, [hasAccess, name, navigate])
 
   useEffect(() => {
     const getRandomColor = () => {

@@ -23,4 +23,5 @@ export enum RQ_KEY {
   // Lineage
   GET_LINEAGE_NOUS_METADATA = 'get_lineage_nous_metadata',
   GET_LINEAGE_NFT_METADATA = 'get_lineage_nft_metadata',
+  GET_LINEAGE_NFT_TOKEN = 'get_lineage_nft_token',
 }
