@@ -48,6 +48,8 @@ const PageAdmin = () => {
 
     const token = nfts[index]?.token
     const knowledge = nfts[index]?.knowledge
+    const metadata = nfts[index]?.metadata
+    const nous = nfts[index]?.nous
 
     setModalState({
       encryptKnowledge: {
@@ -57,6 +59,22 @@ const PageAdmin = () => {
         token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
         version: '',
         knowledge,
+      },
+      nftMetadata: {
+        isOpen: false,
+        token_id: `${tokenId}`,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_CHAIN_ID,
+        token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
+        version: metadata?.version ?? '',
+        metadata,
+      },
+      nousMetadata: {
+        isOpen: false,
+        token_id: `${tokenId}`,
+        chain_id: token?.chain ?? import.meta.env.VITE_DEFAULT_CHAIN_ID,
+        token_address: token?.address ?? import.meta.env.VITE_NOUS_AI_NFT,
+        version: nous?.version ?? '',
+        metadata: nous,
       },
     })
   }

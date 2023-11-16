@@ -7,10 +7,14 @@ import { useAlertMessage } from 'hooks/use-alert-message'
 import { FileUploader } from 'components/FileUploader'
 import { CloseIcon } from 'components/Icons/icons'
 import { IPFSFile, useGetDirectory, useStoreDirectory } from 'repositories/ipfs.repository'
+import { updateChatBot } from 'services/nous'
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
   const { isOpen, token_id, chain_id, token_address, version, knowledge } = modal.encryptKnowledge
+  const { metadata } = modal.nftMetadata
+  const { metadata: nous } = modal.nousMetadata
+
   const { showSuccess } = useAlertMessage()
 
   const [cids, setCids] = useState<string[]>([])
@@ -57,6 +61,7 @@ const EncryptKnowledgeModal = () => {
 
     const newCids = [cid]
     await onEncrypt(newCids)
+    if (nous?.id && metadata?.name) await updateChatBot(nous.id, metadata.name, `ipfs://${cid}`)
     setCids(newCids)
   }
 
