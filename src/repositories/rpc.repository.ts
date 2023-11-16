@@ -5,6 +5,7 @@ import { RQ_KEY } from 'repositories'
 import { chainIdToNetwork, formatDataKey } from 'utils'
 import { Nft, NftMetadata } from 'lib'
 import { getNftsByContractAddress } from 'services/nft'
+
 const useGetCompleteTransactions = () => {
   return useQuery({
     queryKey: [RQ_KEY.GET_COMPLETED_TXS],
@@ -52,18 +53,6 @@ const usePublishTransaction = () => {
         await queryClient.invalidateQueries([RQ_KEY.GET_METADATAS])
         if (timeout) clearTimeout(timeout)
       }, 5000)
-    },
-  })
-}
-
-const useStoreBlob = () => {
-  const { ipfs } = useIpfs()
-
-  return useMutation({
-    mutationFn: async (blob: Blob) => {
-      const resp = await ipfs?.storeBlob(blob)
-      const url = `${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${resp}`
-      return url
     },
   })
 }
@@ -437,7 +426,6 @@ export {
   useGetCompleteTransactions,
   useGetTransactions,
   usePublishTransaction,
-  useStoreBlob,
   useGetOwnedNousMetadatas,
   useGetSingleNousMetadata,
   useGetNousMetadatas,

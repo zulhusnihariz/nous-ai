@@ -6,6 +6,7 @@ import { usePublishTransaction } from 'repositories/rpc.repository'
 import { useAlertMessage } from 'hooks/use-alert-message'
 import { FileUploader } from 'components/FileUploader'
 import { CloseIcon } from 'components/Icons/icons'
+import { IPFSFile, useGetDirectory, useStoreDirectory } from 'repositories/ipfs.repository'
 
 const EncryptKnowledgeModal = () => {
   const { modal, setModalState } = useBoundStore()
@@ -18,6 +19,9 @@ const EncryptKnowledgeModal = () => {
 
   const { address, signMessage } = useConnectedWallet()
   const { mutateAsync: publish } = usePublishTransaction()
+
+  const { data: files } = useGetDirectory(cids)
+  const { mutateAsync: storeDirectory } = useStoreDirectory()
 
   const onEncrypt = async (cids: string[]) => {
     const content = JSON.stringify(cids)
@@ -51,15 +55,23 @@ const EncryptKnowledgeModal = () => {
   const onUploadFile = async (cid: string) => {
     if (!address?.full) return
 
-    const newCids = [...cids, cid]
+    const newCids = [cid]
     await onEncrypt(newCids)
     setCids(newCids)
   }
 
   const onDeleteFile = async (cid: string) => {
-    const newCids = cids.filter(el => el !== cid)
-    await onEncrypt(newCids)
-    setCids(newCids)
+    const filtered = (files as IPFSFile[]).filter(el => el.cid !== cid)
+
+    if (filtered.length > 0) {
+      const results = await storeDirectory(filtered?.map(el => el.content))
+      const split = results.split('/')
+      const newCid = split[split.length - 1]
+      onUploadFile(newCid)
+    } else {
+      await onEncrypt([])
+      setCids([])
+    }
   }
 
   return (
@@ -100,6 +112,7 @@ const EncryptKnowledgeModal = () => {
                   {/* file upload */}
                   <FileUploader
                     cids={cids}
+                    existingFiles={files}
                     setIsLoading={bool => setIsLoading(bool)}
                     onUploadFile={onUploadFile}
                     onDeleteFile={onDeleteFile}
