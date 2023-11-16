@@ -13,6 +13,7 @@ const PageInventory = () => {
   })
   const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
 
+  console.log(nfts)
   const goToMintPage = () => {
     navigate('/mint')
   }
@@ -48,7 +49,6 @@ const PageInventory = () => {
                         alt={nft.metadata.name}
                       />
                       <div className="font-semibold mt-2 truncate">{nft.metadata.name}</div>
-                      <div className="">Polygon</div>
                     </>
                   )}
                 </div>
