@@ -43,9 +43,10 @@ const useGetPerks = (variables?: ApolloClientFilter) => {
           banner: c.image,
           longDescription: c.description,
           isPrivate: perk.isPrivate,
-          isActiveable: perk.isActivable,
+          isActivable: perk.isActivable,
           isRepurchaseable: perk.isRepurchaseable,
           forSale: perk.forSale,
+          cid: perk.cid,
         }
       })
     },
