@@ -10,12 +10,10 @@ import { NftMetadata } from 'lib'
 
 const initialNftMetadata: NftMetadata = {
   name: 'Nous Psyche',
-  description: 'Collection of Nous chatbot using Malaya LLM',
+  description:
+    'Collection of 10000 Nous Psyche intelligent NFT bots by Mesolitica. Digital Entities for the Metaverse.',
   image: '',
-  attributes: [
-    { trait_type: 'name', value: '' },
-    { trait_type: 'personality', value: '' },
-  ],
+  attributes: [{ trait_type: 'name', value: 'Bot' }],
 }
 
 const NftMetadataModal = () => {
