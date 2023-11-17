@@ -3,6 +3,7 @@ export interface News {
   title: String
   description: String
   content?: String
-  pubDate: String
-  link: String
+  createdAt: String
+  url: String
+  origin: String
 }

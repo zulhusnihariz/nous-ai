@@ -54,7 +54,7 @@ const PageSearch = () => {
   const [faqs, setFAQs] = useState<FAQ[]>([])
   const [session, setSession] = useState('')
   const [disableChat, setDisableChat] = useState(false)
-  const [nousId, setNousId] = useState('nouspsyche-mesolitica-com-354-rasa')
+  const [nousId, setNousId] = useState('354')
 
   const location = useLocation()
   const { initialQ } = location.state || {}

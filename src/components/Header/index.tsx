@@ -4,24 +4,46 @@ import { Disclosure } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useNetwork } from 'wagmi'
-import { useBoundStore } from 'store'
+import { useBoundStore, useNousStore } from 'store'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 import logo from '/img/logo.png'
-import { CommunityIcon, InventoryIcon, MintIcon } from 'components/Icons/icons'
+import { CommunityIcon, InventoryIcon, MintIcon, PerksIcon, QuestIcon } from 'components/Icons/icons'
+import { useConnectedWallet } from 'hooks/use-connected-wallet'
 
 export default function Header() {
-  const { setCurrentWalletState, setWalletState } = useBoundStore()
+  const { setCurrentWalletState, setWalletState, current } = useBoundStore()
+  const { setSelectedNous, selectedNous } = useNousStore()
   const { address, isConnected } = useAccount()
+  const wallet = useConnectedWallet()
   const { chain } = useNetwork()
 
   useEffect(() => {
     if (isConnected) {
-      setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
-      setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
+      if (address !== wallet.address.full) {
+        setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
+        setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
+      }
     }
 
     if (!isConnected) setCurrentWalletState({ chain: undefined })
-  }, [isConnected])
+
+    if (address !== wallet.address.full) {
+      wallet.refreshWallet()
+      setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
+      setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
+      setSelectedNous(undefined)
+    }
+  }, [
+    isConnected,
+    address,
+    setCurrentWalletState,
+    chain?.network,
+    chain?.nativeCurrency.symbol,
+    setWalletState,
+    setSelectedNous,
+    selectedNous,
+    wallet.address,
+  ])
 
   return (
     <Disclosure as="nav" className="bg-transparent">
@@ -57,6 +79,20 @@ export default function Header() {
             >
               <CommunityIcon />
               Explorer
+            </Link>
+            <Link
+              to="/perks"
+              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+            >
+              <PerksIcon />
+              Perks
+            </Link>
+            <Link
+              to="/quests"
+              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+            >
+              <QuestIcon />
+              Quests
             </Link>
           </div>
           <ConnectButton

@@ -26,7 +26,7 @@ const Newsfeed = (prop: Prop) => {
                     prop.onClick(feed)
                   }}
                 >
-                  {feed.title}
+                  {`[${feed.origin.toUpperCase()}] ${feed.title}`}
                 </div>
               ))}
           </div>

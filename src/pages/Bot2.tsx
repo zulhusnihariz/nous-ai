@@ -25,6 +25,7 @@ const PageBot2 = () => {
   const { data: nft } = useGetSingleNousMetadata(key)
   const [refetch, setRefetch] = useState(false)
   const [newsSummary, setNewsSummary] = useState('')
+  const [nousId] = useState('357')
 
   const [session, setSession] = useState(v4())
   useEffect(() => {
@@ -56,7 +57,7 @@ const PageBot2 = () => {
   // Ask nous
   const askBot = async (fq: FAQ) => {
     try {
-      const res = await chatWithNous(nft?.nous.id as string, session, fq.question)
+      const res = await chatWithNous(nousId, session, fq.question)
       if (res.data.length <= 0) {
         return
       }
@@ -93,6 +94,15 @@ const PageBot2 = () => {
           return faq
         })
       )
+
+      if (readingNews?.content === '') {
+        const content = newAnswers.join(' ')
+
+        setReadingNews(prev => {
+          console.log('prev,', prev)
+          if (prev) return { ...prev, content }
+        })
+      }
     } catch (e) {
       console.log(e)
       setDisableChat(false)
@@ -121,9 +131,13 @@ const PageBot2 = () => {
     setReadingNews(feed)
   }
 
+  const onHandleRelatedArticlesClick = (title: string) => {
+    chatQuestion(title)
+  }
+
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 pb-[130px]">
-      {nft?.nous.id && (
+      {nousId && (
         <>
           <div className="">
             <Newsfeed onClick={onHandleNewsClick} />
@@ -147,13 +161,14 @@ const PageBot2 = () => {
           </div>
           <div className="">
             <NewsGlossary
-              nousId={nft?.nous.id as String}
+              nousId={nousId as String}
               readingNews={readingNews}
               session={session}
               refetch={refetch}
               doneRefetch={() => setRefetch(false)}
               summary={newsSummary}
               chatQuestion={chatQuestion}
+              onHandleRelatedArticlesClick={onHandleRelatedArticlesClick}
             />
           </div>
         </>

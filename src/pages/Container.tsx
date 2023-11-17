@@ -7,11 +7,7 @@ const PageContainer = () => {
 
   const iframeHeight = 'calc(100vh - 90px)'
 
-  return (
-    <>
-      <iframe className="w-full" style={{ height: iframeHeight }} src={nft?.metadata.animation_url} />
-    </>
-  )
+  return <>{/* <iframe className="w-full" style={{ height: iframeHeight }} src={nft?.metadata.animation_url} /> */}</>
 }
 
 export default PageContainer

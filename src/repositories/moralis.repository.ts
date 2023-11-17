@@ -7,12 +7,11 @@ const useGetNftByWalletAddress = ({ address, chain }: { address: string; chain: 
   const { getNftsByWalletAddress } = useApi()
 
   return useQuery({
-    queryKey: [RQ_KEY.GET_NFTS, chain],
+    queryKey: [RQ_KEY.GET_NFTS, address, chain],
     queryFn: async ({ queryKey }) => {
-      const [_rqKey, chain] = queryKey
+      const [_rqKey, address, chain] = queryKey
       try {
         const response = await getNftsByWalletAddress(address, chain)
-
         const nfts = response.data.result.map(
           (d: { token_address: any; token_id: any; metadata: string; owner_of: string }) => {
             const meta = JSON.parse(d.metadata)

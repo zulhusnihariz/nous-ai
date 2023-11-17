@@ -61,13 +61,12 @@ const PageMint = () => {
   }, [isLoaded])
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 z-3">
         <div className="h-32 rounded-lg lg:col-span-2">
           <div className="rounded-lg border border-gray-700 bg-orange-300 text-black p-4">
             <div className="text-lg font-bold">Mint your NOUS Bot</div>
             <div className="text-sm">Contract: {import.meta.env.VITE_NOUS_AI_NFT}</div>
             <PublicMintBox />
-            <WhitelistMintBox />
           </div>
         </div>
         <div className="h-32 rounded-lg flex flex-col gap-y-2">
@@ -96,7 +95,7 @@ const PageMint = () => {
             <div className="mt-3 text-xs">Minting remains open while supplies last.</div>
           </div>
           {/* <TransactionMint /> */}
-          <TimelineMint />
+          {/* <TimelineMint /> */}
         </div>
       </div>
     </>

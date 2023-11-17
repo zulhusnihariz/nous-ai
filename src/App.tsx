@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { mainnet, polygon, polygonMumbai } from 'wagmi/chains'
+import { base, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import MainLayout from 'layouts/MainLayout'
@@ -13,7 +14,7 @@ import { AlertMessageProvider } from 'hooks/use-alert-message'
 import { Route, Routes } from 'react-router-dom'
 
 import PageIndex from 'pages'
-import PageNft from 'pages/nft'
+import PageNft from 'pages/PageNft'
 import PageInventory from 'pages/inventory'
 import PageRoom from 'pages/Room'
 import { ApiProvider } from 'hooks/use-api'
@@ -28,6 +29,8 @@ import PageBot from 'pages/Bot2'
 import PageExplorer from 'pages/Explorer'
 import PageContainer from 'pages/Container'
 import PageBot2 from 'pages/Bot2'
+import PagePerks from 'pages/Perks'
+import PageQuest from 'pages/Quest'
 
 const App = () => {
   return (
@@ -44,6 +47,8 @@ const App = () => {
             <Route path="/bot/:name" element={<PageBot />} />
             <Route path="/bot2" element={<PageBot2 />} />
             <Route path="/search" element={<PageSearch />} />
+            <Route path="/perks" element={<PagePerks />} />
+            <Route path="/quests" element={<PageQuest />} />
             <Route path="/container/:key" element={<PageContainer />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
@@ -55,11 +60,12 @@ const App = () => {
   )
 }
 
-const currentChain = [mainnet, polygonMumbai]
+const currentChain = [base, polygonMumbai]
 
 // Web3 Configs
 const { chains, publicClient } = configureChains(currentChain, [
   infuraProvider({ apiKey: String(import.meta.env.VITE_INFURA_ID) }),
+  alchemyProvider({ apiKey: String(import.meta.env.VITE_ALCHEMY_ID) }),
   jsonRpcProvider({
     rpc: chain => {
       return {
