@@ -82,11 +82,7 @@ const createDefaultMetadata = (token_id: string) => {
       attributes: [
         {
           trait_type: 'name',
-          value: '',
-        },
-        {
-          trait_type: 'personality',
-          value: '',
+          value: `BOT${token_id}`,
         },
       ],
       version: '',
