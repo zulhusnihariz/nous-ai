@@ -3,16 +3,27 @@ import { useNavigate } from 'react-router-dom'
 import { useGetNftByWalletAddress } from 'repositories/moralis.repository'
 import { useGetOwnedNousMetadatas } from 'repositories/rpc.repository'
 import { PlusIcon } from 'components/Icons/icons'
+import { useNousStore } from 'store'
+import { Nft } from 'lib'
 
 const PageInventory = () => {
   const navigate = useNavigate()
   const { address } = useConnectedWallet()
-  const { data: owned } = useGetNftByWalletAddress({ address: address?.full, chain: 'mumbai' })
-  console.log(owned)
+  const { setSelectedNous } = useNousStore()
+
+  const { data: owned } = useGetNftByWalletAddress({
+    address: address?.full,
+    chain: import.meta.env.VITE_DEFAULT_CHAIN_NAME,
+  })
   const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
-  
+
   const goToMintPage = () => {
     navigate('/mint')
+  }
+
+  const onHandleNftClick = (nft: Nft) => {
+    setSelectedNous(nft)
+    navigate(`/nft`, { state: { nft } })
   }
 
   return (
@@ -36,7 +47,7 @@ const PageInventory = () => {
                 <div
                   key={index}
                   className="text-sm border border-transparent hover:bg-gray-100 hover:text-black p-2 rounded-lg cursor-pointer"
-                  onClick={() => navigate(`/nft`, { state: { nft } })}
+                  onClick={() => onHandleNftClick(nft)}
                 >
                   {nft.metadata && (
                     <>
@@ -46,7 +57,6 @@ const PageInventory = () => {
                         alt={nft.metadata.name}
                       />
                       <div className="font-semibold mt-2 truncate">{nft.metadata.name}</div>
-                      <div className="">Polygon</div>
                     </>
                   )}
                 </div>

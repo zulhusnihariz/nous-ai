@@ -1,9 +1,10 @@
 import { DownloadIcon, PlusIcon, TrashIcon } from 'components/Icons/icons'
 import { useEffect, useRef, useState } from 'react'
-import { useStoreBlob } from 'repositories/rpc.repository'
+import { IPFSFile, useStoreDirectory } from 'repositories/ipfs.repository'
 
 interface Prop {
   cids: string[]
+  existingFiles: IPFSFile[]
   setIsLoading: (bool: boolean) => void
   onDeleteFile: (cid: string) => Promise<void>
   onUploadFile: (cid: string) => Promise<void>
@@ -12,7 +13,7 @@ interface Prop {
 export const FileUploader = (prop: Prop) => {
   const [file, setFile] = useState<File>()
   const inputFileRef = useRef<HTMLInputElement>(null)
-  const { mutateAsync: storeBlob } = useStoreBlob()
+  const { mutateAsync: storeDirectory } = useStoreDirectory()
 
   const onSelectFile = () => {
     const filePicker = document.getElementById('file') as HTMLInputElement
@@ -28,7 +29,7 @@ export const FileUploader = (prop: Prop) => {
   useEffect(() => {
     async function upload() {
       prop.setIsLoading(true)
-      const results = await storeBlob(new Blob([file as File]))
+      const results = await storeDirectory([...prop.existingFiles?.map(el => el.content), file as File])
       const split = results.split('/')
       const cid = split[split.length - 1]
       prop.onUploadFile(cid)
@@ -46,14 +47,14 @@ export const FileUploader = (prop: Prop) => {
 
   return (
     <div className={`w-full flex flex-col text-white p-2`}>
-      {prop.cids?.map((cid, index) => {
+      {prop.existingFiles?.map((file, index) => {
         return (
           <ul className="" key={index}>
             <li className="">
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">Upload: {cid}</div>
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">Upload: {file.path}</div>
               <div className="flex justify-end gap-3 p-2">
                 <a
-                  href={`${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${cid}`}
+                  href={`${import.meta.env.VITE_IPFS_NFT_STORAGE_URL}/${file.cid}`}
                   download
                   target="_blank"
                   className="h-8 w-8 bg-green-500 hover:bg-green-300 flex justify-center items-center rounded-lg"
@@ -62,7 +63,7 @@ export const FileUploader = (prop: Prop) => {
                 </a>
                 <button
                   className="h-8 w-8 bg-red-900 hover:bg-red-700 flex justify-center items-center rounded-lg"
-                  onClick={async () => prop.onDeleteFile(cid)}
+                  onClick={async () => prop.onDeleteFile(file.cid)}
                 >
                   <TrashIcon />
                 </button>

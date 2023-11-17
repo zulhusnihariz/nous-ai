@@ -1,7 +1,7 @@
 import GenericButton from 'components/Button/GenericButton'
 import { CameraIcon } from 'components/Icons/icons'
 import { useEffect, useRef, useState } from 'react'
-import { useStoreBlob } from 'repositories/rpc.repository'
+import { useStoreBlob } from 'repositories/ipfs.repository'
 
 interface Prop {
   url: string

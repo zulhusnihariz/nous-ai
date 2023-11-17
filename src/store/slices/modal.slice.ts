@@ -2,6 +2,8 @@ import { StateCreator } from 'zustand'
 import { resetters } from '..'
 import { Transaction, NousMetadata } from 'services/rpc'
 import { NftMetadata } from 'lib'
+import { Perk } from 'lib/Perk'
+import { Campaign } from 'lib/Quest'
 
 export type ModalState = {
   isOpen: boolean
@@ -18,6 +20,9 @@ export type Modal = {
     url: string
   }
   apiKey: ModalState & { key: string }
+  purchasePerk: ModalState & { perk: Perk | undefined }
+  selectNous: ModalState
+  campaign: ModalState & { campaign?: Campaign }
 }
 
 export interface ModalSlice {
@@ -55,6 +60,21 @@ const initialModal = {
     apiKey: {
       isOpen: false,
       key: '',
+    },
+    purchasePerk: {
+      isOpen: false,
+      perk: undefined,
+    },
+    tokenSelection: {
+      isOpen: false,
+      selectedTokenId: -1,
+    },
+    selectNous: {
+      isOpen: false,
+    },
+    campaign: {
+      isOpen: false,
+      campaign: undefined,
     },
   },
 }

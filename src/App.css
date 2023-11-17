@@ -21,3 +21,12 @@
 .content-display {
   white-space: pre-line;
 }
+
+.notched-border {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  background: #522d5b;
+  clip-path: polygon(0 10%, 10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
+}

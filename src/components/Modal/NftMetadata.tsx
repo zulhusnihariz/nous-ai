@@ -8,19 +8,10 @@ import { useAlertMessage } from 'hooks/use-alert-message'
 import { formatDataKey } from 'utils'
 import { NftMetadata } from 'lib'
 
-// interface NftMetadata {
-//   name: string
-//   description: string
-//   image: string
-//   animation_url: string
-//   attributes: { trait_type: string; value: string }[]
-// }
-
 const initialNftMetadata: NftMetadata = {
   name: 'Nous Psyche',
   description: 'Collection of Nous chatbot using Malaya LLM',
   image: '',
-  animation_url: '',
   attributes: [
     { trait_type: 'name', value: '' },
     { trait_type: 'personality', value: '' },
@@ -93,11 +84,6 @@ const NftMetadataModal = () => {
         metadata.description = initialNftMetadata.description
       }
 
-      if (!metadata.animation_url) {
-        const data_key = formatDataKey(chain_id as string, token_address as string, token_id as string)
-        metadata.animation_url = `${import.meta.env.VITE_PUBLIC_URL}/embed/${data_key}`
-      }
-
       setNftMetadata(metadata)
     }
   }, [metadata, token_id])
@@ -162,15 +148,6 @@ const NftMetadataModal = () => {
                       +
                     </button> */}
                   </div>
-
-                  <input
-                    className="w-full rounded-lg border-black border p-3  text-sm shadow-sm text-black mb-2 "
-                    name="animation_url"
-                    type="text"
-                    placeholder="Animation URL"
-                    onChange={e => handleChange(e)}
-                    value={nftMetadata.animation_url}
-                  />
 
                   {nftMetadata.attributes.length > 0 &&
                     nftMetadata.attributes.map((attribute, idx) => {

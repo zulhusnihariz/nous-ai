@@ -1,6 +1,6 @@
 export const OpenseaIcon = (prop: { enabled: boolean }) => {
   return (
-    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
+    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
       <path
         d="M90 45C90 69.8514 69.8514 90 45 90C20.1486 90 0 69.8514 0 45C0 20.1486 20.1486 0 45 0C69.8566 0 90 20.1486 90 45Z"
         fill={prop.enabled ? '#2081E2' : '#94a3b8'}

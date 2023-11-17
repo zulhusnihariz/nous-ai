@@ -11,7 +11,7 @@ const ChatBubble = (prop: ChatProp) => {
 
   return (
     <>
-      <div className={`flex p-2 my-2 mx-1 md:mx-16 lg:mx-40 ${prop.className}`}>
+      <div className={`z-10 flex p-2 my-2 mx-1 md:mx-16 lg:mx-40 ${prop.className}`}>
         {prop.img.length > 0 && (
           <img
             alt="avatar"
