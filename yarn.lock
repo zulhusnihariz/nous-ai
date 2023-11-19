@@ -7398,6 +7398,11 @@ symbol-observable@^4.0.0:
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-4.0.0.tgz#5b425f192279e87f2f9b937ac8540d1984b39205"
   integrity sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==
 
+tailwindcss-slant-plugin@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/tailwindcss-slant-plugin/-/tailwindcss-slant-plugin-0.1.1.tgz#c2d53afc70830d2d9601f15b8f500f0b7fc24874"
+  integrity sha512-JgZ2+EXzIZ1g/7PvyihH/pm+Md910gtfMFM4YtlDR0lPPCo0IgkekZvbtSUOqzUQfm2W6g7IcbmNVBz0EwguUA==
+
 tailwindcss@^3.3.2:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.3.tgz#90da807393a2859189e48e9e7000e6880a736daf"

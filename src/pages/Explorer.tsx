@@ -13,7 +13,7 @@ const PageExplorer = () => {
               bots.map((bot, index) => {
                 return (
                   <div key={index} className="text-sm border border-transparent rounded-lg">
-                    <BotCard dataKey={bot.dataKey} metadata={bot.metadata} />
+                    <BotCard dataKey={bot.dataKey} nft={bot} />
                   </div>
                 )
               })}

@@ -4,7 +4,7 @@ import { Chat } from 'lib'
 import { useEffect, useRef, useState } from 'react'
 import { chatWithNous } from 'services/nous'
 import { useGetLineageNftToken, useGetLineageNousMetadata, useGetSingleNousMetadata } from 'repositories/rpc.repository'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
 import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
@@ -105,41 +105,37 @@ const PageRoom = () => {
   }, [bgColor])
 
   return (
-    <div className="min-h-screen ">
-      {/* <img
-        className="absolute top-0 left-0 w-screen h-auto z-0 opacity-50"
-        src="https://images.unsplash.com/photo-1699453223942-dfead4b64e24?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      /> */}
-      <div className="relative flex justify-center h-screen z-10 pb-[230px]">
-        <div className="flex flex-col w-full h-screen">
-          <div className="flex-1 p-2">
-            {chats.map((chat, index) => {
-              return (
-                <ChatBubble
-                  name={chat.name}
-                  key={index}
-                  img={chat.avatar}
-                  text={chat.text}
-                  bgColor={chat.bgColor as string}
-                  className=""
-                />
-              )
-            })}
-            <div ref={bottomRef}></div>
+    <>
+      <div className="min-h-screen z-0 pb-72">
+        <div className="relative h-screen z-10 pb-[230px]">
+          <div className="w-full mt-4">
+            <Link to="/inventory">Back to NFT</Link>
           </div>
-          <div className="fixed bottom-0 left-0 w-full">
-            <div className="py-6">
-              <label htmlFor="Search" className="sr-only">
-                {' '}
-                Search{' '}
-              </label>
-
-              <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+          <div className="flex flex-col w-full h-screen">
+            <div className="flex-1 p-2">
+              {chats.map((chat, index) => {
+                return (
+                  <ChatBubble
+                    name={chat.name}
+                    key={index}
+                    img={chat.avatar}
+                    text={chat.text}
+                    bgColor={chat.bgColor as string}
+                    className=""
+                  />
+                )
+              })}
+              <div ref={bottomRef}></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className="fixed bottom-0 left-0 w-full z-10">
+        <div className="py-6">
+          <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+        </div>
+      </div>
+    </>
   )
 }
 

@@ -1,9 +1,12 @@
 import { useBoundStore, useNousStore } from 'store'
 import { Perk } from 'lib/Perk'
 import useEquipPerk from 'hooks/useEquip'
+import GenericButton from 'components/Button/GenericButton'
+import { useEffect } from 'react'
 
 interface Prop {
   perkId: string
+  onReceivedError: (error: string) => void
 }
 
 const EquipButton = (prop: Prop) => {
@@ -18,29 +21,21 @@ const EquipButton = (prop: Prop) => {
   const onHandleEquip = async () => {
     try {
       await equipPerk()
-      setModalState({ purchasePerk: { isOpen: false, perk: undefined } })
+      setModalState({
+        alert: { isOpen: true, state: 'success', message: `Equipping Perk ver. ${prop.perkId} success` },
+      })
     } catch (e) {
+      setModalState({
+        alert: { isOpen: true, state: 'failed', message: `Purchase Perk ver. ${prop.perkId} failed: ${error}` },
+      })
       console.log(e)
     }
   }
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-end gap-2">
-        <img
-          src={selectedNous?.metadata.image}
-          className="text-center w-10 h-10 rounded-md ring ring-green-300"
-          onClick={e => {
-            e.stopPropagation()
-            setModalState({ selectNous: { isOpen: true } })
-          }}
-        />
-        <button
-          className="rounded-md bg-green-500 px-5 py-3 text-center text-sm font-semibold text-white"
-          onClick={onHandleEquip}
-        >
-          Equip
-        </button>
+      <div className="">
+        <GenericButton name={!isLoading ? `Equip` : `Processing`} onClick={onHandleEquip} />
       </div>
     </div>
   )

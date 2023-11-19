@@ -1,12 +1,11 @@
-import ChainName from 'components/ChainName'
 import ShareDialog from 'components/ShareDialog'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatDataKey } from 'utils'
 import { useApi } from 'hooks/use-api'
-import { ChatIcon, DatabaseIcon, VerifiedNousIcon } from 'components/Icons/icons'
+import { VerifiedNousIcon } from 'components/Icons/icons'
 import ViewKnowledgeModal from 'components/Modal/ViewKnowledge'
-import { useBoundStore } from 'store'
+import { useBoundStore, useNousStore } from 'store'
 import ApiKeyModal from 'components/Modal/ApiKeyModal'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
@@ -15,6 +14,7 @@ import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useGetPerkByTokenId } from 'repositories/perk.repository'
 import Avatar from 'components/Avatar'
 import PerkCardNft from 'components/PerkCard/PerkCardNft'
+import GenericButton from 'components/Button/GenericButton'
 
 const PageNft = () => {
   const location = useLocation()
@@ -22,6 +22,7 @@ const PageNft = () => {
   const { rpc } = useApi()
   const { setModalState } = useBoundStore()
   const { address } = useConnectedWallet()
+  const { setOwnedPerks } = useNousStore()
 
   const { nft } = location.state || {}
 
@@ -46,6 +47,7 @@ const PageNft = () => {
 
   const { data: badge } = useGetLineageNousMetadata(nftKey, 'badge', import.meta.env.VITE_NOUS_DATA_PK as string, '')
   const { data: nouskb } = useGetLineageNousMetadata(nftKey, 'nous_kb', import.meta.env.VITE_NOUS_DATA_PK as string, '')
+  const { data: access } = useGetLineageNousMetadata(nftKey, 'access', import.meta.env.VITE_NOUS_DATA_PK as string, '')
 
   const { hasAccess } = useCheckAccess({
     dataKey: nftKey,
@@ -79,11 +81,20 @@ const PageNft = () => {
     if (nft && !nftKey) {
       init()
     }
-  }, [nft, nftKey])
+
+    if (perks) {
+      setOwnedPerks(perks)
+    }
+  }, [nft, nftKey, perks, setOwnedPerks])
 
   const goToChatroom = () => {
     if (!nftKey) return
     navigate(`/room/${nftKey}`)
+  }
+
+  const goToPerk = () => {
+    if (!nftKey) return
+    navigate(`/perks`)
   }
 
   const goToKnowledge = () => {
@@ -107,7 +118,7 @@ const PageNft = () => {
             <div className="bg-[#181818] rounded p-4">
               <div className="flex">
                 <div className="flex-auto w-1/4">
-                  <Avatar imgMain={nft.metadata.image} imgBadge={badge?.content.src} />
+                  <Avatar imgMain={nft.metadata.image} imgBadge={badge?.content.src} badgeSize="12" />
                 </div>
                 <div className="flex-auto w-3/4 px-5">
                   <div className="">
@@ -135,8 +146,14 @@ const PageNft = () => {
                       )}
                       {nouskb && (
                         <div className="bg-slate-700 text-black rounded-md p-2">
-                          <div className="text-xs text-slate-400 uppercase">Knowledge Storage Size</div>
+                          <div className="text-xs text-slate-400 uppercase">Knowledge Size</div>
                           <div className="text-gray-300 uppercase font-semibold">{nouskb.content.size_in_mb} MB</div>
+                        </div>
+                      )}
+                      {access && (
+                        <div className="bg-slate-700 text-black rounded-md p-2">
+                          <div className="text-xs text-slate-400 uppercase">Access</div>
+                          <div className="text-gray-300 uppercase font-semibold">{access.content}</div>
                         </div>
                       )}
                     </div>
@@ -151,26 +168,12 @@ const PageNft = () => {
             <div className="mt-5 bg-[#181818] rounded p-4">
               <div className="text-2xl font-semibold mb-4">Tools</div>
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
-                <button
-                  className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center cursor-pointer border border-red-900 hover:border-white"
-                  onClick={() => goToChatroom()}
-                >
-                  <div className="block text-left">
-                    <ChatIcon />
-                    <div className="text-sm mt-1">Chat</div>
-                  </div>
-                </button>
+                {bot_level && bot_level.content?.level > 0 && <GenericButton name="Chat" onClick={goToChatroom} />}
+
+                <GenericButton name="Shop Perk" onClick={goToPerk} />
 
                 {bot_level && bot_level.content?.level > 0 && (
-                  <button
-                    className="bg-red-900 rounded-lg px-4 py-2 text-white w-full flex items-center justify-center text-center cursor-pointer border border-red-900 hover:border-white"
-                    onClick={() => goToKnowledge()}
-                  >
-                    <div>
-                      <DatabaseIcon />
-                      <div className="text-sm mt-1">Knowledge</div>
-                    </div>
-                  </button>
+                  <GenericButton name="Knowledge" onClick={() => goToKnowledge()} />
                 )}
               </div>
             </div>
@@ -183,15 +186,7 @@ const PageNft = () => {
               {perks && !perks.length && (
                 <div className="text-center">
                   <div>You have not purchase any perks</div>
-                  <button
-                    className={`mt-2 group relative inline-block text-sm font-medium text-black focus:outline-none focus:ring active:text-gray-500`}
-                    onClick={e => navigate('/perks')}
-                  >
-                    <span className="absolute rounded-md inset-0 translate-x-0.5 translate-y-0.5 bg-green-700 transition-transform group-hover:translate-y-0 group-hover:translate-x-0"></span>
-                    <span className="flex rounded-md items-center relative border border-current bg-green-400 px-10 py-3">
-                      Purchase Now
-                    </span>
-                  </button>
+                  <GenericButton name="Shop Perk" onClick={goToPerk} className="mt-3" />
                 </div>
               )}
             </div>

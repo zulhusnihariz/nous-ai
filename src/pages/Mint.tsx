@@ -2,6 +2,7 @@ import PublicMintBox from 'components/Mint/PublicMintBox'
 import TimelineMint from 'components/Mint/TimelineMint'
 import TransactionMint from 'components/Mint/TransactionMint'
 import WhitelistMintBox from 'components/Mint/WhitelistMintBox'
+import TypographyNormal from 'components/Typography/Normal'
 import { useEffect, useState } from 'react'
 import RPC from 'utils/ethers'
 
@@ -61,42 +62,36 @@ const PageMint = () => {
   }, [isLoaded])
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 z-3">
-        <div className="h-32 rounded-lg lg:col-span-2">
-          <div className="rounded-lg border border-gray-700 bg-orange-300 text-black p-4">
-            <div className="text-lg font-bold">Mint your NOUS Bot</div>
-            <div className="text-sm">Contract: {import.meta.env.VITE_NOUS_AI_NFT}</div>
-            <PublicMintBox />
-          </div>
+      <div className="w-2/5">
+        <div className="p-4">
+          <PublicMintBox />
         </div>
-        <div className="h-32 rounded-lg flex flex-col gap-y-2">
-          <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
-            <div className="text-lg font-bold mb-4">Progress</div>
-            <div className="flex justify-between text-sm">
-              <span>{((supply / max) * 100).toFixed(2)}% minted</span>
-              <span className="font-semibold">
-                {supply}/{max}
-              </span>
-            </div>
-            <div className="mt-1">
-              <span id="ProgressLabel" className="sr-only">
-                Supply
-              </span>
+        <div className="flex justify-between text-sm mt-2">
+          <TypographyNormal>{((supply / max) * 100).toFixed(2)}% minted</TypographyNormal>
+          <TypographyNormal classNames="font-semibold">
+            {supply}/{max}
+          </TypographyNormal>
+        </div>
+        <div className="mt-1">
+          <span id="ProgressLabel" className="sr-only">
+            Supply
+          </span>
 
-              <span aria-labelledby="ProgressLabel" className="block rounded-full bg-yellow-100">
-                <span
-                  className="block h-4 pt-1 rounded-lg bg-[repeating-linear-gradient(45deg,_var(--tw-gradient-from)_0,_var(--tw-gradient-from)_20px,_var(--tw-gradient-to)_20px,_var(--tw-gradient-to)_40px)] from-orange-400 to-orange-500"
-                  style={{ width: `${(supply / max) * 100 < 3 ? 3 : (supply / max) * 100}%` }}
-                >
-                  <span className="font-bold text-white"> </span>
-                </span>
-              </span>
+          <div className="relative">
+            <div className="border border-green-300 p-1">
+              <div
+                className="flex h-3 items-center justify-center bg-green-300 text-xs leading-none"
+                style={{ width: `${(supply / max) * 100 < 3 ? 3 : (supply / max) * 100}%` }}
+              ></div>
             </div>
-            <div className="mt-3 text-xs">Minting remains open while supplies last.</div>
           </div>
-          {/* <TransactionMint /> */}
-          {/* <TimelineMint /> */}
         </div>
+        {/* <div className="text-sm mt-4 text-center">
+          Nous Psyche NFT Contract:{' '}
+          <a target="_blank" href={`https://basescan.org/address/${import.meta.env.VITE_NOUS_AI_NFT}`}>
+            {import.meta.env.VITE_NOUS_AI_NFT}
+          </a>
+        </div> */}
       </div>
     </>
   )

@@ -1,35 +1,24 @@
-import { OpenseaIcon } from 'components/Icons/socials'
-import { NftMetadata } from 'lib'
-import { useNavigate } from 'react-router-dom'
+import Avatar from 'components/Avatar'
+import TypographyNormal from 'components/Typography/Normal'
+import { Nft, NftMetadata } from 'lib'
+import { NousNft } from 'lib/NousNft'
 
 interface Prop {
   dataKey: string
-  metadata: NftMetadata
+  nft: Nft & NousNft
 }
 
-const BotCard = ({ metadata, dataKey }: Prop) => {
-  const navigate = useNavigate()
-
-  const goToRoom = () => {
-    navigate(`/room/${dataKey}`)
-  }
-
+const BotCard = ({ nft }: Prop) => {
   return (
     <div>
-      <div className="group relative block overflow-hidden rounded-lg">
-        <button className="absolute end-4 top-4 z-10 rounded-full bg-white text-gray-900 transition hover:text-gray-900/75">
-          <span className="sr-only">Opensea</span>
+      <div className="group relative block overflow-hidden ring-2 ring-white bg-black/50">
+        <div>
+          <h3 className="absolute end-4 bottom-4 z-10 text-md font-medium truncate text-white">
+            <TypographyNormal>{nft.metadata.name}</TypographyNormal>
+          </h3>
 
-          <OpenseaIcon enabled={false} />
-        </button>
-
-        <h3 className="absolute end-4 bottom-4 z-10 text-md font-medium text-gray-300 truncate">{metadata.name}</h3>
-
-        <img
-          src={metadata.image}
-          alt={metadata.name}
-          className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
-        />
+          <Avatar imgMain={nft.metadata.image} imgBadge={nft.achievement?.badge} badgeSize="12" />
+        </div>
       </div>
     </div>
   )
