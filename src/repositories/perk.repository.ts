@@ -104,6 +104,7 @@ const useGetPerkByTokenId = (tokenId: number) => {
       })
     },
     enabled: tokenId >= 0,
+    refetchInterval: 10000,
   })
 }
 

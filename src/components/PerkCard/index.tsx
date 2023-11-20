@@ -10,11 +10,19 @@ interface Prop {
   onClickHandler: (index: number) => void
 }
 
-const PerkPrice = ({ price }: { price: String }) => {
-  if (price === '0.0') {
+const PerkPrice = ({ perk }: { perk: Perk }) => {
+  if (!perk.forSale) {
+    return 'NOT FOR SALE'
+  }
+
+  if (perk.isPrivate) {
+    return 'WHITELIST'
+  }
+
+  if (perk.price === '0.0') {
     return 'FREE'
   } else {
-    return `${price} E`
+    return `${perk.price} E`
   }
 }
 
@@ -46,7 +54,7 @@ const PerkCard = (prop: Prop) => {
         {prop.perk.category && <span className="text-xs text-yellow-300 font-thin">[{prop.perk.category}]</span>}
       </TypographyNormal>
       <TypographyNormal>
-        <PerkPrice price={prop.perk.price} />
+        <PerkPrice perk={prop.perk} />
       </TypographyNormal>
     </div>
   )
