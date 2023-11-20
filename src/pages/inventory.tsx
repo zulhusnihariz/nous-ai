@@ -15,11 +15,8 @@ const PageInventory = () => {
   const { address } = useConnectedWallet()
   const { setSelectedNous } = useNousStore()
 
-  // const { data: owned } = useGetNftByWalletAddress({
-  //   address: address?.full,
-  // })
-
   const { data: nfts } = useGetOwnedNousMetadatas(address.full)
+
   const goToMintPage = () => {
     navigate('/mint')
   }

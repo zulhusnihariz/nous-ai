@@ -21,6 +21,7 @@ export function useConnectedWallet() {
       case CURRENT_CHAIN.POLYGON:
       case CURRENT_CHAIN.MUMBAI:
       case CURRENT_CHAIN.MATIC_MUMBAI:
+      case CURRENT_CHAIN.BASE:
         setAddress({ display: shortenAddress(`${evmAddress}`), full: `${evmAddress}` })
         return
     }
@@ -33,6 +34,7 @@ export function useConnectedWallet() {
       case CURRENT_CHAIN.POLYGON:
       case CURRENT_CHAIN.MUMBAI:
       case CURRENT_CHAIN.MATIC_MUMBAI:
+      case CURRENT_CHAIN.BASE:
         {
           const ethBalance = evmBalance == null ? void 0 : evmBalance.formatted
           const displayBalance = ethBalance ? abbreviateETHBalance(parseFloat(ethBalance)) : void 0
@@ -55,6 +57,7 @@ export function useConnectedWallet() {
       case CURRENT_CHAIN.POLYGON:
       case CURRENT_CHAIN.MUMBAI:
       case CURRENT_CHAIN.MATIC_MUMBAI:
+      case CURRENT_CHAIN.BASE:
         try {
           return await signMessageAsync({ message })
         } catch (e) {
@@ -71,6 +74,7 @@ export function useConnectedWallet() {
       case CURRENT_CHAIN.POLYGON:
       case CURRENT_CHAIN.MUMBAI:
       case CURRENT_CHAIN.MATIC_MUMBAI:
+      case CURRENT_CHAIN.BASE:
         await wagmiDisconnect()
         setWalletState({ evm: { address: '' } })
         break

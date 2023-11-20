@@ -4,6 +4,7 @@ import { resetters } from '..'
 export enum CURRENT_CHAIN {
   // mainnet
   POLYGON = 'matic',
+  BASE = 'base',
   // testnet
   MUMBAI = 'mumbai',
   MATIC_MUMBAI = 'maticmum',

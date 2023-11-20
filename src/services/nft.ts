@@ -1,17 +1,21 @@
-import apiMoralisInstance from 'adapter/moralis'
+import { Token } from 'lib/Perk'
+import { ApolloClientFilter, apolloQuery } from './apollo'
 
-export const getNftsByWalletAddress = (address: string, chain: string) => {
-  return apiMoralisInstance({
-    method: 'GET',
-    url: `/${address}/nft?chain=${chain}&token_addresses%5B0%5D=${
-      import.meta.env.VITE_NOUS_AI_NFT
-    }&format=decimal&media_items=false`,
-  })
-}
+export const getNftsByPage = async (variables?: ApolloClientFilter) => {
+  const query = `
+    query GetTokenByPage($first: Int, $skip: Int) {
+      tokens(first: $first, skip: $skip) {
+        id
+        tokenId
+        owner {
+          id
+        }
+      }
+    }
+  `
 
-export const getNftsByContractAddress = (token_address: string, chain: string) => {
-  return apiMoralisInstance({
-    method: 'GET',
-    url: `/nft/${token_address}?chain=${chain}&format=decimal&media_items=false`,
+  return apolloQuery<{ tokens: Token[] }>({
+    query,
+    variables,
   })
 }
