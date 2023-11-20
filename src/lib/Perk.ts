@@ -15,6 +15,10 @@ export interface Perk {
 
 export interface Token {
   tokenPerks: TokenPerk[]
+  id: string
+  tokenId: string
+  metadataURI?: string
+  owner: { id: string }
 }
 
 export interface TokenPerk {
