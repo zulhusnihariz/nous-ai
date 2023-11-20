@@ -61,12 +61,12 @@ const PageInventory = () => {
                             <div className="flex justify-between p-2">
                               <div className="flex flex-col justify-center">
                                 <TypographyNormal>{nft.metadata.name}</TypographyNormal>
-                                {nft.stat && (
+                                {nft.stat && nft.stat.level && (
                                   <TypographyNormal classNames="uppercase font-bold text-yellow-300">
                                     Level {nft.stat.level}
                                   </TypographyNormal>
                                 )}
-                                {!nft.stat && (
+                                {nft.stat && !nft.stat.level && (
                                   <TypographyNormal classNames="uppercase font-bold text-yellow-300">
                                     Not activated
                                   </TypographyNormal>

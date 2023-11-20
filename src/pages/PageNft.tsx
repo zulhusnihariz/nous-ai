@@ -168,7 +168,7 @@ const PageNft = () => {
             <div className="mt-5 bg-[#181818] rounded p-4">
               <div className="text-2xl font-semibold mb-4">Tools</div>
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
-                {bot_level && bot_level.content?.level > 0 && <GenericButton name="Chat" onClick={goToChatroom} />}
+                {nous_id && <GenericButton name="Chat" onClick={goToChatroom} />}
 
                 <GenericButton name="Shop Perk" onClick={goToPerk} />
 
