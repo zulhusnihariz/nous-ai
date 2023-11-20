@@ -1,8 +1,6 @@
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useNavigate } from 'react-router-dom'
-import { useGetNftByWalletAddress } from 'repositories/moralis.repository'
 import { useGetOwnedNousMetadatas } from 'repositories/rpc.repository'
-import { PlusIcon } from 'components/Icons/icons'
 import { useNousStore } from 'store'
 import { Nft } from 'lib'
 import TypographyNormal from 'components/Typography/Normal'
@@ -17,12 +15,11 @@ const PageInventory = () => {
   const { address } = useConnectedWallet()
   const { setSelectedNous } = useNousStore()
 
-  const { data: owned } = useGetNftByWalletAddress({
-    address: address?.full,
-    chain: import.meta.env.VITE_DEFAULT_CHAIN_NAME,
-  })
+  // const { data: owned } = useGetNftByWalletAddress({
+  //   address: address?.full,
+  // })
 
-  const { data: nfts } = useGetOwnedNousMetadatas(address.full, owned?.map(el => `${el.token_id}`) ?? [])
+  const { data: nfts } = useGetOwnedNousMetadatas(address.full)
   const goToMintPage = () => {
     navigate('/mint')
   }
@@ -37,10 +34,10 @@ const PageInventory = () => {
   }
 
   useEffect(() => {
-    if (owned && owned.length <= 0) {
+    if (nfts && nfts.length <= 0) {
       navigate('/mint')
     }
-  }, [navigate, owned])
+  }, [navigate, nfts])
 
   return (
     <div className="flex justify-center">
@@ -100,7 +97,7 @@ const PageInventory = () => {
                       imgMain={nfts[selectedNftIndex].metadata.image}
                       imgBadge={nfts[selectedNftIndex].achievement?.badge}
                       className="h-96 w-96"
-                      badgeSize="24"
+                      badgeSize="20"
                     />
                   </>
                 )}

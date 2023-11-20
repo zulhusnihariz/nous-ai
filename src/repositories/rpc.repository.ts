@@ -6,6 +6,7 @@ import { chainIdToNetwork, formatDataKey } from 'utils'
 import { Nft, NftMetadata } from 'lib'
 import { getNftsByContractAddress } from 'services/nft'
 import { NousNft } from 'lib/NousNft'
+import { getNftByAddress } from 'services/wallet'
 
 const useGetCompleteTransactions = () => {
   return useQuery({
@@ -231,15 +232,17 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
+const useGetOwnedNousMetadatas = (public_key: string) => {
   return useQuery<(Nft & NousNft)[]>({
-    queryKey: [RQ_KEY.GET_METADATAS, tokenIds],
+    queryKey: [RQ_KEY.GET_METADATAS, public_key],
     queryFn: async () => {
+      const { data } = await getNftByAddress(public_key)
+
       const nfts: (Nft & NousNft)[] = []
 
-      for (let i = 0; i < tokenIds.length; i++) {
-        const tokenId = tokenIds[i]
-        const json = createDefaultMetadata(tokenId)
+      for (let i = 0; i < data.tokens.length; i++) {
+        const token = data.tokens[i]
+        const json = createDefaultMetadata(token.tokenId)
 
         const [
           contentFromMetadata,
@@ -247,7 +250,7 @@ const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
           contentFromNousMetadata,
           contentFromNousLevel,
           contentFromNousBadge,
-        ] = await fetchNousMetadata(tokenId, public_key)
+        ] = await fetchNousMetadata(token.tokenId, public_key)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
@@ -279,7 +282,7 @@ const useGetOwnedNousMetadatas = (public_key: string, tokenIds: string[]) => {
 
       return nfts
     },
-    enabled: Boolean(public_key) && tokenIds.length > 0,
+    enabled: Boolean(public_key),
   })
 }
 
