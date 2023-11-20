@@ -81,13 +81,6 @@ export default function Header() {
               Explorer
             </Link>
             <Link
-              to="/perks"
-              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
-            >
-              <PerksIcon />
-              Perks
-            </Link>
-            <Link
               to="/quests"
               className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
             >

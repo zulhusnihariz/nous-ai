@@ -36,7 +36,7 @@ const useMinting = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [address])
 
   return { canMint, isLoading, error }
 }

@@ -1,4 +1,5 @@
 import { ExclamationIcon } from 'components/Icons/icons'
+import TypographyNormal from 'components/Typography/Normal'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -33,7 +34,9 @@ const PageIndex = () => {
     <div className="h-full w-4/5 mx-auto flex flex-col justify-center items-center">
       <section className="">
         <h3 className=" w-full p-5 text-center font-semibold text-4xl">
-          Welcome to <span className="text-yellow-700">Nous Psyche</span>
+          <TypographyNormal>
+            Welcome to <span className="text-yellow-500">Nous Psyche</span>
+          </TypographyNormal>
         </h3>
       </section>
       <div className="w-full h-[600px]">
@@ -53,7 +56,7 @@ const PageIndex = () => {
         <section className=" flex flex-col items-center justify-center">
           <p className="flex gap-2 justify-center p-1 w-3/4 font-medium">
             <ExclamationIcon />
-            Don't know what to ask? Try asking this:
+            <TypographyNormal>Don't know what to ask? Try asking this:</TypographyNormal>
           </p>
 
           <div className={`grid grid-cols-2  sm:flex sm:gap-2 sm:flex-wrap px-7 md:p-3 justify-center `}>
@@ -63,7 +66,9 @@ const PageIndex = () => {
                 onClick={() => {
                   goToSearch(link)
                 }}
-                className={`text-sm hover:bg-[#181818] hover:text-white text-gray-400 rounded-md p-2 ${quickLinks.length % 2 !== 0 && " last:col-span-2"}`}
+                className={`bg-black text-sm hover:bg-black/50 hover:text-white text-gray-200 rounded-md p-2 ${
+                  quickLinks.length % 2 !== 0 && ' last:col-span-2'
+                }`}
               >
                 {link}
               </button>

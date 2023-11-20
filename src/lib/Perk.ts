@@ -10,6 +10,7 @@ export interface Perk {
   isPrivate: boolean
   isActivable: boolean
   isRepurchaseable: boolean
+  category?: string
 }
 
 export interface Token {

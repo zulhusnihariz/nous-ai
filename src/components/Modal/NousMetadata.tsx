@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { useBoundStore } from 'store'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { usePublishTransaction } from 'repositories/rpc.repository'
-import { NousMetadata } from 'services/rpc'
+import { NousMetadata } from 'lib/NousNft'
 import { useAlertMessage } from 'hooks/use-alert-message'
 
 const initialNousMetadata: NousMetadata = {
@@ -102,7 +102,7 @@ const NousMetadataModal = () => {
                     name="id"
                     type="text"
                     placeholder="ID"
-                    value={nousMetadata.id as string}
+                    value={nousMetadata.id}
                     onChange={e => handleChange(e)}
                   />
 

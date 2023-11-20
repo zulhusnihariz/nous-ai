@@ -5,6 +5,7 @@ import { v4 } from 'uuid'
 import { chatWithNous } from 'services/nous'
 import ChatSubmit from 'components/ChatSubmit'
 import Typewriter from 'components/Typewriter'
+import TypographyNormal from 'components/Typography/Normal'
 
 interface FAQ {
   question: string
@@ -20,8 +21,6 @@ export const DisplayAnswer = (prop: { answers: string[] }) => {
         <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
         <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
         <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
         <span className="sr-only">Loading...</span>
       </div>
     )
@@ -112,7 +111,7 @@ const PageSearch = () => {
 
   const getRelatedQuestions = async (chatContext: string) => {
     try {
-      const query = 'Derivate questions in the context of Nous Psyche from from the text after this. ' + chatContext
+      const query = 'Derivate 3 questions in the context of Nous Psyche from from the text after this. ' + chatContext
       const res = await chatWithNous(nousId, session, query)
 
       const questions: string[] = []
@@ -158,59 +157,56 @@ const PageSearch = () => {
   }, [faqs])
 
   return (
-    <div className="flex mx-auto w-4/5 md:w-3/4 justify-center">
-      <main className="w-full h-screen">
-        {faqs.map((faq, index) => (
-          <div key={index}>
-            <div>
-              <h1 className="text-3xl">{faq.question}</h1>
-              <div className="mt-4">
-                <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3">
-                  <AnswerIcon />
-                  Answers
-                </h3>
-                <DisplayAnswer answers={faq.answers} />
+    <>
+      <div className="flex mx-auto w-4/5 md:w-3/4 justify-center bg-green-800/40 backdrop-blur pb-40">
+        <main className="w-full">
+          {faqs.map((faq, index) => (
+            <div key={index}>
+              <div className="">
+                <h1 className="text-3xl bg-blue-600 p-4">
+                  <TypographyNormal>{faq.question}</TypographyNormal>
+                </h1>
+                <div className="px-4">
+                  <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3">
+                    <AnswerIcon />
+                    <TypographyNormal classNames="text-yellow-400">Answers</TypographyNormal>
+                  </h3>
+                  <DisplayAnswer answers={faq.answers} />
+                </div>
+              </div>
+              <hr className="h-px bg-gray-400 border-0" />
+            </div>
+          ))}
+
+          <section className="p-4 bg-white/10 backdrop-blur">
+            <div className="">
+              <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3 text-yellow-400">
+                <StackIcon />
+                <TypographyNormal>Related</TypographyNormal>
+              </h3>
+              <div className="text-md pb-4">
+                {links.map((link, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      chatQuestion(link as string)
+                    }}
+                    className="text-md border-b border-b-gray-700 py-2 hover:text-yellow-400 cursor-pointer"
+                  >
+                    <TypographyNormal>{link}</TypographyNormal>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="flex my-3">
-              {/* <button>
-                <CopyIcon classes={'text-gray-400'} />
-              </button> */}
-            </div>
-            <hr className="h-px mb-8 bg-gray-700 border-0 dark:bg-gray-700" />
-          </div>
-        ))}
-
-        <section className="pb-60">
-          <div className="">
-            <h3 className="font-semibold text-xl items-center flex gap-2 rounded-md py-3">
-              <StackIcon />
-              Related
-            </h3>
-            <div className="text-md pb-4">
-              {links.map((link, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    chatQuestion(link as string)
-                  }}
-                  className="text-md border-b border-b-gray-700 py-2 hover:text-yellow-400 text-gray-500 cursor-pointer"
-                >
-                  {link}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Input Section */}
-        <div className="fixed bottom-0 left-0 w-full ">
-          <div className="relative py-6">
-            <ChatSubmit onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
-          </div>
+          </section>
+        </main>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full ">
+        <div className="py-6">
+          <ChatSubmit onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   )
 }
 export default PageSearch
