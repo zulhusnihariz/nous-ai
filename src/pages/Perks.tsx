@@ -1,7 +1,6 @@
 import AlertBoxSuccess from 'components/AlertBox'
 import PerkCard from 'components/PerkCard'
 import DisplayPerk from 'components/PerkCard/DisplayPerk'
-import SelectNousModal from 'components/SelectNousModal'
 import TypographyNormal from 'components/Typography/Normal'
 import { Perk } from 'lib/Perk'
 import { useEffect, useState } from 'react'
@@ -55,7 +54,6 @@ const PagePerks = () => {
           {perks && perks[selectedPerkIndex] && <DisplayPerk perk={perks[selectedPerkIndex]} />}
         </div>
       </div>
-      <SelectNousModal />
     </>
   )
 }
