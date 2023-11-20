@@ -1,5 +1,5 @@
 import { Token } from 'lib/Perk'
-import { apolloQuery } from './apollo'
+import { ApolloClientFilter, apolloQuery } from './apollo'
 
 export const getNftByAddress = async (address: string) => {
   const query = `
@@ -14,8 +14,10 @@ export const getNftByAddress = async (address: string) => {
     }
   `
 
-  return apolloQuery<{ tokens: Token[] }>({
+  const res = apolloQuery<{ tokens: Token[] }>({
     query,
-    variables: { address: address.toLowerCase() },
+    variables: { address },
   })
+
+  return res
 }

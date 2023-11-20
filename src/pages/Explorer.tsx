@@ -2,7 +2,7 @@ import BotCard from 'components/BotCard'
 import { useGetAllBots } from 'repositories/rpc.repository'
 
 const PageExplorer = () => {
-  const { data: bots } = useGetAllBots()
+  const { data: bots } = useGetAllBots(50, 0)
 
   return (
     <>

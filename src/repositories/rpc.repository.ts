@@ -4,9 +4,9 @@ import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { chainIdToNetwork, formatDataKey } from 'utils'
 import { Nft, NftMetadata } from 'lib'
-import { getNftsByContractAddress } from 'services/nft'
 import { NousNft } from 'lib/NousNft'
 import { getNftByAddress } from 'services/wallet'
+import { getNftsByPage } from 'services/nft'
 
 const useGetCompleteTransactions = () => {
   return useQuery({
@@ -236,7 +236,7 @@ const useGetOwnedNousMetadatas = (public_key: string) => {
   return useQuery<(Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_METADATAS, public_key],
     queryFn: async () => {
-      const { data } = await getNftByAddress(public_key)
+      const { data } = await getNftByAddress(public_key.toLowerCase())
 
       const nfts: (Nft & NousNft)[] = []
 
@@ -286,18 +286,20 @@ const useGetOwnedNousMetadatas = (public_key: string) => {
   })
 }
 
-const useGetAllBots = () => {
+const useGetAllBots = (size: number, page: number) => {
   return useQuery<({ dataKey: string } & Nft & NousNft)[]>({
     queryKey: [RQ_KEY.GET_ALL_NFTS],
     queryFn: async () => {
       const nfts: ({ dataKey: string } & Nft & NousNft)[] = []
 
-      const res = await getNftsByContractAddress(
-        import.meta.env.VITE_NOUS_AI_NFT as string,
-        chainIdToNetwork(import.meta.env.VITE_DEFAULT_CHAIN_ID as string)
-      )
+      // const res = await getNftsByContractAddress(
+      //   import.meta.env.VITE_NOUS_AI_NFT as string,
+      //   chainIdToNetwork(import.meta.env.VITE_DEFAULT_CHAIN_ID as string)
+      // )
 
-      const tokenIds = res.data.result.map((nft: any) => nft.token_id)
+      const { data } = await getNftsByPage({ first: size, skip: size * page })
+
+      const tokenIds = data.tokens.map((nft: any) => nft.tokenId)
 
       for (let i = 0; i < tokenIds.length; i++) {
         const tokenId = tokenIds[i]

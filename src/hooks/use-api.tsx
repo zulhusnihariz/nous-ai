@@ -1,10 +1,7 @@
 import React, { createContext, useContext } from 'react'
-import { getNftsByWalletAddress, getNftsByContractAddress } from 'services/nft'
 import rpc from 'services/rpc'
 
 interface ApiContextProps {
-  getNftsByWalletAddress: typeof getNftsByWalletAddress
-  getNftsByContractAddress: typeof getNftsByContractAddress
   rpc: typeof rpc
 }
 
@@ -13,8 +10,6 @@ interface ApiProviderProps {
 }
 
 export const ApiContext = createContext<ApiContextProps | undefined>({
-  getNftsByWalletAddress,
-  getNftsByContractAddress,
   rpc,
 })
 
@@ -27,9 +22,5 @@ export const useApi = () => {
 }
 
 export const ApiProvider: React.FC<ApiProviderProps> = ({ children }) => {
-  return (
-    <ApiContext.Provider value={{ getNftsByWalletAddress, getNftsByContractAddress, rpc }}>
-      {children}
-    </ApiContext.Provider>
-  )
+  return <ApiContext.Provider value={{ rpc }}>{children}</ApiContext.Provider>
 }
