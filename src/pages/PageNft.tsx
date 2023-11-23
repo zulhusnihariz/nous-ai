@@ -9,7 +9,7 @@ import { useBoundStore, useNousStore } from 'store'
 import ApiKeyModal from 'components/Modal/ApiKeyModal'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import EncryptKnowledgeModal from 'components/Modal/EncryptKnowledge'
-import { useGetLineageNousMetadata } from 'repositories/rpc.repository'
+import { useGetLineageNousMetadata, useGetOwnedNousMetadatas } from 'repositories/rpc.repository'
 import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useGetPerkByTokenId } from 'repositories/perk.repository'
 import Avatar from 'components/Avatar'
@@ -55,6 +55,8 @@ const PageNft = () => {
     walletAddress: address.full,
   })
 
+  const { data: owned } = useGetOwnedNousMetadatas(address.full)
+
   useEffect(() => {
     if (!nft || !nft.token) {
       navigate('/inventory')
@@ -98,16 +100,33 @@ const PageNft = () => {
   }
 
   const goToKnowledge = () => {
-    setModalState({
-      encryptKnowledge: {
-        isOpen: true,
-        token_id: `${nft.token_id}`,
-        chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID,
-        token_address: import.meta.env.VITE_NOUS_AI_NFT,
-        version: '',
-        knowledge: [],
-      },
-    })
+    const owned_nft = owned?.find(owned_nft => (owned_nft.token_id = nft.token_id))
+
+    if (owned_nft) {
+      let metadata = {
+        ...owned_nft.metadata,
+        name: owned_nft.metadata?.attributes?.find(attributes => attributes.trait_type === 'name')?.value ?? '',
+      }
+
+      setModalState({
+        encryptKnowledge: {
+          isOpen: true,
+          token_id: `${nft.token_id}`,
+          chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID,
+          token_address: import.meta.env.VITE_NOUS_AI_NFT,
+          version: '',
+          knowledge: owned_nft?.knowledge ?? [],
+        },
+        nftMetadata: {
+          isOpen: false,
+          metadata: metadata,
+        },
+        nousMetadata: {
+          isOpen: false,
+          metadata: owned_nft?.nous ?? { id: '', version: '' },
+        },
+      })
+    }
   }
 
   return (
