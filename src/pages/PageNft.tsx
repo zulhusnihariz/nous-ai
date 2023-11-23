@@ -99,11 +99,16 @@ const PageNft = () => {
     navigate(`/perks`)
   }
 
+  const goToQuest = () => {
+    if (!nftKey) return
+    navigate(`/quests`)
+  }
+
   const goToKnowledge = () => {
     const owned_nft = owned?.find(owned_nft => (owned_nft.token_id = nft.token_id))
 
     if (owned_nft) {
-      let metadata = {
+      const metadata = {
         ...owned_nft.metadata,
         name: owned_nft.metadata?.attributes?.find(attributes => attributes.trait_type === 'name')?.value ?? '',
       }
@@ -190,6 +195,7 @@ const PageNft = () => {
                 {nous_id && <GenericButton name="Chat" onClick={goToChatroom} />}
 
                 <GenericButton name="Shop Perk" onClick={goToPerk} />
+                <GenericButton name="Quests" onClick={goToQuest} />
 
                 {bot_level && bot_level.content?.level > 0 && (
                   <GenericButton name="Knowledge" onClick={() => goToKnowledge()} />

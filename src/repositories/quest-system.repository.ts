@@ -3,15 +3,15 @@ import { News } from 'lib'
 import { Campaign } from 'lib/Quest'
 import { RQ_KEY } from 'repositories'
 import { getPerkById } from 'services/apollo'
-import { addParticipant, getCampaigns } from 'services/quest-system'
+import { addParticipant, getCampaignByTokenId } from 'services/quest-system'
 import { useQueryClient } from 'wagmi'
 
-const useGetCampaigns = (address?: string) => {
+const useGetCampaignsByTokenId = (tokenId?: string) => {
   return useQuery({
-    queryKey: [RQ_KEY.GET_QUEST_CAMPAIGNS, address],
+    queryKey: [RQ_KEY.GET_QUEST_CAMPAIGNS, tokenId],
     queryFn: async ({ queryKey }) => {
       try {
-        const response = await getCampaigns(address)
+        const response = await getCampaignByTokenId(tokenId)
         const campaigns = response.data as Campaign[]
 
         for (const campaign of campaigns) {
@@ -36,20 +36,23 @@ const useGetCampaigns = (address?: string) => {
       }
       return []
     },
+    enabled: tokenId !== undefined,
+    staleTime: 1000,
   })
 }
 
-const useAddParticipant = () => {
+const useAddParticipant = (tokenId: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (params: { questId: string; address: string; data: string }) => {
-      return addParticipant(params.questId, params.address, params.data)
+    mutationFn: async (params: { questId: string; token_id: string; data: string }) => {
+      return addParticipant(params.questId, params.token_id, params.data)
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries([RQ_KEY.GET_QUEST_CAMPAIGNS])
+    onSuccess: () => {
+      queryClient.invalidateQueries([RQ_KEY.GET_QUEST_CAMPAIGNS, tokenId]).catch(console.log)
+      queryClient.refetchQueries([RQ_KEY.GET_QUEST_CAMPAIGNS, tokenId]).catch(console.log)
     },
   })
 }
 
-export { useGetCampaigns, useAddParticipant }
+export { useGetCampaignsByTokenId, useAddParticipant }

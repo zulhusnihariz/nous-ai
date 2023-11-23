@@ -1,18 +1,18 @@
 import questSystemApiInstance from 'adapter/quest-system'
 
-export const getCampaigns = (address?: string) => {
+export const getCampaignByTokenId = (tokenId?: string) => {
   return questSystemApiInstance({
     method: 'GET',
-    url: `/campaigns${address ? `/address/${address}` : ''}`,
+    url: `/campaigns/token/${tokenId}`,
   })
 }
 
-export const addParticipant = (questId: string, address: string, data?: string) => {
+export const addParticipant = (questId: string, tokenId: string, data?: string) => {
   return questSystemApiInstance({
     method: 'POST',
     url: `/quests/${questId}/participants`,
     data: {
-      address,
+      tokenId,
       data,
     },
   })
