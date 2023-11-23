@@ -185,7 +185,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
     queryFn: async () => {
       const nfts: (Nft & NousNft)[] = []
 
-      const end_index = page_index * item_per_page + 10 <= 555 ? page_index * item_per_page + 10 : 555
+      const end_index = page_index * item_per_page + 10 < 10000 ? page_index * item_per_page + 10 : 10000
 
       for (let x = page_index * item_per_page; x < end_index; x++) {
         const json = createDefaultMetadata(`${x}`)

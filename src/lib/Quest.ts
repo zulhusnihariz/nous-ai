@@ -1,6 +1,7 @@
 import { Perk } from './Perk'
 
 export interface Campaign {
+  _id: string
   title: String
   description: String
   isOngoing: Boolean

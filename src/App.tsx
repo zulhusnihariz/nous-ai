@@ -21,7 +21,7 @@ import { ApiProvider } from 'hooks/use-api'
 import { LitProtocolProvider } from 'hooks/use-lit-protocol'
 import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
-import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, connectorsForWallets, darkTheme, lightTheme, midnightTheme } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import PageSearch from 'pages/PageSearch'
 import PageMint from 'pages/Mint'
@@ -102,7 +102,16 @@ export function Web3Wrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider modalSize="compact" chains={chains}>
+      <RainbowKitProvider
+        theme={lightTheme({
+          accentColor: '#ff0000',
+          accentColorForeground: 'black',
+          borderRadius: 'none',
+          fontStack: 'system',
+        })}
+        modalSize="compact"
+        chains={chains}
+      >
         <IpfsProvider>
           <AlertMessageProvider>{children}</AlertMessageProvider>
         </IpfsProvider>
