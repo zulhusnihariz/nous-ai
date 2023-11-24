@@ -6,13 +6,13 @@ const PageExplorer = () => {
 
   return (
     <>
-      <div className="w-full">
+      <div className="w-full px-6">
         <div className="h-32 rounded-lg w-full">
-          <div className="grid grid-cols-6 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
             {bots &&
               bots.map((bot, index) => {
                 return (
-                  <div key={index} className="text-sm border border-transparent rounded-lg">
+                  <div key={index} className="text-[8px] sm:text-sm border border-transparent rounded-lg">
                     <BotCard dataKey={bot.dataKey} nft={bot} />
                   </div>
                 )

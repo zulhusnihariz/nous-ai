@@ -109,15 +109,15 @@ const PageAdmin = () => {
   }, [])
 
   return (
-    <div className="h-full pb-[30px] w-full">
+    <div className="h-full pb-[30px] w-full px-2">
       <table className="table-auto min-w-full divide-y-2 divide-gray-200 bg-gray-800 text-sm">
         <thead className="bg-gray-600 w-full text-white">
           <tr>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Token ID</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Name</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nft Metadata</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Knowledge Base</th>
-            <th className="whitespace-nowrap px-4 py-2 font-semibold text-lg text-center">Nous ID</th>
+            <th className="whitespace-nowrap px-2 md:px-4 py-2 font-semibold text-[8px] md:text-lg text-center">Token ID</th>
+            <th className="whitespace-nowrap px-2 md:px-4 py-2 font-semibold text-[8px] md:text-lg text-center">Name</th>
+            <th className="whitespace-nowrap px-2 md:px-4 py-2 font-semibold text-[8px] md:text-lg text-center">Nft Metadata</th>
+            <th className="whitespace-nowrap px-2 md:px-4 py-2 font-semibold text-[8px] md:text-lg text-center">Knowledge Base</th>
+            <th className="whitespace-nowrap px-2 md:px-4 py-2 font-semibold text-[8px] md:text-lg text-center">Nous ID</th>
           </tr>
         </thead>
 
@@ -179,7 +179,7 @@ const PageAdmin = () => {
           })}
         </tbody>
       </table>
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 flex justify-center text-[8px] md:text-lg">
         {currentPage > 0 && (
           <a href={`/admin?start=${currentPage - 1}`} className="mr-4 p-4 bg-yellow-300 text-black">
             Previous 10
