@@ -62,7 +62,7 @@ const PageMint = () => {
   }, [isLoaded])
   return (
     <>
-      <div className="w-2/5">
+      <div className="px-10 lg:w-2/5">
         <div className="p-4">
           <PublicMintBox />
         </div>

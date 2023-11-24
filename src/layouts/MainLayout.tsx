@@ -26,14 +26,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Web3Wrapper>
-      {backgroundImage && <img src={backgroundImage} className="mask-image absolute object-cover w-screen -z-10" />}
+      {backgroundImage && <img src={backgroundImage} className="mask-image absolute object-cover w-screen -z-10 h-screen" />}
       <Header />
       <hr className="h-px mb-8 bg-white border-0 dark:bg-gray-700" />
       <div className="container mx-auto text-white">
         <Outlet />
       </div>
-      <AlertBox />
-    </Web3Wrapper>
+    </Web3Wrapper> 
   )
 }
 

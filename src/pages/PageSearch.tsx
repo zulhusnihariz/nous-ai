@@ -190,7 +190,7 @@ const PageSearch = () => {
                 <StackIcon />
                 <TypographyNormal>Quick Links</TypographyNormal>
               </h3>
-              <div className="grid grid-cols-3 gap-2 mt-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                 {quickLinks.map((link, index) => (
                   <div
                     key={index}
