@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Disclosure } from '@headlessui/react'
 
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore, useNousStore } from 'store'
@@ -16,6 +16,7 @@ export default function Header() {
   const { address, isConnected } = useAccount()
   const wallet = useConnectedWallet()
   const { chain } = useNetwork()
+  const location = useLocation()
 
   useEffect(() => {
     if (isConnected) {
@@ -47,7 +48,7 @@ export default function Header() {
 
   return (
     <Disclosure as="nav" className="bg-transparent">
-      <div className="mx-auto max-w-[3840px] py-1">
+      <div className="mx-auto max-w-[3840px]">
         <div className="relative flex h-16 items-center justify-between px-3">
           <div className="flex flex-shrink-0 items-center">
             <Link to="/">
@@ -55,10 +56,12 @@ export default function Header() {
               <img className="hidden h-16 w-auto lg:block" src={logo} alt="Nous Psyche" />
             </Link>
           </div>
-          <div className="flex gap-3 text-white">
+          <div className="flex text-white h-full">
             <Link
               to="/mint"
-              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+              className={`flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
+                location.pathname === '/mint' ? 'bg-blue-600/80' : ''
+              }`}
             >
               <MintIcon /> Mint
             </Link>
@@ -66,7 +69,9 @@ export default function Header() {
               <>
                 <Link
                   to="/inventory"
-                  className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+                  className={`flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
+                    location.pathname === '/inventory' ? 'bg-blue-600/80' : ''
+                  }`}
                 >
                   <InventoryIcon /> Inventory
                 </Link>
@@ -75,17 +80,12 @@ export default function Header() {
 
             <Link
               to="/explorer"
-              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
+              className={`flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
+                location.pathname === '/explorer' ? 'bg-blue-600/80' : ''
+              }`}
             >
               <CommunityIcon />
               Explorer
-            </Link>
-            <Link
-              to="/quests"
-              className="flex items-center gap-2 px-4 h-10 py-2 hover:bg-orange-200 hover:text-orange-800 rounded-lg"
-            >
-              <QuestIcon />
-              Quests
             </Link>
           </div>
           <ConnectButton

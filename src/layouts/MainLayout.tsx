@@ -9,18 +9,26 @@ interface BackgroundImages {
 }
 const backgroundImages: BackgroundImages = {
   '/mint': '/img/minting.png',
+  '/perks': '/img/workshop.png',
+  '/search': '',
 }
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation()
 
-  const backgroundImage = backgroundImages[location.pathname] || '/img/bg.png'
+  let backgroundImage = ''
+
+  if (backgroundImages[location.pathname] === 'none') {
+    backgroundImage = ''
+  } else {
+    backgroundImage = backgroundImages[location.pathname] || '/img/bg.png'
+  }
 
   return (
     <Web3Wrapper>
-      <img src={backgroundImage} className="absolute object-cover w-screen -z-10" />
+      {backgroundImage && <img src={backgroundImage} className="mask-image absolute object-cover w-screen -z-10" />}
       <Header />
-      <hr className="h-px mb-8 bg-gray-700 border-0 dark:bg-gray-700" />
+      <hr className="h-px mb-8 bg-white border-0 dark:bg-gray-700" />
       <div className="container mx-auto text-white">
         <Outlet />
       </div>
