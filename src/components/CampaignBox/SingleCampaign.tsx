@@ -196,9 +196,7 @@ const SingleCampaignBox = () => {
                         </div>
                       )}
                       <div
-                        className={`flex flex-col ${
-                          modal.campaign.campaign?.merkleTreeRoot ? 'bg-blue-600/40 blur' : ''
-                        }`}
+                        className={`flex flex-col ${modal.campaign.campaign.isOngoing ? 'bg-blue-600/40 blur' : ''}`}
                       >
                         {modal.campaign.campaign?.quests.map((quest, index) => (
                           <div

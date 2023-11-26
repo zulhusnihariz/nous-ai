@@ -38,6 +38,7 @@ const useGetCampaignsByTokenId = (tokenId?: string) => {
     },
     enabled: tokenId !== undefined,
     staleTime: 1000,
+    refetchOnWindowFocus: true,
   })
 }
 

@@ -1,5 +1,6 @@
 import TypographyNormal from 'components/Typography/Normal'
 import { Campaign } from 'lib/Quest'
+import { useEffect } from 'react'
 import { useBoundStore } from 'store'
 
 interface Prop {
@@ -15,6 +16,11 @@ const CampaignBox = ({ campaign, selectedIndex, onCampaignClicked }: Prop) => {
     setModalState({ campaign: { isOpen: true, campaign } })
     onCampaignClicked(campaign._id)
   }
+
+  useEffect(() => {
+    setModalState({ campaign: { isOpen: true, campaign } })
+  }, [campaign])
+
   return (
     <>
       <article
