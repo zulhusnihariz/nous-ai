@@ -25,6 +25,7 @@ export type Modal = {
   selectNous: ModalState
   campaign: ModalState & { campaign?: Campaign }
   alert: ModalState & { state: string } & { message: string }
+  smallMenu: ModalState
 }
 
 export interface ModalSlice {
@@ -82,6 +83,9 @@ const initialModal = {
       isOpen: false,
       state: '',
       message: '',
+    },
+    smallMenu: {
+      isOpen: false,
     },
   },
 }
