@@ -167,7 +167,7 @@ const PageSearch = () => {
 
   return (
     <>
-      <div className="flex mx-auto w-4/5 md:w-3/4 justify-center bg-green-800/80 backdrop-blur pb-40">
+      <div className="flex mx-auto w-[96%] md:w-3/4 justify-center bg-green-800/80 backdrop-blur pb-40">
         <main className="w-full">
           {faqs.map((faq, index) => (
             <div key={index}>

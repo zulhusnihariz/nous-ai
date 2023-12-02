@@ -45,7 +45,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
   return (
     <div className="relative py-6">
       <div className="relative sm:w-full md:w-3/4 lg:w-1/2 mx-auto px-4">
-        <div className="bg-blue-800 text-white p-1 text-xs border-blue-600 border">Press ENTER to submit</div>
+        <div className="bg-blue-800 text-white p-1 text-xs border-blue-600 border invisible md:visible">Press ENTER to submit</div>
         <textarea
           id="message"
           ref={textAreaRef}
@@ -60,15 +60,15 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
           rows={2}
           disabled={prop.disable}
         />
-        <span className="absolute inset-y-0 end-0 grid w-20 place-content-center">
-          {/* <button
+        <span className="absolute -bottom-4 inset-y-0 end-0 grid w-20 place-content-center visible md:invisible">
+          <button
             type="button"
-            className="rounded-full border ring-1 ring-white border-black bg-indigo-400 p-3 text-black hover:bg-indigo-300 hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
+            className="rounded-full border ring-1 ring-white border-black bg-indigo-400 p-2 text-black hover:bg-indigo-300 hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
             onClick={onSubmit}
             disabled={prop.disable}
           >
             <SubmitChat />
-          </button> */}
+          </button>
         </span>
       </div>
     </div>

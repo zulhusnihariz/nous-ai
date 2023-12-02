@@ -164,7 +164,7 @@ const SingleCampaignBox = () => {
               leaveFrom="opacity-100 translate-x-0"
               leaveTo="opacity-0 translate-x-full"
             >
-              <div className="fixed left-1/2 md:w-2/4 top-1/2 -translate-x-1 -translate-y-1/2 transform backdrop-blur bg-blue-600/80 ring-1 ring-white text-white h-full w-full">
+              <div className="fixed left-0 md:left-1/2 md:w-2/4 top-1/2 -translate-x-1 -translate-y-1/2 transform backdrop-blur bg-blue-600/80 ring-1 ring-white text-white h-full w-full">
                 <Dialog.Panel className="">
                   <div className="flex flex-col justify-center">
                     <h3 className="font-semibold text-2xl p-4 bg-blue-500/70">
@@ -177,7 +177,7 @@ const SingleCampaignBox = () => {
                       <h4 className="text-yellow-400 text-sm">
                         <TypographyNormal>Reward Perks</TypographyNormal>
                       </h4>
-                      <div className="grid grid-cols-3 gap-2 mt-2">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-2">
                         {modal.campaign.campaign?.perks &&
                           modal.campaign.campaign?.perks.map((perk, index) => {
                             return (

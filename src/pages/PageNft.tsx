@@ -137,8 +137,8 @@ const PageNft = () => {
   return (
     <>
       {nft && (
-        <div className="flex justify-center">
-          <div className="block w-3/4">
+        <div className="flex justify-center mb-10">
+          <div className="block w-[90%] md:w-3/4">
             <div className="bg-[#181818] rounded p-4">
               <div className="flex">
                 <div className="flex-auto w-1/4">
@@ -146,8 +146,8 @@ const PageNft = () => {
                 </div>
                 <div className="flex-auto w-3/4 px-5">
                   <div className="">
-                    <div className="text-2xl font-bold">{nft.metadata.name}</div>
-                    <div className="mt-2 grid grid-cols-3 gap-2">
+                    <div className="text-lg md:text-2xl font-bold">{nft.metadata.name}</div>
+                    <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
                       {bot_level && bot_level.content?.level >= 0 && (
                         <div className="bg-yellow-300 text-black rounded-md p-2">
                           <div className="text-xs text-yellow-800 uppercase">Level</div>
@@ -157,7 +157,7 @@ const PageNft = () => {
                       {!bot_level && (
                         <div className="bg-yellow-300 text-black rounded-md p-2">
                           <div className="text-xs text-yellow-800 uppercase">Level</div>
-                          <div className="uppercase font-semibold">Not Activated</div>
+                          <div className="uppercase font-semibold text-xs">Not Activated</div>
                         </div>
                       )}
                       {nous_id && nous_id?.content && (
@@ -190,7 +190,7 @@ const PageNft = () => {
             </div>
 
             <div className="mt-5 bg-[#181818] rounded p-4">
-              <div className="text-2xl font-semibold mb-4">Tools</div>
+              <div className="text-lg md:text-2xl font-semibold mb-4">Tools</div>
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
                 {nous_id && <GenericButton name="Chat" onClick={goToChatroom} />}
 
@@ -203,8 +203,8 @@ const PageNft = () => {
               </div>
             </div>
 
-            <div className="mt-5 bg-[#181818] rounded p-4">
-              <div className="text-2xl font-semibold mb-4">Purchased Perks</div>
+            <div className="mt-5 bg-[#181818] rounded pt-4 pb-8 px-4">
+              <div className="text-lg md:text-2xl font-semibold mb-4">Purchased Perks</div>
               <div className="grid gap-4 sm:grid-cols-4">
                 {perks?.map((perk, index) => <PerkCardNft key={index} perk={perk} tokenId={nft.token_id} />)}
               </div>
