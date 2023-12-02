@@ -66,6 +66,7 @@ const createDefaultMetadata = (token_id: string) => {
     token_id,
     chain_id: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
     dataKey: '',
+    latestPrice: 0,
     metadata: {
       name: '',
       image: '',
@@ -292,11 +293,6 @@ const useGetAllBots = (size: number, page: number) => {
     queryFn: async () => {
       const nfts: ({ dataKey: string } & Nft & NousNft)[] = []
 
-      // const res = await getNftsByContractAddress(
-      //   import.meta.env.VITE_NOUS_AI_NFT as string,
-      //   chainIdToNetwork(import.meta.env.VITE_DEFAULT_CHAIN_ID as string)
-      // )
-
       const { data } = await getNftsByPage({ first: size, skip: size * page })
 
       const tokenIds = data.tokens.map((nft: any) => nft.tokenId)
@@ -304,6 +300,7 @@ const useGetAllBots = (size: number, page: number) => {
       for (let i = 0; i < tokenIds.length; i++) {
         const tokenId = tokenIds[i]
         const json = createDefaultMetadata(tokenId)
+        json.latestPrice = data.tokens[i].latestPrice
 
         const [
           contentFromMetadata,

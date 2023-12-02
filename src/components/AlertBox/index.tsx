@@ -8,7 +8,10 @@ const AlertBox = () => {
   const { modal, setModalState } = useBoundStore()
 
   const onCloseModal = () => {
-    setModalState({ alert: { isOpen: false, state: '', message: '' } })
+    if (modal.alert.onOkClicked) {
+      modal.alert.onOkClicked()
+    }
+    setModalState({ alert: { isOpen: false, state: '', message: '', onOkClicked: () => {} } })
   }
 
   return (

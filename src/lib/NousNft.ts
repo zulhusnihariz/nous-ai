@@ -2,6 +2,7 @@ import { NftMetadata } from './NftMetadata'
 
 export type NousNft = {
   metadata: NftMetadata & { version: string }
+  latestPrice: number
   knowledge: string[]
   nous: NousMetadata & { version: string }
   token: {

@@ -167,7 +167,7 @@ const PageSearch = () => {
 
   return (
     <>
-      <div className="flex mx-auto w-4/5 md:w-3/4 justify-center bg-green-800/80 backdrop-blur pb-40">
+      <div className="flex mx-auto w-[96%] md:w-3/4 justify-center bg-green-800/80 backdrop-blur pb-40">
         <main className="w-full">
           {faqs.map((faq, index) => (
             <div key={index}>
@@ -190,7 +190,7 @@ const PageSearch = () => {
                 <StackIcon />
                 <TypographyNormal>Quick Links</TypographyNormal>
               </h3>
-              <div className="grid grid-cols-3 gap-2 mt-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                 {quickLinks.map((link, index) => (
                   <div
                     key={index}

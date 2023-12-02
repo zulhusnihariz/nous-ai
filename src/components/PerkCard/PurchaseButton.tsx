@@ -14,8 +14,6 @@ interface Prop {
 }
 
 const PurchaseButton = (prop: Prop) => {
-  const queryClient = useQueryClient()
-
   const { purchasePerk, isLoading, error } = usePurchasePerk({
     perk: prop.perk,
     mintPrice: prop.mintPrice,
@@ -37,8 +35,6 @@ const PurchaseButton = (prop: Prop) => {
       setModalState({
         alert: { isOpen: true, state: 'success', message: `Purchase Perk ver. ${prop.perk.id} success` },
       })
-
-      await queryClient.invalidateQueries([RQ_KEY.GET_PERK_BY_TOKEN_ID, prop.perk.id])
     } catch (e) {
       setModalState({
         alert: { isOpen: true, state: 'failed', message: `Purchase Perk ver. ${prop.perk.id} failed: ${error}` },

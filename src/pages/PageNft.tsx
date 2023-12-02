@@ -15,6 +15,10 @@ import { useGetPerkByTokenId } from 'repositories/perk.repository'
 import Avatar from 'components/Avatar'
 import PerkCardNft from 'components/PerkCard/PerkCardNft'
 import GenericButton from 'components/Button/GenericButton'
+import TypographyNormal from 'components/Typography/Normal'
+import useReferralCode from 'components/Exchange/hooks/useReferralCode'
+import ExchangeAssignRefCodeButton from 'components/Exchange/AssignCodeButton'
+import useClipboard from 'hooks/useClipboard'
 
 const PageNft = () => {
   const location = useLocation()
@@ -23,6 +27,7 @@ const PageNft = () => {
   const { setModalState } = useBoundStore()
   const { address } = useConnectedWallet()
   const { setOwnedPerks } = useNousStore()
+  const copyToClipboard = useClipboard()
 
   const { nft } = location.state || {}
 
@@ -56,6 +61,7 @@ const PageNft = () => {
   })
 
   const { data: owned } = useGetOwnedNousMetadatas(address.full)
+  const { refCode } = useReferralCode()
 
   useEffect(() => {
     if (!nft || !nft.token) {
@@ -134,34 +140,38 @@ const PageNft = () => {
     }
   }
 
+  const handleCopyRefCode = async (text: string) => {
+    await copyToClipboard(text)
+  }
+
   return (
     <>
       {nft && (
-        <div className="flex justify-center">
-          <div className="block w-3/4">
-            <div className="bg-[#181818] rounded p-4">
+        <div className="flex justify-center mb-10">
+          <div className="block w-[90%] md:w-3/4">
+            <div className="bg-blue-600/80 ring ring-white border border-blue-600 backdrop-blur p-4">
               <div className="flex">
                 <div className="flex-auto w-1/4">
                   <Avatar imgMain={nft.metadata.image} imgBadge={badge?.content.src} badgeSize="12" />
                 </div>
                 <div className="flex-auto w-3/4 px-5">
                   <div className="">
-                    <div className="text-2xl font-bold">{nft.metadata.name}</div>
-                    <div className="mt-2 grid grid-cols-3 gap-2">
+                    <div className="text-lg md:text-2xl font-bold">{nft.metadata.name}</div>
+                    <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
                       {bot_level && bot_level.content?.level >= 0 && (
-                        <div className="bg-yellow-300 text-black rounded-md p-2">
+                        <div className="bg-yellow-300 text-black ring-1 ring-yellow-600 p-2">
                           <div className="text-xs text-yellow-800 uppercase">Level</div>
                           <div className="uppercase font-semibold">Level {bot_level.content?.level}</div>
                         </div>
                       )}
                       {!bot_level && (
-                        <div className="bg-yellow-300 text-black rounded-md p-2">
+                        <div className="bg-yellow-300 text-black ring-1 ring-yellow-600 p-2">
                           <div className="text-xs text-yellow-800 uppercase">Level</div>
-                          <div className="uppercase font-semibold">Not Activated</div>
+                          <div className="uppercase font-semibold text-xs">Not Activated</div>
                         </div>
                       )}
                       {nous_id && nous_id?.content && (
-                        <div className="bg-slate-700 text-black rounded-md p-2">
+                        <div className="bg-slate-700 text-black ring-1 ring-black p-2">
                           <div className="text-xs text-slate-400 uppercase">Bot</div>
                           <div className="text-gray-300 flex items-center gap-2 uppercase font-semibold">
                             <VerifiedNousIcon /> Nous Activated
@@ -169,13 +179,13 @@ const PageNft = () => {
                         </div>
                       )}
                       {nouskb && (
-                        <div className="bg-slate-700 text-black rounded-md p-2">
+                        <div className="bg-slate-700 text-black ring-1 ring-black p-2">
                           <div className="text-xs text-slate-400 uppercase">Knowledge Size</div>
                           <div className="text-gray-300 uppercase font-semibold">{nouskb.content.size_in_mb} MB</div>
                         </div>
                       )}
                       {access && (
-                        <div className="bg-slate-700 text-black rounded-md p-2">
+                        <div className="bg-slate-700 text-black ring-1 ring-black p-2">
                           <div className="text-xs text-slate-400 uppercase">Access</div>
                           <div className="text-gray-300 uppercase font-semibold">{access.content}</div>
                         </div>
@@ -188,9 +198,20 @@ const PageNft = () => {
                 </div>
               </div>
             </div>
+            <div className="mt-5 p-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ring ring-white/90 from-green-500 to-green-600">
+              <div className="text-md tracking-wider font-semibold mb-2">
+                <TypographyNormal classNames="uppercase text-yellow-400">Referral Code</TypographyNormal>
+              </div>
+              {refCode && (
+                <span onClick={() => handleCopyRefCode(refCode)}>
+                  <TypographyNormal classNames="text-sm text-white cursor-pointer">{refCode}</TypographyNormal>
+                </span>
+              )}
+              {!refCode && <ExchangeAssignRefCodeButton />}
+            </div>
 
-            <div className="mt-5 bg-[#181818] rounded p-4">
-              <div className="text-2xl font-semibold mb-4">Tools</div>
+            <div className="mt-5 bg-blue-600/80 ring ring-white border border-blue-600 backdrop-blur p-4">
+              <div className="text-lg md:text-2xl font-semibold mb-4">Tools</div>
               <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-4">
                 {nous_id && <GenericButton name="Chat" onClick={goToChatroom} />}
 
@@ -203,8 +224,8 @@ const PageNft = () => {
               </div>
             </div>
 
-            <div className="mt-5 bg-[#181818] rounded p-4">
-              <div className="text-2xl font-semibold mb-4">Purchased Perks</div>
+            <div className="mt-5 bg-[#181818] rounded pt-4 pb-8 px-4">
+              <div className="text-lg md:text-2xl font-semibold mb-4">Purchased Perks</div>
               <div className="grid gap-4 sm:grid-cols-4">
                 {perks?.map((perk, index) => <PerkCardNft key={index} perk={perk} tokenId={nft.token_id} />)}
               </div>

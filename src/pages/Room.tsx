@@ -108,9 +108,9 @@ const PageRoom = () => {
     <>
       <div className="min-h-screen z-0 pb-72">
         <div className="relative h-screen z-10 pb-[230px]">
-          <div className="w-full mt-4">
+          <button className="mt-4 mx-2 py-2 px-4 bg-gray-600 border-white border-[1px] text-sm">
             <Link to="/inventory">Back to NFT</Link>
-          </div>
+          </button>
           <div className="flex flex-col w-full h-screen">
             <div className="flex-1 p-2">
               {chats.map((chat, index) => {

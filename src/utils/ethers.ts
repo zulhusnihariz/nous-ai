@@ -7,7 +7,7 @@ export type CallContractMethodArgs = {
   data: string[]
   method: string
   options?: {
-    value: string
+    value?: string
   }
 }
 

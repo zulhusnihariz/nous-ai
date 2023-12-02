@@ -25,4 +25,7 @@ export enum RQ_KEY {
   GET_LINEAGE_NFT_METADATA = 'get_lineage_nft_metadata',
   GET_DIRECTORY = 'get_directory',
   GET_LINEAGE_NFT_TOKEN = 'get_lineage_nft_token',
+  // PATREON
+  GET_TOTAL_PATREON_VALUE = 'get_total_patreon_value',
+  GET_PATREON_TX_BY_TOKEN_ID = 'get_patreon_tx_by_token_id',
 }

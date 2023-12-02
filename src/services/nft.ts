@@ -10,6 +10,7 @@ export const getNftsByPage = async (variables?: ApolloClientFilter) => {
         owner {
           id
         }
+        latestPrice
       }
     }
   `
@@ -17,5 +18,21 @@ export const getNftsByPage = async (variables?: ApolloClientFilter) => {
   return apolloQuery<{ tokens: Token[] }>({
     query,
     variables,
+  })
+}
+
+export const getNftsLatestPrice = async (tokenIds: number[]) => {
+  const query = `
+    query GetTokensLatestPrice($tokenIds: [Int!]) {
+      tokens(where: { tokenId_in: $tokenIds }) {
+        tokenId
+        latestPrice
+      }
+    }
+  `
+
+  return apolloQuery<{ tokens: Token[] }>({
+    query,
+    variables: { tokenIds },
   })
 }
