@@ -34,6 +34,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="container mx-auto text-white">
         <Outlet />
       </div>
+      <AlertBox />
     </Web3Wrapper>
   )
 }
