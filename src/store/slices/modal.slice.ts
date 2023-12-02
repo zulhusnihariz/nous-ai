@@ -104,9 +104,6 @@ const initialModal = {
     smallMenu: {
       isOpen: false,
     },
-    smallMenu: {
-      isOpen: false,
-    },
   },
 }
 
