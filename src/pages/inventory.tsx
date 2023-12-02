@@ -42,14 +42,14 @@ const PageInventory = () => {
         <div className="h-full">
           <div className="p-4">
             <div className="flex justify-start gap-2">
-              <GenericButton name="Mint Nous Psyche" onClick={goToMintPage} />
-              <GenericButton name="Opensea" color="blue" textColor="text-blue-600" onClick={() => {}} />
+              <GenericButton name="Mint Nous Psyche" className="text-xs lg:text-sm" onClick={goToMintPage} />
+              <GenericButton name="Opensea" color="blue" className="text-xs lg:text-sm" textColor="text-blue-600" onClick={() => {}} />
             </div>
             <div className="grid gap-2 sm:grid-cols-1 md:grid-cols-2">
               <div className="w-full">
-                <div className="mt-4 flex flex-col gap-2">
+                <div className="mt-4 flex flex-col gap-2 py-4 md:py-0">
                   {nfts?.map((nft, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={index} className="flex flex-col md:flex-row gap-2 items-center">
                       <div
                         onClick={() => onHandleNftClick(index)}
                         className={`backdrop-blur ring-2 ring-white border border-black cursor-pointer w-3/4 ${
@@ -60,14 +60,14 @@ const PageInventory = () => {
                           <>
                             <div className="flex justify-between p-2">
                               <div className="flex flex-col justify-center">
-                                <TypographyNormal>{nft.metadata.name}</TypographyNormal>
+                                <TypographyNormal classNames="text-xs lg:text-sm">{nft.metadata.name}</TypographyNormal>
                                 {nft.stat && nft.stat.level && (
                                   <TypographyNormal classNames="uppercase font-bold text-yellow-300">
                                     Level {nft.stat.level}
                                   </TypographyNormal>
                                 )}
                                 {nft.stat && !nft.stat.level && (
-                                  <TypographyNormal classNames="uppercase font-bold text-yellow-300">
+                                  <TypographyNormal classNames="uppercase font-bold text-yellow-300 text-sm lg:text-[16px]">
                                     Not activated
                                   </TypographyNormal>
                                 )}
@@ -77,12 +77,15 @@ const PageInventory = () => {
                           </>
                         )}
                       </div>
-                      {selectedNftIndex === index && (
-                        <GenericButton
-                          name="Customize"
-                          onClick={() => onHandleCustomizeClick(nfts[selectedNftIndex])}
-                        />
-                      )}
+                      <div>
+                        {selectedNftIndex === index && (
+                          <GenericButton
+                            name="Customize"
+                            className="text-xs lg:text-sm"
+                            onClick={() => onHandleCustomizeClick(nfts[selectedNftIndex])}
+                          />
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -93,7 +96,7 @@ const PageInventory = () => {
                     <Avatar
                       imgMain={nfts[selectedNftIndex].metadata.image}
                       imgBadge={nfts[selectedNftIndex].achievement?.badge}
-                      className="h-96 w-96"
+                      className="pt-4 md:pt-0 h-62 w-62 md:h-56 md:w-56 lg:h-96 lg:w-96"
                       badgeSize="20"
                     />
                   </>

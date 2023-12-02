@@ -94,7 +94,7 @@ const PublicMintBox = () => {
 
   return (
     <>
-      <div className="p-4 mt-4 mb-4 text-center">
+      <div className="flex flex-col gap-y-4 p-4 mt-4 mb-4 text-center">
         {isLoaded && !isDisabled && address && (
           <GenericButton
             name={'Mint Nous Psyche'}

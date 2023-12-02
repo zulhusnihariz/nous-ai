@@ -28,9 +28,9 @@ const PageIndex = () => {
   }
 
   return (
-    <div className="h-full w-4/5 mx-auto flex flex-col justify-center items-center">
+    <div className="h-full w-[92%] md:w-4/5 mx-auto flex flex-col justify-center items-center">
       <section className="">
-        <h3 className=" w-full p-5 text-center font-semibold text-2xl md:text-4xl">
+        <h3 className=" w-full py-5 text-center font-semibold text-2xl md:text-4xl">
           <TypographyNormal>
             Welcome to <span className="text-yellow-500">Nous Psyche</span>
           </TypographyNormal>
@@ -44,7 +44,7 @@ const PageIndex = () => {
             <input
               type="text"
               placeholder="Ask anything..."
-              className="border border-gray-300 bg-[#181818] placeholder:text-gray-300 placeholder:italic md:w-3/4 lg:w-1/2 rounded-md p-2 outline-none focus:outline-white focus:border-none"
+              className="border border-gray-300 bg-[#181818] placeholder:text-gray-300 placeholder:italic w-5/6 md:w-3/4 lg:w-1/2 rounded-md p-2 outline-none focus:outline-white focus:border-none"
               onKeyUp={handleKeyUp}
               onChange={e => setInputValue(e.target.value)}
             />

@@ -1,8 +1,10 @@
 import { ethers } from 'ethers'
 import { Perk } from 'lib/Perk'
 import { useCallback, useState } from 'react'
+import { RQ_KEY } from 'repositories'
 import { useNousStore } from 'store'
 import RPC from 'utils/ethers'
+import { useQueryClient } from 'wagmi'
 
 interface PurchaseButtonProps {
   perk: Perk
@@ -33,6 +35,8 @@ const usePurchasePerk = ({ perk, mintPrice }: PurchaseButtonProps) => {
 
   const { selectedNous } = useNousStore()
 
+  const queryClient = useQueryClient()
+
   const purchasePerk = useCallback(async () => {
     setIsLoading(true)
     setError('')
@@ -41,6 +45,7 @@ const usePurchasePerk = ({ perk, mintPrice }: PurchaseButtonProps) => {
 
     try {
       const rpc = new RPC(window?.ethereum as any)
+
       await rpc.callContractMethod({
         contractABI,
         contractAddress: import.meta.env.VITE_NOUS_AI_NFT as string,
@@ -55,6 +60,7 @@ const usePurchasePerk = ({ perk, mintPrice }: PurchaseButtonProps) => {
       throw new Error(error.reason as string)
     } finally {
       setIsLoading(false)
+      await queryClient.invalidateQueries([RQ_KEY.GET_PERK_BY_TOKEN_ID, Number(selectedNous?.token_id)])
     }
   }, [mintPrice, perk, selectedNous])
 
