@@ -19,6 +19,7 @@ export interface Token {
   tokenId: string
   metadataURI?: string
   owner: { id: string }
+  latestPrice: number
 }
 
 export interface TokenPerk {

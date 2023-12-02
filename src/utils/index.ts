@@ -1,5 +1,5 @@
 import { SHA256 } from 'crypto-js'
-import { encode } from 'bs58'
+import { decode, encode } from 'bs58'
 
 export * from './abbreviate-balance'
 
@@ -122,6 +122,17 @@ export function formatDataKey(chain_id: String, address: String, token_id: Strin
   return encode(uint8Array)
 }
 
+export function hexToBase58(hexString: string) {
+  const cleanHexString = hexString.startsWith('0x') ? hexString.substring(2) : hexString
+  const uint8Array = hexToUint8Array(cleanHexString)
+  return encode(uint8Array)
+}
+
+export function base58ToHex(base58string: string) {
+  const uint8Array = decode(base58string)
+  return `0x${Buffer.from(uint8Array).toString('hex')}`
+}
+
 function hexToUint8Array(hexString: String): Uint8Array {
   if (hexString.length % 2 !== 0) {
     throw new Error('Invalid hex string')
@@ -202,4 +213,8 @@ export function convertSnakeToCamelCase(obj: Record<string, any>): any {
   }
 
   return obj
+}
+
+export function displayShortAddress(str: string) {
+  return str.substring(0, 6) + '...' + str.substring(str.length - 4)
 }

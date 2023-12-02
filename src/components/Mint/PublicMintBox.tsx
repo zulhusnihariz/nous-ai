@@ -5,6 +5,8 @@ import { useAccount } from 'wagmi'
 import useMinting from './hooks'
 import GenericButton from 'components/Button/GenericButton'
 import TypographyNormal from 'components/Typography/Normal'
+import { useBoundStore } from 'store'
+import { useNavigate } from 'react-router-dom'
 
 const contractABI = [
   {
@@ -32,11 +34,14 @@ const contractABI = [
 
 const PublicMintBox = () => {
   const [isDisabled, setDisabled] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isAbleToMint, setIsAbleToMint] = useState(false)
   const { address } = useAccount()
 
   const { canMint } = useMinting()
+  const { setModalState } = useBoundStore()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const checkEligible = async () => {
@@ -55,6 +60,8 @@ const PublicMintBox = () => {
       return
     }
 
+    setIsLoading(true)
+
     const rpc = new RPC(window?.ethereum as any)
 
     try {
@@ -67,8 +74,23 @@ const PublicMintBox = () => {
           value: '0',
         },
       })
+
+      setModalState({
+        alert: {
+          isOpen: true,
+          state: 'success',
+          message: 'Minting completed',
+          onOkClicked: () => {
+            navigate('/inventory')
+            window.location.reload()
+          },
+        },
+      })
     } catch (e) {
+      setModalState({ alert: { isOpen: true, state: 'failed', message: (e as any).reason } })
       console.log(e)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -97,15 +119,15 @@ const PublicMintBox = () => {
       <div className="flex flex-col gap-y-4 p-4 mt-4 mb-4 text-center">
         {isLoaded && !isDisabled && address && (
           <GenericButton
-            name={'Mint Nous Psyche'}
+            name={isLoading ? 'Processing...' : 'Mint Nous Psyche'}
             onClick={e => handleOnMintClicked()}
-            disabled={isLoaded && isDisabled && address}
-            className="text-2xl"
+            disabled={isLoading || (isLoaded && isDisabled && address)}
+            className="text-xl"
             color="yellow"
             textColor="text-yellow-600"
           />
         )}
-        {address && !isAbleToMint && (
+        {isLoaded && address && !isAbleToMint && (
           <TypographyNormal classNames="text-red-600">Restricted only to a single NFT per wallet</TypographyNormal>
         )}
         {!address && <TypographyNormal classNames="text-md text-white">Connect to your wallet</TypographyNormal>}

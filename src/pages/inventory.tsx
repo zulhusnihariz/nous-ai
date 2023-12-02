@@ -43,13 +43,19 @@ const PageInventory = () => {
           <div className="p-4">
             <div className="flex justify-start gap-2">
               <GenericButton name="Mint Nous Psyche" className="text-xs lg:text-sm" onClick={goToMintPage} />
-              <GenericButton name="Opensea" color="blue" className="text-xs lg:text-sm" textColor="text-blue-600" onClick={() => {}} />
+              <GenericButton
+                name="Opensea"
+                color="blue"
+                className="text-xs lg:text-sm"
+                textColor="text-blue-600"
+                onClick={() => window.open('https://opensea.io/collection/thenouspsyche', '_blank')}
+              />
             </div>
             <div className="grid gap-2 sm:grid-cols-1 md:grid-cols-2">
               <div className="w-full">
-                <div className="mt-4 flex flex-col gap-2 py-4 md:py-0">
+                <div className="mt-4 flex items-center gap-2 py-4 md:py-0 w-full">
                   {nfts?.map((nft, index) => (
-                    <div key={index} className="flex flex-col md:flex-row gap-2 items-center">
+                    <div key={index} className="flex gap-2 items-center w-full">
                       <div
                         onClick={() => onHandleNftClick(index)}
                         className={`backdrop-blur ring-2 ring-white border border-black cursor-pointer w-3/4 ${
@@ -81,7 +87,7 @@ const PageInventory = () => {
                         {selectedNftIndex === index && (
                           <GenericButton
                             name="Customize"
-                            className="text-xs lg:text-sm"
+                            className="text-xs py-6 lg:text-sm"
                             onClick={() => onHandleCustomizeClick(nfts[selectedNftIndex])}
                           />
                         )}
@@ -90,13 +96,13 @@ const PageInventory = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center mt-4">
                 {nfts && nfts[selectedNftIndex] && (
                   <>
                     <Avatar
                       imgMain={nfts[selectedNftIndex].metadata.image}
                       imgBadge={nfts[selectedNftIndex].achievement?.badge}
-                      className="pt-4 md:pt-0 h-62 w-62 md:h-56 md:w-56 lg:h-96 lg:w-96"
+                      className="h-62 w-62 md:h-56 md:w-56 lg:h-96 lg:w-96"
                       badgeSize="20"
                     />
                   </>

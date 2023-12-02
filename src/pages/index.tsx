@@ -2,7 +2,7 @@ import { ExclamationIcon } from 'components/Icons/icons'
 import TypographyNormal from 'components/Typography/Normal'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import botFaq from '/public/img/botfaq.svg'
+import botFaq from '/img/botfaq.svg'
 
 const quickLinks = [
   'What is Nous Psyche?',

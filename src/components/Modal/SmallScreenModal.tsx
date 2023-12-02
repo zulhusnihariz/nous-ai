@@ -96,6 +96,21 @@ const SmallScreenModal = () => {
                         </>
                       )}
 
+                      {address && (
+                        <>
+                          <Link
+                            to="/subscription"
+                            className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700 `}
+                            onClick={() => {
+                              closeDialog()
+                            }}
+                          >
+                            <InventoryIcon /> <span className="pl-4">Subscription</span>
+                          </Link>
+                          <hr />
+                        </>
+                      )}
+
                       <Link
                         to="/explorer"
                         className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700

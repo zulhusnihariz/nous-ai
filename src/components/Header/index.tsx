@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { Link, useLocation } from 'react-router-dom'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
@@ -6,47 +6,39 @@ import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore, useNousStore } from 'store'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 import logo from '/img/logo.png'
-import { CommunityIcon, InventoryIcon, MintIcon, PerksIcon, QuestIcon } from 'components/Icons/icons'
+import { CommunityIcon, InventoryIcon, MintIcon, SubscribeIcon } from 'components/Icons/icons'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import SmallScreenModal from '../Modal/SmallScreenModal'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import SocialMedias from './SocialMedias'
 
 export default function Header() {
-  const { setCurrentWalletState, setWalletState, current, setModalState } = useBoundStore()
-  const { setSelectedNous, selectedNous } = useNousStore()
+  const { setCurrentWalletState, setWalletState, setModalState } = useBoundStore()
+  const { setSelectedNous } = useNousStore()
   const { address, isConnected } = useAccount()
   const wallet = useConnectedWallet()
   const { chain } = useNetwork()
   const location = useLocation()
+  const prevAddressRef = useRef(address)
 
   useEffect(() => {
     if (isConnected) {
-      if (address !== wallet.address.full) {
+      if (!wallet.address.full) {
+        wallet.refreshWallet()
+        setSelectedNous(undefined)
         setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
         setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
+      }
+
+      if (wallet.address.full && address !== prevAddressRef.current) {
+        window.location.reload()
       }
     }
 
     if (!isConnected) setCurrentWalletState({ chain: undefined })
 
-    if (address !== wallet.address.full) {
-      wallet.refreshWallet()
-      setCurrentWalletState({ chain: chain?.network as CURRENT_CHAIN, address, publicKey: address })
-      setWalletState({ evm: { address, publicKey: address, balance: { symbol: chain?.nativeCurrency.symbol } } })
-      setSelectedNous(undefined)
-    }
-  }, [
-    isConnected,
-    address,
-    setCurrentWalletState,
-    chain?.network,
-    chain?.nativeCurrency.symbol,
-    setWalletState,
-    setSelectedNous,
-    selectedNous,
-    wallet.address,
-  ])
+    prevAddressRef.current = address
+  }, [address, isConnected])
 
   const openModal = () => {
     setModalState({ smallMenu: { isOpen: true } })
@@ -92,6 +84,16 @@ export default function Header() {
             >
               <CommunityIcon />
               Explorer
+            </Link>
+
+            <Link
+              to="/subscribe"
+              className={`hidden sm:flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
+                location.pathname === '/subscribe' ? 'bg-blue-600/80' : ''
+              }`}
+            >
+              <SubscribeIcon />
+              Subscribe
             </Link>
           </div>
 

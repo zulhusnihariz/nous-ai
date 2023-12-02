@@ -31,6 +31,7 @@ import PageContainer from 'pages/Container'
 import PageBot2 from 'pages/Bot2'
 import PagePerks from 'pages/Perks'
 import PageQuest from 'pages/Quest'
+import PageExchange from 'pages/Exchange'
 
 const App = () => {
   return (
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/search" element={<PageSearch />} />
             <Route path="/perks" element={<PagePerks />} />
             <Route path="/quests" element={<PageQuest />} />
+            <Route path="/subscribe" element={<PageExchange />} />
             <Route path="/container/:key" element={<PageContainer />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>

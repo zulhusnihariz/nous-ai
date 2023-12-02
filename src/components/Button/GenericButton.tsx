@@ -1,6 +1,6 @@
 interface ButtonProp {
   className?: string
-  name: string
+  name?: string
   onClick: (e: any) => void
   icon?: React.ReactNode
   disabled?: boolean
@@ -13,10 +13,10 @@ const GenericButton = ({ name, onClick, icon, className, disabled, color, textCo
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`relative px-5 py-3 overflow-hidden font-medium ${
-        textColor ?? 'text-gray-600'
-      } bg-white border border-${color ?? 'gray'}-100 shadow-inner group ${className ?? ''} ${
-        disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+      className={`relative px-5 py-3 overflow-hidden font-medium ${textColor ?? 'text-gray-600'}  border border-${
+        color ?? 'gray'
+      }-100 shadow-inner group ${className ?? ''} ${
+        disabled ? 'cursor-not-allowed bg-slate-500' : 'bg-white cursor-pointer'
       }`}
     >
       <span
@@ -45,6 +45,7 @@ const GenericButton = ({ name, onClick, icon, className, disabled, color, textCo
         }-900 opacity-0 group-hover:opacity-100`}
       ></span>
       <span className="relative transition-colors duration-100 delay-200 group-hover:text-white ease">
+        {icon}
         <span className="uppercase">{name}</span>
       </span>
     </button>
