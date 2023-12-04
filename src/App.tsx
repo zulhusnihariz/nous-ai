@@ -21,7 +21,7 @@ import { ApiProvider } from 'hooks/use-api'
 import { LitProtocolProvider } from 'hooks/use-lit-protocol'
 import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
-import { RainbowKitProvider, connectorsForWallets, darkTheme, lightTheme, midnightTheme } from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, connectorsForWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import PageSearch from 'pages/PageSearch'
 import PageMint from 'pages/Mint'
@@ -32,6 +32,7 @@ import PageBot2 from 'pages/Bot2'
 import PagePerks from 'pages/Perks'
 import PageQuest from 'pages/Quest'
 import PageExchange from 'pages/Exchange'
+import { web3AuthConnector } from 'hooks/wagmi-web3auth-connector'
 
 const App = () => {
   return (
@@ -81,12 +82,7 @@ const { chains, publicClient } = configureChains(currentChain, [
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [
-      metaMaskWallet({
-        chains,
-        projectId: '_',
-      }),
-    ],
+    wallets: [web3AuthConnector({ chains }), metaMaskWallet({ chains, projectId: '_' })],
   },
 ])
 
