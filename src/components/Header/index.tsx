@@ -11,6 +11,7 @@ import SmallScreenModal from '../Modal/SmallScreenModal'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import SocialMedias from './SocialMedias'
 import { CustomConnectButton } from 'components/Button/CustomConnectButton'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export default function Header() {
   const { setCurrentWalletState, setWalletState, setModalState } = useBoundStore()
@@ -104,7 +105,13 @@ export default function Header() {
               </div>
             </div>
             <div className="block">
-              <CustomConnectButton />
+              <ConnectButton
+                chainStatus={'none'}
+                accountStatus={{
+                  smallScreen: 'avatar',
+                  largeScreen: 'avatar',
+                }}
+              />
             </div>
             <button type="button" className="block sm:hidden h-8 w-8 text-white" onClick={openModal}>
               <Bars3Icon />

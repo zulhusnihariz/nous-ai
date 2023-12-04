@@ -94,6 +94,10 @@ export const web3AuthConnector = ({ chains }: any) => {
               label: '',
               showOnModal: false,
             },
+            [WALLET_ADAPTERS.METAMASK]: {
+              label: '',
+              showOnModal: false,
+            },
           },
         },
       })
