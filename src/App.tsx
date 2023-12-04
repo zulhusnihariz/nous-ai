@@ -109,6 +109,7 @@ export function Web3Wrapper({ children }: { children: React.ReactNode }) {
         })}
         modalSize="compact"
         chains={chains}
+        initialChain={import.meta.env.VITE_MODE === 'production' ? base : polygonMumbai}
       >
         <IpfsProvider>
           <AlertMessageProvider>{children}</AlertMessageProvider>
