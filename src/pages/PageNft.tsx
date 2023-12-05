@@ -19,6 +19,7 @@ import TypographyNormal from 'components/Typography/Normal'
 import useReferralCode from 'components/Exchange/hooks/useReferralCode'
 import ExchangeAssignRefCodeButton from 'components/Exchange/AssignCodeButton'
 import useClipboard from 'hooks/useClipboard'
+import ReferralBox from 'components/Exchange/Referral'
 
 const PageNft = () => {
   const location = useLocation()
@@ -208,7 +209,14 @@ const PageNft = () => {
                   <TypographyNormal classNames="text-sm text-white cursor-pointer">{refCode}</TypographyNormal>
                 </span>
               )}
-              {!refCode && <ExchangeAssignRefCodeButton />}
+              <div className="flex justify-between">
+                {!refCode && <ExchangeAssignRefCodeButton />}
+                <GenericButton
+                  className="ml-4"
+                  name="Referral"
+                  onClick={() => setModalState({ referral: { isOpen: true } })}
+                />
+              </div>
             </div>
 
             <div className="mt-5 bg-blue-600/80 ring ring-white border border-blue-600 backdrop-blur p-4">
@@ -262,6 +270,7 @@ const PageNft = () => {
         </div>
       )}
       <EncryptKnowledgeModal />
+      <ReferralBox />
     </>
   )
 }
