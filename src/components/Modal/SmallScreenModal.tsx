@@ -1,11 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { CommunityIcon, InventoryIcon, MintIcon } from 'components/Icons/icons'
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { useBoundStore } from 'store'
 import { useAccount } from 'wagmi'
-import SocialMedias from '../Header/SocialMedias'
+import GenericButton from 'components/Button/GenericButton'
+import { MenuCloseIcon } from 'components/Icons/icons'
 
 const SmallScreenModal = () => {
   const { modal, setModalState } = useBoundStore()
@@ -30,37 +29,23 @@ const SmallScreenModal = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-blue-600/40 backdrop-blur" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full h-screen text-center transform overflow-hidden rounded-md bg-blue-900 p-6 align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-white flex justify-between py-6 px-4"
-                  >
-                    <p>Welcome to Nous!</p>
-                    <button
+          <Transition.Child as={Fragment}>
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex items-center justify-center fixed left-1/2 w-full lg:w-2/4 bottom-0 -translate-x-1/2 -translate-y-0 transform">
+                <Dialog.Panel className="w-full p-2 transform overflow-hidden bg-blue-900/80 backdrop-blur align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white flex justify-between">
+                    <GenericButton
+                      icon={<MenuCloseIcon />}
                       onClick={() => {
                         closeDialog()
                       }}
-                      className="hover:text-red-500"
-                    >
-                      X
-                    </button>
+                    />
                   </Dialog.Title>
-                  <div className="relative flex items-center justify-between text-white">
-                    <div className="flex flex-col w-full">
+                  <div className="relative flex items-center justify-between text-white mt-6">
+                    <div className="flex flex-col w-full gap-4 px-4">
                       {/*                   
                       Should be here.    
                       <ConnectButton
@@ -72,69 +57,80 @@ const SmallScreenModal = () => {
                       /> */}
                       <Link
                         to="/mint"
-                        className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700 
+                        className={`h-full uppercase tracking-widest sm:text-md md:text-xl hover:text-yellow-400
                         `}
                         onClick={() => {
                           closeDialog()
                         }}
                       >
-                        <MintIcon /> <span className="pl-4">Mint</span>
+                        <span className="">Mint</span>
                       </Link>
-                      <hr />
                       {address && (
                         <>
                           <Link
                             to="/inventory"
-                            className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700 `}
+                            className={`h-full uppercase tracking-widest sm:text-md md:text-xl hover:text-yellow-400`}
                             onClick={() => {
                               closeDialog()
                             }}
                           >
-                            <InventoryIcon /> <span className="pl-4">Inventory</span>
+                            <span className="">Inventory</span>
                           </Link>
-                          <hr />
                         </>
                       )}
 
                       {address && (
                         <>
                           <Link
-                            to="/subscription"
-                            className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700 `}
+                            to="/subscribe"
+                            className={`h-full uppercase tracking-widest sm:text-md md:text-xl hover:text-yellow-400`}
                             onClick={() => {
                               closeDialog()
                             }}
                           >
-                            <InventoryIcon /> <span className="pl-4">Subscription</span>
+                            <span className="">Subscription</span>
                           </Link>
-                          <hr />
                         </>
                       )}
 
                       <Link
                         to="/explorer"
-                        className={`flex items-center gap-2 px-4 py-5 h-full hover:bg-blue-700
-                        `}
+                        className={`h-full uppercase tracking-widest sm:text-md md:text-xl hover:text-yellow-400`}
                         onClick={() => {
                           closeDialog()
                         }}
                       >
-                        <CommunityIcon />
-                        <span className="pl-4">Explorer</span>
+                        <span className="">Explorer</span>
                       </Link>
-                      <hr />
-                      <div className="text-white pt-10">
-                        <p>Follow Us On These Platforms!</p>
-                        <div className="p-4">
-                          <SocialMedias />
-                        </div>
+
+                      <div className="py-2 flex flex-col gap-2">
+                        <Link
+                          to=""
+                          className={`h-full uppercase tracking-widest sm:text-md md:text-md hover:text-yellow-400
+                        `}
+                          onClick={() => {
+                            window.open('https://twitter.com/thenouspsyche', '_blank')
+                          }}
+                        >
+                          <span className="">Twitter</span>
+                        </Link>
+                        <Link
+                          to=""
+                          className={`h-full uppercase tracking-widest sm:text-md md:text-md hover:text-yellow-400
+                        `}
+                          onClick={() => {
+                            window.open('https://discord.com/invite/96xkTdHF6p', '_blank')
+                          }}
+                        >
+                          <span className="">Discord</span>
+                        </Link>
                       </div>
                     </div>
                   </div>
                 </Dialog.Panel>
-              </Transition.Child>
+              </div>
             </div>
-          </div>
+          </Transition.Child>
         </Dialog>
       </Transition>
     </>

@@ -82,7 +82,7 @@ const { chains, publicClient } = configureChains(currentChain, [
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [web3AuthConnector({ chains }), metaMaskWallet({ chains, projectId: '_' })],
+    wallets: [metaMaskWallet({ chains, projectId: '_' })],
   },
 ])
 

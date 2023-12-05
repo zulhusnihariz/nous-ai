@@ -30,7 +30,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <img src={backgroundImage} className="mask-image absolute object-cover w-screen -z-10 h-screen" />
       )}
       <Header />
-      <hr className="h-px mb-8 bg-white border-0 dark:bg-gray-700" />
+      <hr className="h-px mb-8 bg-slate-800 border-0 dark:bg-gray-700" />
       <div className="container mx-auto text-white">
         <Outlet />
       </div>

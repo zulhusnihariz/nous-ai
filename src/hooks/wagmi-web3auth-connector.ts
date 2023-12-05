@@ -6,14 +6,13 @@ import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { TorusWalletConnectorPlugin } from '@web3auth/torus-wallet-connector-plugin'
 
 const name = 'Web3Auth'
-const iconUrl = 'https://images.web3auth.io/web3auth-logo.svg'
+const iconUrl = 'https://web3auth.io/images/web3authlog.png'
 
 export const web3AuthConnector = ({ chains }: any) => {
-  // Create Web3Auth Instance
   const chainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: `${import.meta.env.VITE_DEFAULT_CHAIN_ID_HEX}`,
-    rpcTarget: import.meta.env.VITE_INFURA_URL, // This is the public RPC we have added, please pass on your own endpoint while creating an app
+    rpcTarget: import.meta.env.VITE_INFURA_URL,
     displayName: chains[0].name,
     tickerName: chains[0].nativeCurrency?.name,
     ticker: chains[0].nativeCurrency?.symbol,
@@ -26,7 +25,7 @@ export const web3AuthConnector = ({ chains }: any) => {
     chainConfig: {
       chainNamespace: CHAIN_NAMESPACES.EIP155,
       chainId: `${import.meta.env.VITE_DEFAULT_CHAIN_ID_HEX}`,
-      rpcTarget: import.meta.env.VITE_INFURA_URL, // This is the public RPC we have added, please pass on your own endpoint while creating an app
+      rpcTarget: import.meta.env.VITE_INFURA_URL,
     },
     uiConfig: {
       theme: { primary: 'dark' },
