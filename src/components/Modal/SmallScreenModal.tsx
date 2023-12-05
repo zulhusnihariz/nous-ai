@@ -109,6 +109,19 @@ const SmallScreenModal = () => {
                           className={`h-full uppercase tracking-widest sm:text-md md:text-md hover:text-yellow-400
                         `}
                           onClick={() => {
+                            window.open(
+                              'https://nous-psyche.notion.site/Glossary-64da36bc10314f619259c8585b1cd44d',
+                              '_blank'
+                            )
+                          }}
+                        >
+                          <span className="">Whitepaper</span>
+                        </Link>
+                        <Link
+                          to=""
+                          className={`h-full uppercase tracking-widest sm:text-md md:text-md hover:text-yellow-400
+                        `}
+                          onClick={() => {
                             window.open('https://twitter.com/thenouspsyche', '_blank')
                           }}
                         >

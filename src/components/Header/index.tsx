@@ -51,7 +51,9 @@ export default function Header() {
     <Disclosure as="nav" className="bg-black/50 backdrop-blur">
       <div className="mx-auto max-w-[3840px]">
         <div className="relative flex h-16 items-center justify-between px-3">
-          <GenericButton icon={<Bar3Icon />} onClick={openModal} />
+          <div className="flex gap-2 items-center">
+            <GenericButton icon={<Bar3Icon />} onClick={openModal} />
+          </div>
           <div className="flex flex-shrink-0 items-center">
             <Link to="/">
               <img className="block h-12 w-auto lg:hidden" src={logo} alt="Nous Psyche" />
