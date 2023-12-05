@@ -1,16 +1,18 @@
 import React, { useEffect, useRef } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { Link, useLocation } from 'react-router-dom'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore, useNousStore } from 'store'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
 import logo from '/img/logo.png'
-import { CommunityIcon, InventoryIcon, MintIcon, SubscribeIcon } from 'components/Icons/icons'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import SmallScreenModal from '../Modal/SmallScreenModal'
-import { Bars3Icon } from '@heroicons/react/24/outline'
 import SocialMedias from './SocialMedias'
+import { CustomConnectButton } from 'components/Button/CustomConnectButton'
+import { useAccountModal, useConnectModal } from '@rainbow-me/rainbowkit'
+import GenericButton from 'components/Button/GenericButton'
+import { Bar3Icon } from 'components/Icons/misc'
+import { displayShortAddress } from 'utils'
 
 export default function Header() {
   const { setCurrentWalletState, setWalletState, setModalState } = useBoundStore()
@@ -18,8 +20,9 @@ export default function Header() {
   const { address, isConnected } = useAccount()
   const wallet = useConnectedWallet()
   const { chain } = useNetwork()
-  const location = useLocation()
   const prevAddressRef = useRef(address)
+  const { openConnectModal } = useConnectModal()
+  const { openAccountModal } = useAccountModal()
 
   useEffect(() => {
     if (isConnected) {
@@ -45,77 +48,32 @@ export default function Header() {
   }
 
   return (
-    <Disclosure as="nav" className="bg-transparent">
+    <Disclosure as="nav" className="bg-black/50 backdrop-blur">
       <div className="mx-auto max-w-[3840px]">
         <div className="relative flex h-16 items-center justify-between px-3">
+          <div className="flex gap-2 items-center">
+            <GenericButton icon={<Bar3Icon />} onClick={openModal} />
+          </div>
           <div className="flex flex-shrink-0 items-center">
             <Link to="/">
               <img className="block h-12 w-auto lg:hidden" src={logo} alt="Nous Psyche" />
-              <img className="hidden h-16 w-auto lg:block" src={logo} alt="Nous Psyche" />
+              <img className="hidden h-14 w-auto lg:block" src={logo} alt="Nous Psyche" />
             </Link>
           </div>
-          <div className="flex text-white h-full">
-            <Link
-              to="/mint"
-              className={`hidden sm:flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
-                location.pathname === '/mint' ? 'bg-blue-600/80' : ''
-              }`}
-            >
-              <MintIcon /> Mint
-            </Link>
-            {address && (
-              <>
-                <Link
-                  to="/inventory"
-                  className={`hidden sm:flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
-                    location.pathname === '/inventory' ? 'bg-blue-600/80' : ''
+          {!address && <GenericButton name="Login" onClick={openConnectModal} />}
+          {address && (
+            <div className="text-right text-white cursor-pointer" onClick={openAccountModal}>
+              <div className="text-xs text-slate-400 uppercase">WALLET ({chain?.name})</div>
+              <div className="flex items-center justify-end gap-2">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    chain?.id.toString() === import.meta.env.VITE_DEFAULT_CHAIN_ID ? 'bg-green-500' : 'bg-red-500'
                   }`}
-                >
-                  <InventoryIcon /> Inventory
-                </Link>
-              </>
-            )}
-
-            <Link
-              to="/explorer"
-              className={`hidden sm:flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
-                location.pathname === '/explorer' ? 'bg-blue-600/80' : ''
-              }`}
-            >
-              <CommunityIcon />
-              Explorer
-            </Link>
-
-            <Link
-              to="/subscribe"
-              className={`hidden sm:flex items-center gap-2 px-4 py-2 h-full border-r border-l hover:bg-blue-600 backdrop-blur bg-black/60 ${
-                location.pathname === '/subscribe' ? 'bg-blue-600/80' : ''
-              }`}
-            >
-              <SubscribeIcon />
-              Subscribe
-            </Link>
-          </div>
-
-          <div className="flex justify-between gap-3 items-center">
-            <div className="hidden sm:block pr-4">
-              <div title="Follow Us On These Platforms">
-                <SocialMedias />
+                ></div>
+                {displayShortAddress(address)}
               </div>
             </div>
-            <div className="block">
-              <ConnectButton
-                chainStatus={'none'}
-                accountStatus={{
-                  smallScreen: 'avatar',
-                  largeScreen: 'avatar',
-                }}
-              />
-            </div>
-            <button type="button" className="block sm:hidden h-8 w-8 text-white" onClick={openModal}>
-              <Bars3Icon />
-            </button>
-          </div>
+          )}
         </div>
         <div>
           <SmallScreenModal />

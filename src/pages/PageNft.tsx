@@ -19,6 +19,7 @@ import TypographyNormal from 'components/Typography/Normal'
 import useReferralCode from 'components/Exchange/hooks/useReferralCode'
 import ExchangeAssignRefCodeButton from 'components/Exchange/AssignCodeButton'
 import useClipboard from 'hooks/useClipboard'
+import ReferralBox from 'components/Exchange/Referral'
 
 const PageNft = () => {
   const location = useLocation()
@@ -60,7 +61,8 @@ const PageNft = () => {
     walletAddress: address.full,
   })
 
-  const { data: owned } = useGetOwnedNousMetadatas(address.full)
+  const { data } = useGetOwnedNousMetadatas(address.full)
+  const owned = data?.pages?.flatMap(group => group.data)
   const { refCode } = useReferralCode()
 
   useEffect(() => {
@@ -199,15 +201,24 @@ const PageNft = () => {
               </div>
             </div>
             <div className="mt-5 p-4 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ring ring-white/90 from-green-500 to-green-600">
-              <div className="text-md tracking-wider font-semibold mb-2">
-                <TypographyNormal classNames="uppercase text-yellow-400">Referral Code</TypographyNormal>
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-md tracking-wider font-semibold mb-2">
+                    <TypographyNormal classNames="uppercase text-yellow-400">Referral Code</TypographyNormal>
+                  </div>
+                  {refCode && (
+                    <span onClick={() => handleCopyRefCode(refCode)}>
+                      <TypographyNormal classNames="text-sm text-white cursor-pointer">{refCode}</TypographyNormal>
+                    </span>
+                  )}
+                </div>
+                {!refCode && <ExchangeAssignRefCodeButton />}
+                <GenericButton
+                  className="ml-4"
+                  name="Referral"
+                  onClick={() => setModalState({ referral: { isOpen: true } })}
+                />
               </div>
-              {refCode && (
-                <span onClick={() => handleCopyRefCode(refCode)}>
-                  <TypographyNormal classNames="text-sm text-white cursor-pointer">{refCode}</TypographyNormal>
-                </span>
-              )}
-              {!refCode && <ExchangeAssignRefCodeButton />}
             </div>
 
             <div className="mt-5 bg-blue-600/80 ring ring-white border border-blue-600 backdrop-blur p-4">
@@ -261,6 +272,7 @@ const PageNft = () => {
         </div>
       )}
       <EncryptKnowledgeModal />
+      <ReferralBox />
     </>
   )
 }

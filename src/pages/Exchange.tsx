@@ -12,7 +12,8 @@ import useContractPaused from 'components/Exchange/hooks/usePaused'
 import ScrollController from 'components/ScrollController'
 import TypographyNormal from 'components/Typography/Normal'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useGetAllBots } from 'repositories/rpc.repository'
 
 const PageExchange = () => {
@@ -21,10 +22,16 @@ const PageExchange = () => {
 
   const { address } = useConnectedWallet()
 
-  const { isAllowed } = useAllowedList({ address: address?.full })
-  const { isPaused, isLoaded } = useContractPaused()
+  let { isAllowed } = useAllowedList({ address: address?.full })
+  let { isPaused, isLoaded } = useContractPaused()
 
-  const { data: bots } = useGetAllBots(50, 0)
+  const { ref, inView } = useInView()
+  const { data, fetchNextPage } = useGetAllBots(6)
+  const bots = data?.pages?.flatMap(group => group.data)
+
+  useEffect(() => {
+    if (inView) fetchNextPage()
+  }, [inView, fetchNextPage])
 
   const onSelectedIndex = (index: number) => {
     setSelectedNftIndex(index)
@@ -61,6 +68,9 @@ const PageExchange = () => {
                         )
                       }
                     })}
+                  <p ref={ref} className="opacity-0">
+                    Observe this
+                  </p>
                 </div>
                 {bots && bots.length > 3 && <ScrollController targetRef={scrollContainerRef} />}
               </div>

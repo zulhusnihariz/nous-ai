@@ -1,7 +1,7 @@
 interface ButtonProp {
   className?: string
   name?: string
-  onClick: (e: any) => void
+  onClick: any
   icon?: React.ReactNode
   disabled?: boolean
   color?: string

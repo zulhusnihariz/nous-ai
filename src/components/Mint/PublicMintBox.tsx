@@ -120,7 +120,7 @@ const PublicMintBox = () => {
         {isLoaded && !isDisabled && address && (
           <GenericButton
             name={isLoading ? 'Processing...' : 'Mint Nous Psyche'}
-            onClick={e => handleOnMintClicked()}
+            onClick={handleOnMintClicked}
             disabled={isLoading || (isLoaded && isDisabled && address)}
             className="text-xl"
             color="yellow"
