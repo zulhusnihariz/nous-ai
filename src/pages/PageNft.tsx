@@ -60,7 +60,8 @@ const PageNft = () => {
     walletAddress: address.full,
   })
 
-  const { data: owned } = useGetOwnedNousMetadatas(address.full)
+  const { data } = useGetOwnedNousMetadatas(address.full)
+  const owned = data?.pages?.flatMap(group => group.data)
   const { refCode } = useReferralCode()
 
   useEffect(() => {

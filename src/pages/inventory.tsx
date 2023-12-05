@@ -7,6 +7,7 @@ import TypographyNormal from 'components/Typography/Normal'
 import GenericButton from 'components/Button/GenericButton'
 import { useEffect, useState } from 'react'
 import Avatar from 'components/Avatar'
+import { useInView } from 'react-intersection-observer'
 
 const PageInventory = () => {
   const [selectedNftIndex, setSelectedNftIndex] = useState(0)
@@ -15,7 +16,9 @@ const PageInventory = () => {
   const { address } = useConnectedWallet()
   const { setSelectedNous } = useNousStore()
 
-  const { data: nfts } = useGetOwnedNousMetadatas(address.full)
+  const { ref, inView } = useInView()
+  const { data, fetchNextPage } = useGetOwnedNousMetadatas(address.full, 20)
+  const nfts = data?.pages?.flatMap(el => el.data)
 
   const goToMintPage = () => {
     navigate('/mint')
@@ -29,6 +32,10 @@ const PageInventory = () => {
     setSelectedNous(nft)
     navigate(`/nft`, { state: { nft } })
   }
+
+  useEffect(() => {
+    if (inView) fetchNextPage()
+  }, [fetchNextPage, inView])
 
   useEffect(() => {
     if (nfts && nfts.length <= 0) {
@@ -108,6 +115,9 @@ const PageInventory = () => {
                   </>
                 )}
               </div>
+              <p ref={ref} className="opacity-0">
+                Observe this
+              </p>
             </div>
           </div>
         </div>
