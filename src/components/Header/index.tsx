@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { Link, useLocation } from 'react-router-dom'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useNetwork } from 'wagmi'
 import { useBoundStore, useNousStore } from 'store'
 import { CURRENT_CHAIN } from 'store/slices/wallet.slice'
@@ -11,6 +10,8 @@ import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import SmallScreenModal from '../Modal/SmallScreenModal'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import SocialMedias from './SocialMedias'
+import { CustomConnectButton } from 'components/Button/CustomConnectButton'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export default function Header() {
   const { setCurrentWalletState, setWalletState, setModalState } = useBoundStore()

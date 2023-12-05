@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
 import rpc, { JSONRPCFilter, Transaction } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
@@ -233,11 +233,11 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetOwnedNousMetadatas = (public_key: string) => {
-  return useQuery<(Nft & NousNft)[]>({
+const useGetOwnedNousMetadatas = (public_key: string, size: number = 9999) => {
+  return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_METADATAS, public_key],
-    queryFn: async () => {
-      const { data } = await getNftByAddress(public_key.toLowerCase())
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await getNftByAddress(public_key.toLowerCase(), pageParam, size)
 
       const nfts: (Nft & NousNft)[] = []
 
@@ -281,19 +281,21 @@ const useGetOwnedNousMetadatas = (public_key: string) => {
         nfts.push(json)
       }
 
-      return nfts
+      return { data: nfts, nextCursor: pageParam + size }
     },
+    getNextPageParam: lastPage => lastPage.nextCursor,
+    keepPreviousData: true,
     enabled: Boolean(public_key),
   })
 }
 
-const useGetAllBots = (size: number, page: number) => {
-  return useQuery<({ dataKey: string } & Nft & NousNft)[]>({
+const useGetAllBots = (size: number) => {
+  return useInfiniteQuery<{ data: ({ dataKey: string } & Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_ALL_NFTS],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 0 }) => {
       const nfts: ({ dataKey: string } & Nft & NousNft)[] = []
 
-      const { data } = await getNftsByPage({ first: size, skip: size * page })
+      const { data } = await getNftsByPage({ skip: pageParam, first: size })
 
       const tokenIds = data.tokens.map((nft: any) => nft.tokenId)
 
@@ -344,8 +346,10 @@ const useGetAllBots = (size: number, page: number) => {
         nfts.push(json)
       }
 
-      return nfts
+      return { data: nfts, nextCursor: pageParam + size }
     },
+    getNextPageParam: lastPage => lastPage.nextCursor,
+    keepPreviousData: true,
   })
 }
 
