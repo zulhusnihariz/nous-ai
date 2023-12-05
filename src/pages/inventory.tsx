@@ -18,7 +18,7 @@ const PageInventory = () => {
 
   const { ref, inView } = useInView()
   const { data, fetchNextPage } = useGetOwnedNousMetadatas(address.full, 20)
-  const nfts = data?.pages?.flatMap(el => el.data)
+  const nfts = data?.pages?.flatMap(group => group.data)
 
   const goToMintPage = () => {
     navigate('/mint')
