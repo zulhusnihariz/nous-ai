@@ -90,6 +90,12 @@ const createDefaultMetadata = (token_id: string) => {
       chain: import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
       id: token_id,
     },
+    custom: {
+      name: '',
+      description: '',
+      instructions: '',
+      conversationStarters: [''],
+    },
   }
 }
 
@@ -100,7 +106,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
     token_id
   )
 
-  const [result_metadata, result_nous_storage, result_nous_metadata, result_nous_level, result_badge] =
+  const [result_metadata, result_nous_storage, result_nous_metadata, result_nous_level, result_badge, result_custom] =
     await Promise.all([
       rpc.getMetadata(data_key, '0x01', import.meta.env.VITE_NOUS_METADATA_PK?.toLowerCase() as string, '', data_key),
       rpc.searchMetadatas({
@@ -155,6 +161,13 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
         'badge',
         ''
       ),
+      rpc.getMetadata(
+        data_key,
+        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
+        import.meta.env.VITE_NOUS_DATA_PK as string,
+        'custom',
+        ''
+      ),
     ])
 
   const [nous_storage_exists, nous_metadata_exists] = [
@@ -167,6 +180,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
   const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
   const cid_nous_level = result_nous_level ? result_nous_level.cid : ''
   const cid_nous_badge = result_badge ? result_badge.cid : ''
+  const cid_nous_custom = result_custom ? result_custom.cid : ''
 
   const promises: any[] = [
     cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
@@ -174,6 +188,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string) => {
     cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
     cid_nous_level ? rpc.getContentFromIpfs(cid_nous_level) : undefined,
     cid_nous_badge ? rpc.getContentFromIpfs(cid_nous_badge) : undefined,
+    cid_nous_custom ? rpc.getContentFromIpfs(cid_nous_custom) : undefined,
   ]
 
   const result = await Promise.all(promises)
@@ -190,6 +205,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
 
       for (let x = page_index * item_per_page; x < end_index; x++) {
         const json = createDefaultMetadata(`${x}`)
+        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
 
         const [
           contentFromMetadata,
@@ -233,7 +249,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetOwnedNousMetadatas = (public_key: string, size: number = 9999) => {
+const useGetOwnedNousMetadatas = (public_key: string, size: number = 1000) => {
   return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_METADATAS, public_key],
     queryFn: async ({ pageParam = 0 }) => {
@@ -244,6 +260,7 @@ const useGetOwnedNousMetadatas = (public_key: string, size: number = 9999) => {
       for (let i = 0; i < data.tokens.length; i++) {
         const token = data.tokens[i]
         const json = createDefaultMetadata(token.tokenId)
+        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
 
         const [
           contentFromMetadata,
@@ -251,6 +268,7 @@ const useGetOwnedNousMetadatas = (public_key: string, size: number = 9999) => {
           contentFromNousMetadata,
           contentFromNousLevel,
           contentFromNousBadge,
+          contentFromNousCustom,
         ] = await fetchNousMetadata(token.tokenId, public_key)
 
         if (contentFromMetadata) {
@@ -278,6 +296,11 @@ const useGetOwnedNousMetadatas = (public_key: string, size: number = 9999) => {
           json.achievement.badge = data.content.src as string
         }
 
+        if (contentFromNousCustom) {
+          const data = JSON.parse(contentFromNousCustom.data.result.content as string)
+          json.custom = data.content.src
+        }
+
         nfts.push(json)
       }
 
@@ -302,6 +325,7 @@ const useGetAllBots = (size: number) => {
       for (let i = 0; i < tokenIds.length; i++) {
         const tokenId = tokenIds[i]
         const json = createDefaultMetadata(tokenId)
+        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
         json.latestPrice = data.tokens[i].latestPrice
 
         const [
@@ -310,6 +334,7 @@ const useGetAllBots = (size: number) => {
           contentFromNousMetadata,
           contentFromNousLevel,
           contentFromNousBadge,
+          contentFromNousCustom,
         ] = await fetchNousMetadata(tokenId as string, import.meta.env.VITE_NOUS_METADATA_PK as string)
 
         if (contentFromMetadata) {
@@ -335,6 +360,11 @@ const useGetAllBots = (size: number) => {
         if (contentFromNousBadge) {
           const data = JSON.parse(contentFromNousBadge.data.result.content as string)
           json.achievement.badge = data.content.src as string
+        }
+
+        if (contentFromNousCustom) {
+          const data = JSON.parse(contentFromNousCustom.data.result.content as string)
+          json.custom = data.content.src
         }
 
         json.dataKey = formatDataKey(
@@ -447,7 +477,7 @@ const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: 
         version
       )
 
-      if (!metadata.cid) {
+      if (!metadata?.cid) {
         return null
       }
 

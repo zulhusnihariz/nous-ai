@@ -32,7 +32,7 @@ import PageBot2 from 'pages/Bot2'
 import PagePerks from 'pages/Perks'
 import PageQuest from 'pages/Quest'
 import PageExchange from 'pages/Exchange'
-import { web3AuthConnector } from 'hooks/wagmi-web3auth-connector'
+import PageBuilder from 'pages/Builder'
 
 const App = () => {
   return (
@@ -53,6 +53,7 @@ const App = () => {
             <Route path="/quests" element={<PageQuest />} />
             <Route path="/subscribe" element={<PageExchange />} />
             <Route path="/container/:key" element={<PageContainer />} />
+            <Route path="/builder" element={<PageBuilder />} />
           </Route>
           <Route element={<PublicLayout children={undefined} />}>
             <Route path="/room/:key" element={<PageRoom />} />
