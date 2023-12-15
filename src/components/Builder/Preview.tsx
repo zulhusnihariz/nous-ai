@@ -142,7 +142,12 @@ const BuilderPreview = (prop: { nft: Nft }) => {
                   custom.conversationStarters[0] !== '' &&
                   custom.conversationStarters.map((el: string) => {
                     return (
-                      <div className="bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md">{el}</div>
+                      <div
+                        className="bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md"
+                        onClick={() => onSendChat(el)}
+                      >
+                        {el}
+                      </div>
                     )
                   })}
               </div>
