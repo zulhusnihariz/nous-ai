@@ -68,7 +68,7 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
     const signature = (await signMessage(JSON.stringify(content))) as string
 
     await publish({
-      alias: 'custom',
+      alias: 'builder',
       chain_id: prop.nft.chain_id as string,
       data: content,
       mcdata: '',
@@ -94,7 +94,7 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
   }, [prop.nft])
 
   return (
-    <div className="m-4 p-4 text-center transform ring ring-white bg-blue-600/80 backdrop-blur text-white h-full lg:h-[600px] w-2/4">
+    <div className="m-4 p-4 text-center transform ring ring-white bg-blue-600/80 backdrop-blur text-white h-full lg:h-[600px] w-full">
       <h1 className="font-extrabold text-xl">CONFIGURE</h1>
       <div className="flex flex-col items-start w-full overflow-y-auto no-scrollbar h-[450px]">
         <label htmlFor="name">Name</label>
@@ -125,7 +125,7 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
 
         {input.conversationStarters.map((el: string, idx: number) => {
           return (
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center" key={el}>
               <input
                 className="p-2 w-full mt-2 text-slate-600 text-sm"
                 name="description"
