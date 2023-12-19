@@ -22,7 +22,9 @@ const DisplayExchange = (prop: Prop) => {
     <div className="h-full">
       <div className="bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500 to-blue-700/60 ring-2 ring-white backdrop-blur border border-blue-600 shadow-2xl h-full">
         <div className="px-4 py-3 bg-blue-500/70 border-b border-blue-600 flex justify-between items-center">
-          <TypographyNormal classNames="">{prop.nft.metadata.name}</TypographyNormal>
+          <TypographyNormal classNames="">
+            {prop.nft?.builder?.name && prop.nft?.builder?.name !== '' ? prop.nft.builder.name : prop.nft.metadata.name}
+          </TypographyNormal>
         </div>
         <div className="flex justify-between px-4 items-center py-2">
           <TypographyNormal classNames="text-orange-400 font-semibold text-lg tracking-wider uppercase">
