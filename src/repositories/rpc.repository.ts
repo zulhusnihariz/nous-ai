@@ -99,7 +99,7 @@ const createDefaultMetadata = (token_id: string) => {
   }
 }
 
-const fetchNousMetadata = async (token_id: string, public_key: string) => {
+const fetchNousMetadata = async (token_id: string, public_key: string, owner_pk: string) => {
   const data_key = formatDataKey(
     import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
     import.meta.env.VITE_NOUS_AI_NFT as string,
@@ -213,7 +213,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
           contentFromNousMetadata,
           contentFromNousLevel,
           contentFromNousBadge,
-        ] = await fetchNousMetadata(`${x}`, public_key)
+        ] = await fetchNousMetadata(`${x}`, public_key, json.owner)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
@@ -261,6 +261,7 @@ const useGetOwnedNousMetadatas = (public_key: string, size: number = 1000) => {
         const token = data.tokens[i]
         const json = createDefaultMetadata(token.tokenId)
         json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
+        json.owner = data.tokens[i].owner.id
 
         const [
           contentFromMetadata,
@@ -269,7 +270,7 @@ const useGetOwnedNousMetadatas = (public_key: string, size: number = 1000) => {
           contentFromNousLevel,
           contentFromNousBadge,
           contentFromNousBuilder,
-        ] = await fetchNousMetadata(token.tokenId, public_key)
+        ] = await fetchNousMetadata(token.tokenId, public_key, json.owner)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
@@ -326,6 +327,7 @@ const useGetAllBots = (size: number) => {
         const tokenId = tokenIds[i]
         const json = createDefaultMetadata(tokenId)
         json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
+        json.owner = data.tokens[i].owner.id
         json.latestPrice = data.tokens[i].latestPrice
 
         const [
@@ -335,7 +337,7 @@ const useGetAllBots = (size: number) => {
           contentFromNousLevel,
           contentFromNousBadge,
           contentFromNousBuilder,
-        ] = await fetchNousMetadata(tokenId as string, import.meta.env.VITE_NOUS_METADATA_PK as string)
+        ] = await fetchNousMetadata(tokenId as string, import.meta.env.VITE_NOUS_METADATA_PK as string, json.owner)
 
         if (contentFromMetadata) {
           const data = JSON.parse(contentFromMetadata.data.result.content as string)
@@ -466,6 +468,7 @@ const useGetNftMetadata = (data_key: string) => {
 }
 
 const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: string, version: string) => {
+  if (alias === 'builder') console.log(alias, public_key)
   return useQuery<any>({
     queryKey: [RQ_KEY.GET_LINEAGE_NOUS_METADATA, data_key, alias],
     queryFn: async () => {

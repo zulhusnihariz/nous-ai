@@ -21,7 +21,7 @@ const PageBuilder = () => {
   const { data, refetch } = useGetLineageNousMetadata(
     selectedNous?.dataKey as string,
     'builder',
-    import.meta.env.VITE_NOUS_METADATA_PK.toLowerCase(),
+    selectedNous?.owner as string,
     ''
   )
 
