@@ -34,7 +34,7 @@ const ExchangeCard = (prop: Prop) => {
           {!prop.nft.stat.level ? (
             <TypographyNormal classNames="uppercase font-bold text-yellow-300">{`Not Activated`}</TypographyNormal>
           ) : (
-            <TypographyNormal>{prop.nft?.custom?.description ?? `Level ${prop.nft.stat.level}`} </TypographyNormal>
+            <TypographyNormal>{prop.nft?.builder?.description ?? `Level ${prop.nft.stat.level}`} </TypographyNormal>
           )}
         </div>
       </div>

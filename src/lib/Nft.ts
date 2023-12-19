@@ -4,11 +4,11 @@ export interface Nft {
   token_id: string | number
   chain_id: string
   metadata: Record<string, any>
-  custom?: Custom
+  builder?: Builder
   dataKey: string
 }
 
-export interface Custom {
+export interface Builder {
   name: string
   description: string
   instructions: string

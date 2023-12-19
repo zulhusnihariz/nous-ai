@@ -1,22 +1,12 @@
 import GenericButton from 'components/Button/GenericButton'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
-import { Custom, Nft } from 'lib'
+import { Builder, Nft } from 'lib'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { RQ_KEY } from 'repositories'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { useQueryClient } from 'wagmi'
 
-const BuilderConfiguration = (prop: { nft: Nft }) => {
-  const navigate = useNavigate()
-  const [input, setInput] = useState<Custom>(
-    prop.nft?.custom ?? {
-      name: '',
-      description: '',
-      instructions: '',
-      conversationStarters: [''],
-    }
-  )
+const BuilderConfiguration = (prop: { nft: Nft; refetch: any }) => {
+  const [input, setInput] = useState<Builder>(prop.nft?.builder as Builder)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,6 +26,10 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
       }),
     }))
   }
+
+  useEffect(() => {
+    if (prop.nft.builder) setInput(prop.nft.builder)
+  }, [prop.nft.builder])
 
   useEffect(() => {
     const lastIndex = input.conversationStarters.length - 1
@@ -62,8 +56,8 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
   const queryClient = useQueryClient()
 
   const onSubmitClicked = async () => {
-    const content = JSON.stringify(input)
     setIsLoading(true)
+    const content = JSON.stringify(input)
 
     const signature = (await signMessage(JSON.stringify(content))) as string
 
@@ -82,16 +76,11 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
     })
 
     const timeout: NodeJS.Timeout = setTimeout(async () => {
-      await queryClient.invalidateQueries([[RQ_KEY.GET_LINEAGE_NOUS_METADATA, prop.nft.dataKey, 'custom']])
+      await prop.refetch()
+      setIsLoading(false)
       if (timeout) clearTimeout(timeout)
     }, 5000)
-
-    setIsLoading(false)
   }
-
-  useEffect(() => {
-    if (!prop.nft) navigate('/inventory')
-  }, [prop.nft])
 
   return (
     <div className="m-4 p-4 text-center transform ring ring-white bg-blue-600/80 backdrop-blur text-white h-full lg:h-[600px] w-full">
@@ -125,7 +114,7 @@ const BuilderConfiguration = (prop: { nft: Nft }) => {
 
         {input.conversationStarters.map((el: string, idx: number) => {
           return (
-            <div className="flex w-full items-center" key={el}>
+            <div className="flex w-full items-center" key={idx}>
               <input
                 className="p-2 w-full mt-2 text-slate-600 text-sm"
                 name="description"

@@ -37,26 +37,13 @@ const BuilderPreview = (prop: { nft: Nft }) => {
 
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const [disableChat, setDisableChat] = useState(false)
+  const builder = prop.nft.builder!
 
   const { data: nous_id } = useGetLineageNousMetadata(
     prop.nft?.dataKey as string,
     'nous_id',
     import.meta.env.VITE_NOUS_DATA_PK as string,
     ''
-  )
-
-  const [custom] = useState(
-    prop.nft?.custom ?? {
-      name: '',
-      description: '',
-      instructions: '',
-      conversationStarters: [
-        // 'Recommend a dish to bring to a potluck',
-        // 'Tell me a fun fact about the Roman Empire',
-        // 'Design a database schema for an online merch store',
-        // 'Compare marketing strategies for sunglasses for Gen Z and Millennials. Provide 5 differences',
-      ],
-    }
   )
 
   const onSendChat = async (message: string) => {
@@ -80,8 +67,8 @@ const BuilderPreview = (prop: { nft: Nft }) => {
       bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
-    let prompt = custom?.instructions
-      ? `Based on the given context: ${custom.instructions}, send back a message from this message;`.concat(message)
+    let prompt = builder?.instructions
+      ? `Based on the given context: ${builder.instructions}, send back a message from this message;`.concat(message)
       : message
 
     try {
@@ -133,23 +120,26 @@ const BuilderPreview = (prop: { nft: Nft }) => {
                 />
               )}
               <p className="text-lg lg:text-2xl font-extrabold">
-                {custom?.name ? custom?.name : prop.nft?.metadata?.name ?? ''}
+                {builder?.name ? builder?.name : prop.nft?.metadata?.name ?? ''}
               </p>
-              <p className="text-sm lg:text-lg mt-2 mb-4">{custom.description}</p>
+              <p className="text-sm lg:text-lg mt-2 mb-4">{builder.description}</p>
 
               <div className="grid lg:grid-cols-2 gap-2 grid-flow-row">
-                {custom.conversationStarters.length > 0 &&
-                  custom.conversationStarters[0] !== '' &&
-                  custom.conversationStarters.map((el: string) => {
-                    return (
-                      <div
-                        className="bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md"
-                        onClick={() => onSendChat(el)}
-                      >
-                        {el}
-                      </div>
-                    )
-                  })}
+                {builder.conversationStarters.length > 0 &&
+                  builder.conversationStarters[0] !== '' &&
+                  builder.conversationStarters
+                    .filter(el => el !== '')
+                    .map((el: string, idx: number) => {
+                      return (
+                        <div
+                          className={`bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md  odd:last:col-span-2  odd:last:justify-self-center`}
+                          onClick={() => onSendChat(el)}
+                          key={idx}
+                        >
+                          {el}
+                        </div>
+                      )
+                    })}
               </div>
             </div>
           ) : (

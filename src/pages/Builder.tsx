@@ -3,18 +3,25 @@ import BuilderPreview from 'components/Builder/Preview'
 import BuilderConfiguration from 'components/Builder/Configure'
 import { Nft } from 'lib'
 import { useGetLineageNousMetadata } from 'repositories/rpc.repository'
-import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import { useEffect, useState } from 'react'
 import GenericButton from 'components/Button/GenericButton'
+import { useNavigate } from 'react-router-dom'
 
 const PageBuilder = () => {
+  const navigate = useNavigate()
   const { selectedNous } = useNousStore()
-  const { address } = useConnectedWallet()
 
-  const { data: custom } = useGetLineageNousMetadata(
+  const [builder, setBuilder] = useState({
+    name: '',
+    description: '',
+    instructions: '',
+    conversationStarters: [''],
+  })
+
+  const { data, refetch } = useGetLineageNousMetadata(
     selectedNous?.dataKey as string,
-    'custom',
-    address.full.toLowerCase(),
+    'builder',
+    import.meta.env.VITE_NOUS_METADATA_PK.toLowerCase(),
     ''
   )
 
@@ -23,6 +30,7 @@ const PageBuilder = () => {
   function handleWindowSizeChange() {
     setWidth(window.innerWidth)
   }
+
   useEffect(() => {
     window.addEventListener('resize', handleWindowSizeChange)
     return () => {
@@ -31,6 +39,14 @@ const PageBuilder = () => {
   }, [])
 
   const isMobile = width <= 768
+
+  useEffect(() => {
+    if (data) setBuilder(data.content)
+  }, [data])
+
+  useEffect(() => {
+    if (!selectedNous) navigate('/inventory')
+  }, [selectedNous])
 
   return (
     <>
@@ -52,16 +68,18 @@ const PageBuilder = () => {
           </div>
 
           <div className="flex">
-            {currentTab === 'configure' && <BuilderConfiguration nft={{ ...selectedNous, custom } as Nft} />}
-            {currentTab === 'preview' && <BuilderPreview nft={{ ...selectedNous, custom } as Nft} />}
+            {currentTab === 'configure' && (
+              <BuilderConfiguration nft={{ ...selectedNous, builder } as Nft} refetch={refetch} />
+            )}
+            {currentTab === 'preview' && <BuilderPreview nft={{ ...selectedNous, builder } as Nft} />}
           </div>
         </>
       )}
 
       {!isMobile && (
         <div className="flex">
-          <BuilderConfiguration nft={{ ...selectedNous, custom } as Nft} />
-          <BuilderPreview nft={{ ...selectedNous, custom } as Nft} />
+          <BuilderConfiguration nft={{ ...selectedNous, builder } as Nft} refetch={refetch} />
+          <BuilderPreview nft={{ ...selectedNous, builder } as Nft} />
         </div>
       )}
     </>
