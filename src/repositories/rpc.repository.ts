@@ -161,13 +161,7 @@ const fetchNousMetadata = async (token_id: string, public_key: string, owner_pk:
         'badge',
         ''
       ),
-      rpc.getMetadata(
-        data_key,
-        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
-        import.meta.env.VITE_NOUS_DATA_PK as string,
-        'builder',
-        ''
-      ),
+      rpc.getMetadata(data_key, import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String, owner_pk, 'builder', ''),
     ])
 
   const [nous_storage_exists, nous_metadata_exists] = [
@@ -468,7 +462,6 @@ const useGetNftMetadata = (data_key: string) => {
 }
 
 const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: string, version: string) => {
-  if (alias === 'builder') console.log(alias, public_key)
   return useQuery<any>({
     queryKey: [RQ_KEY.GET_LINEAGE_NOUS_METADATA, data_key, alias],
     queryFn: async () => {
