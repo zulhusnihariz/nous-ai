@@ -36,3 +36,21 @@ export const getNftsLatestPrice = async (tokenIds: number[]) => {
     variables: { tokenIds },
   })
 }
+export const getNftOwnerByTokenId = async (tokenId: string) => {
+  const query = `
+    query GetTokenByPage($id: String) {
+      token(id: $id) {
+        id
+        tokenId
+        owner {
+          id
+        }
+      }
+    }
+  `
+
+  return apolloQuery<{ token: Token }>({
+    query,
+    variables: { id: tokenId },
+  })
+}

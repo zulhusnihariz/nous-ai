@@ -1,9 +1,17 @@
 import BotCard from 'components/BotCard'
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useGetAllBots } from 'repositories/rpc.repository'
 
 const PageExplorer = () => {
-  const { data } = useGetAllBots(50)
+  const { data, fetchNextPage } = useGetAllBots(20)
+
+  const { ref, inView } = useInView()
   const bots = data?.pages?.flatMap(group => group.data)
+
+  useEffect(() => {
+    if (inView) fetchNextPage()
+  }, [inView, fetchNextPage])
 
   return (
     <>
@@ -18,6 +26,9 @@ const PageExplorer = () => {
                   </div>
                 )
               })}
+            <p ref={ref} className="opacity-0">
+              Observe this
+            </p>
           </div>
         </div>
       </div>

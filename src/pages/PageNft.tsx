@@ -112,6 +112,11 @@ const PageNft = () => {
     navigate(`/quests`)
   }
 
+  const goToBuilder = () => {
+    if (!nftKey) return
+    navigate(`/builder`)
+  }
+
   const goToKnowledge = () => {
     const owned_nft = owned?.find(owned_nft => (owned_nft.token_id = nft.token_id))
 
@@ -232,6 +237,8 @@ const PageNft = () => {
                 {bot_level && bot_level.content?.level > 0 && (
                   <GenericButton name="Knowledge" onClick={() => goToKnowledge()} />
                 )}
+
+                <GenericButton name="Builder" onClick={() => goToBuilder()} />
               </div>
             </div>
 
