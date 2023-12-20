@@ -20,7 +20,6 @@ const PageRoom = () => {
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const [name, setName] = useState('')
   const [bgColor, setBgColor] = useState('')
-
   const { data: nft } = useGetSingleNousMetadata(key as string)
 
   const { data: metadata } = useGetLineageNftToken(key as string)
@@ -36,6 +35,9 @@ const PageRoom = () => {
     import.meta.env.VITE_NOUS_DATA_PK as string,
     ''
   )
+
+  const { data } = useGetLineageNousMetadata(key as string, 'builder', nft?.owner as string, '')
+  const builder = data?.content
 
   const onSendChat = async (message: string) => {
     setDisableChat(true)
@@ -53,8 +55,20 @@ const PageRoom = () => {
 
     setChats(prevChats => [...prevChats, newChat])
 
+    const prompt =
+      chats.length > 0
+        ? `Based on the given context: ${chats[chats.length - 1].text}, send back a message from this message;`.concat(
+            message
+          )
+        : message
+
     try {
-      const res = await chatWithNous(nous_id?.content as string, name, message)
+      if (builder?.instructions) {
+        const instructions = `Act based on this instruction for your next response: ${builder.instructions}`
+        await chatWithNous(nous_id?.content as string, name, instructions)
+      }
+
+      const res = await chatWithNous(nous_id?.content as string, name, prompt)
       if (res.data.length <= 0) {
         return
       }
@@ -113,19 +127,55 @@ const PageRoom = () => {
           </button>
           <div className="flex flex-col w-full h-screen">
             <div className="flex-1 p-2">
-              {chats.map((chat, index) => {
-                return (
-                  <ChatBubble
-                    name={chat.name}
-                    key={index}
-                    img={chat.avatar}
-                    text={chat.text}
-                    bgColor={chat.bgColor as string}
-                    className=""
-                  />
-                )
-              })}
-              <div ref={bottomRef}></div>
+              {chats.length <= 0 ? (
+                <div className="flex flex-col items-center mt-5 text-sm ">
+                  {nft?.metadata?.image && (
+                    <img
+                      className="w-14 h-14 lg:w-24 lg:h-24 rounded-full border-50 object-contain"
+                      src={nft?.metadata?.image}
+                      alt=""
+                    />
+                  )}
+                  <p className="text-lg lg:text-2xl font-extrabold mt-4">
+                    {builder?.name ? builder?.name : nft?.metadata?.name ?? ''}
+                  </p>
+                  <p className="text-sm lg:text-lg mt-2 mb-4">{builder?.description}</p>
+
+                  <div className="grid lg:grid-cols-2 gap-2 grid-flow-row">
+                    {builder?.conversationStarters.length > 0 &&
+                      builder.conversationStarters[0] !== '' &&
+                      builder.conversationStarters
+                        .filter((el: string) => el !== '')
+                        .map((el: string, idx: number) => {
+                          return (
+                            <div
+                              className={`bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md  odd:last:col-span-2  odd:last:justify-self-center`}
+                              onClick={() => onSendChat(el)}
+                              key={idx}
+                            >
+                              {el}
+                            </div>
+                          )
+                        })}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {chats.map((chat, index) => {
+                    return (
+                      <ChatBubble
+                        name={chat.name}
+                        key={index}
+                        img={chat.avatar}
+                        text={chat.text}
+                        className={chat.className as string}
+                        bgColor={chat.bgColor as string}
+                      />
+                    )
+                  })}
+                  <div ref={bottomRef}></div>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import { chainIdToNetwork, formatDataKey } from 'utils'
 import { Nft, NftMetadata } from 'lib'
 import { NousNft } from 'lib/NousNft'
 import { getNftByAddress } from 'services/wallet'
-import { getNftsByPage } from 'services/nft'
+import { getNftOwnerByTokenId, getNftsByPage } from 'services/nft'
 
 const useGetCompleteTransactions = () => {
   return useQuery({
@@ -380,12 +380,12 @@ const useGetAllBots = (size: number) => {
 }
 
 const useGetSingleNousMetadata = (data_key: string) => {
-  return useQuery<NousNft>({
+  return useQuery<Nft & NousNft>({
     queryKey: [RQ_KEY.GET_METADATAS, data_key],
     queryFn: async () => {
       const json = createDefaultMetadata('')
 
-      const [result_nous, result_metadata] = await Promise.all([
+      const [result_nous, result_metadata, result_nft_token] = await Promise.all([
         rpc.searchMetadatas({
           query: [
             {
@@ -412,14 +412,22 @@ const useGetSingleNousMetadata = (data_key: string) => {
           '',
           data_key
         ),
+        rpc.getMetadata(
+          data_key,
+          import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID as String,
+          import.meta.env.VITE_NFT_METADATA_META_CONTRACT_ID.toLowerCase() as String,
+          'token',
+          data_key
+        ),
       ])
 
       const needToLoadFromIpfs = [
         result_nous && result_nous.length == 1 ? rpc.getContentFromIpfs(result_nous[0].cid) : undefined,
         result_metadata && result_metadata?.cid ? rpc.getContentFromIpfs(result_metadata.cid) : undefined,
+        result_nft_token && result_nft_token?.cid ? rpc.getContentFromIpfs(result_nft_token.cid) : undefined,
       ]
 
-      const [nous_ipfs, metadata_ipfs] = await Promise.all(needToLoadFromIpfs)
+      const [nous_ipfs, metadata_ipfs, nft_token_ipfs] = await Promise.all(needToLoadFromIpfs)
 
       if (nous_ipfs) {
         const data = JSON.parse(nous_ipfs.data.result.content as string)
@@ -429,6 +437,14 @@ const useGetSingleNousMetadata = (data_key: string) => {
       if (metadata_ipfs) {
         const data = JSON.parse(metadata_ipfs.data.result.content as string)
         json.metadata = data.content
+      }
+
+      if (nft_token_ipfs) {
+        const data = JSON.parse(nft_token_ipfs.data.result.content as string)
+        json.token = data.content
+
+        const res = await getNftOwnerByTokenId(json.token.id)
+        json.owner = res.data.token.owner.id
       }
 
       return json
@@ -480,7 +496,7 @@ const useGetLineageNousMetadata = (data_key: string, alias: string, public_key: 
       const content = await rpc.getContentFromIpfs(metadata.cid)
       return JSON.parse(content.data.result.content as string)
     },
-    enabled: data_key !== '',
+    enabled: data_key !== '' && public_key !== undefined,
   })
 }
 
