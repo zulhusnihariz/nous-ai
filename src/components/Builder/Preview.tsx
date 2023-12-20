@@ -67,11 +67,19 @@ const BuilderPreview = (prop: { nft: Nft }) => {
       bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
-    let prompt = builder?.instructions
-      ? `Based on the given context: ${builder.instructions}, send back a message from this message;`.concat(message)
-      : message
+    const prompt =
+      chats.length > 0
+        ? `Based on the given context: ${chats[chats.length - 1].text}, send back a message from this message;`.concat(
+            message
+          )
+        : message
 
     try {
+      if (builder?.instructions) {
+        const instructions = `Act based on this instruction for your next response: ${builder.instructions}`
+        await chatWithNous(nous_id?.content as string, name, instructions)
+      }
+
       const res = await chatWithNous(nous_id?.content as string, name, prompt)
 
       if (res.data.length <= 0) {
