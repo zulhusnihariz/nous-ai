@@ -5,6 +5,7 @@ import GenericButton from './Button/GenericButton'
 interface ChatSubmitProp {
   onSendChat: (message: string) => void
   disable: boolean
+  boxWidth: 'wide' | 'small'
 }
 
 const ChatSubmit = (prop: ChatSubmitProp) => {
@@ -44,8 +45,10 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
 
   return (
     <div className="relative py-6">
-      <div className="relative sm:w-full md:w-3/4 lg:w-1/2 mx-auto px-4">
-        <div className="bg-blue-800 text-white p-1 text-xs border-blue-600 border invisible md:visible">Press ENTER to submit</div>
+      <div className={`relative sm:w-full md:w-3/4 mx-auto px-4 ${prop.boxWidth == 'small' ? 'lg:w-1/2' : ''}`}>
+        <div className="bg-blue-800 text-white p-1 text-xs border-blue-600 border invisible md:visible">
+          Press ENTER to submit
+        </div>
         <textarea
           id="message"
           ref={textAreaRef}

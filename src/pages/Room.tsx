@@ -182,7 +182,7 @@ const PageRoom = () => {
       </div>
       <div className="fixed bottom-0 left-0 w-full z-10">
         <div className="py-6">
-          <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+          <ChatSubmit boxWidth="small" onSendChat={msg => onSendChat(msg)} disable={disableChat} />
         </div>
       </div>
     </>

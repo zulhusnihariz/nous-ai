@@ -233,7 +233,7 @@ const PageSearch = () => {
       </div>
       <div className="fixed bottom-0 left-0 w-full ">
         <div className="py-6">
-          <ChatSubmit onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
+          <ChatSubmit boxWidth="small" onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
         </div>
       </div>
     </>

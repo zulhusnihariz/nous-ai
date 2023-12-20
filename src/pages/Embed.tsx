@@ -119,7 +119,7 @@ const EmbedRoom = () => {
               Search
             </label>
 
-            <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+            <ChatSubmit boxWidth="small" onSendChat={msg => onSendChat(msg)} disable={disableChat} />
           </div>
         </div>
       </div>

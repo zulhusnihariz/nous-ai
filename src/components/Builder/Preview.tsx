@@ -40,7 +40,7 @@ const BuilderPreview = (prop: { nft: Nft }) => {
   const builder = prop.nft.builder!
 
   const { data: nous_id } = useGetLineageNousMetadata(
-    prop.nft?.dataKey as string,
+    prop.nft?.dataKey,
     'nous_id',
     import.meta.env.VITE_NOUS_DATA_PK as string,
     ''
@@ -171,7 +171,7 @@ const BuilderPreview = (prop: { nft: Nft }) => {
         </div>
 
         <div className="w-full row-span-2">
-          <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={false} />
+          <ChatSubmit boxWidth="wide" onSendChat={msg => onSendChat(msg)} disable={false} />
         </div>
       </div>
     </>
