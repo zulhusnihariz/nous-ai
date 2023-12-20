@@ -243,7 +243,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetOwnedNousMetadatas = (public_key: string, size: number = 1000) => {
+const useGetOwnedNousMetadatas = (public_key: string, size = 9999) => {
   return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_METADATAS, public_key],
     queryFn: async ({ pageParam = 0 }) => {

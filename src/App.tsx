@@ -33,6 +33,7 @@ import PagePerks from 'pages/Perks'
 import PageQuest from 'pages/Quest'
 import PageExchange from 'pages/Exchange'
 import PageBuilder from 'pages/Builder'
+import { web3AuthConnector } from 'hooks/wagmi-web3auth-connector'
 
 const App = () => {
   return (
