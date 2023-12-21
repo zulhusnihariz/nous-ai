@@ -22,9 +22,9 @@ const ChatBubble = (prop: ChatProp) => {
         {prop.img.length <= 0 && (
           <span className="h-8 w-8 md:h-10 md:w-10 rounded-md" style={{ backgroundColor: prop.bgColor }}></span>
         )}
-        <div className="ml-4 mr-2 text-sm">
-          <h5 className="capitalize font-bold text-sm md:pb-1">{prop.name}</h5>
-          <div dangerouslySetInnerHTML={{ __html: textWithBreaks }}></div>
+        <div className="ml-4 mr-2">
+          <h5 className="capitalize font-bold md:pb-1">{prop.name}</h5>
+          <div className="-mt-1" dangerouslySetInnerHTML={{ __html: textWithBreaks }}></div>
         </div>
       </div>
     </>

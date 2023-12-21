@@ -8,6 +8,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
 import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
+import GenericButton from 'components/Button/GenericButton'
+import GenericMiniButton from 'components/Button/GenericMiniButton'
+import { BoostIcon } from 'components/Icons/misc'
 
 const PageRoom = () => {
   const { key } = useParams()
@@ -85,7 +88,7 @@ const PageRoom = () => {
         avatar: nft?.metadata.image as String,
         text: allText,
         name: nft?.metadata.attributes.find((e: { trait_type: string }) => e.trait_type === 'name')?.value as String,
-        className: 'bg-[#1C1C1C] rounded-md border-[1px] border-[#333335]',
+        className: '',
       }
 
       setChats(prevChats => [...prevChats, resChat])
@@ -120,18 +123,21 @@ const PageRoom = () => {
 
   return (
     <>
-      <div className="min-h-screen z-0 pb-72">
+      <div className="w-full flex justify-between">
+        <div>&nbsp;</div>
+        <div>
+          <GenericMiniButton name="Boost" icon={<BoostIcon />} onClick={() => {}} />
+        </div>
+      </div>
+      <div className="min-h-screen z-0 pb-72 font-arial">
         <div className="relative h-screen z-10 pb-[230px]">
-          <button className="mt-4 mx-2 py-2 px-4 bg-gray-600 border-white border-[1px] text-sm">
-            <Link to="/inventory">Back to NFT</Link>
-          </button>
           <div className="flex flex-col w-full h-screen">
             <div className="flex-1 p-2">
               {chats.length <= 0 ? (
                 <div className="flex flex-col items-center mt-5 text-sm ">
                   {nft?.metadata?.image && (
                     <img
-                      className="w-14 h-14 lg:w-24 lg:h-24 rounded-full border-50 object-contain"
+                      className="w-14 h-14 lg:w-20 lg:h-20 rounded-full border-50 object-contain ring-1 ring-white"
                       src={nft?.metadata?.image}
                       alt=""
                     />
@@ -140,24 +146,6 @@ const PageRoom = () => {
                     {builder?.name ? builder?.name : nft?.metadata?.name ?? ''}
                   </p>
                   <p className="text-sm lg:text-lg mt-2 mb-4">{builder?.description}</p>
-
-                  <div className="grid lg:grid-cols-2 gap-2 grid-flow-row">
-                    {builder?.conversationStarters.length > 0 &&
-                      builder.conversationStarters[0] !== '' &&
-                      builder.conversationStarters
-                        .filter((el: string) => el !== '')
-                        .map((el: string, idx: number) => {
-                          return (
-                            <div
-                              className={`bg-red-500 w-full max-w-[300px] p-4 py-2 cursor-pointer rounded-md  odd:last:col-span-2  odd:last:justify-self-center`}
-                              onClick={() => onSendChat(el)}
-                              key={idx}
-                            >
-                              {el}
-                            </div>
-                          )
-                        })}
-                  </div>
                 </div>
               ) : (
                 <>
@@ -180,9 +168,30 @@ const PageRoom = () => {
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 w-full z-10">
-        <div className="py-6">
-          <ChatSubmit boxWidth="small" onSendChat={msg => onSendChat(msg)} disable={disableChat} />
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-4/5 lg:w-3/4 z-10">
+        {chats.length <= 0 && (
+          <div className="w-full text-sm lg:w-3/4 mx-auto font-arial">
+            <div className="grid grid-cols-2 gap-2 text-center">
+              {builder?.conversationStarters.length > 0 &&
+                builder.conversationStarters[0] !== '' &&
+                builder.conversationStarters
+                  .filter((el: string) => el !== '')
+                  .map((el: string, idx: number) => {
+                    return (
+                      <div
+                        className={`text-gray-400 border border-gray-600 w-full py-3 cursor-pointer odd:last:col-span-2  odd:last:justify-self-center`}
+                        onClick={() => onSendChat(el)}
+                        key={idx}
+                      >
+                        {el}
+                      </div>
+                    )
+                  })}
+            </div>
+          </div>
+        )}
+        <div className="">
+          <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} className="font-arial" />
         </div>
       </div>
     </>

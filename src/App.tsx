@@ -41,7 +41,7 @@ const App = () => {
       <LitProtocolProvider>
         <Routes>
           <Route element={<MainLayout children={undefined} />}>
-            <Route path="/" element={<PageIndex />} />
+            <Route path="/" element={<PageExplorer />} />
             <Route path="/nft" element={<PageNft />} />
             <Route path="/inventory" element={<PageInventory />} />
             <Route path="/admin" element={<PageAdmin />} />
@@ -55,10 +55,9 @@ const App = () => {
             <Route path="/subscribe" element={<PageExchange />} />
             <Route path="/container/:key" element={<PageContainer />} />
             <Route path="/builder" element={<PageBuilder />} />
-          </Route>
-          <Route element={<PublicLayout children={undefined} />}>
             <Route path="/room/:key" element={<PageRoom />} />
           </Route>
+          <Route element={<PublicLayout children={undefined} />}></Route>
         </Routes>
       </LitProtocolProvider>
     </ApiProvider>

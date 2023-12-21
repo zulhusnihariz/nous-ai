@@ -93,6 +93,7 @@ const createDefaultMetadata = (token_id: string) => {
     builder: {
       name: '',
       description: '',
+      category: '',
       instructions: '',
       conversationStarters: [''],
     },
@@ -243,7 +244,7 @@ const useGetNousMetadatas = (public_key: string, page_index: number, item_per_pa
   })
 }
 
-const useGetOwnedNousMetadatas = (public_key: string, size = 9999) => {
+const useGetOwnedNousMetadatas = (public_key: string, size = 1000) => {
   return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_METADATAS, public_key],
     queryFn: async ({ pageParam = 0 }) => {

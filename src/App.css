@@ -24,6 +24,10 @@
   white-space: pre-line;
 }
 
+.font-arial {
+  font-family: 'Arial', 'helvetica', Sans-serif;
+}
+
 .notched-border {
   position: relative;
   width: 100px;

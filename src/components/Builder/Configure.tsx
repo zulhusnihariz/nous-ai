@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { usePublishTransaction } from 'repositories/rpc.repository'
 import { useQueryClient } from 'wagmi'
 
+const categories = ['Character', 'Whitepaper', 'Game', 'Topic']
+
 const BuilderConfiguration = (prop: { nft: Nft; refetch: any }) => {
   const [input, setInput] = useState<Builder>(prop.nft?.builder as Builder)
 
@@ -63,14 +65,14 @@ const BuilderConfiguration = (prop: { nft: Nft; refetch: any }) => {
 
     await publish({
       alias: 'builder',
-      chain_id: prop.nft.chain_id as string,
+      chain_id: prop.nft.chain_id,
       data: content,
       mcdata: '',
       meta_contract_id: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID,
       method: 'metadata',
       public_key: address.full.toLowerCase(),
       signature,
-      token_address: prop.nft.token_address as string,
+      token_address: prop.nft.token_address,
       token_id: prop.nft.token_id as string,
       version: '',
     })

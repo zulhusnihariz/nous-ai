@@ -175,7 +175,7 @@ const PageBot2 = () => {
       )}
       <div className="fixed bottom-0 left-0 w-full">
         <div className="relative py-6">
-          <ChatSubmit boxWidth="small" onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
+          <ChatSubmit onSendChat={msg => chatQuestion(msg)} disable={disableChat} />
         </div>
       </div>
     </div>

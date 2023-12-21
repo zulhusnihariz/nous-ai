@@ -11,6 +11,7 @@ export interface Nft {
 export interface Builder {
   name: string
   description: string
+  category: string
   instructions: string
   conversationStarters: string[]
 }

@@ -5,7 +5,7 @@ import GenericButton from './Button/GenericButton'
 interface ChatSubmitProp {
   onSendChat: (message: string) => void
   disable: boolean
-  boxWidth: 'wide' | 'small'
+  className?: string
 }
 
 const ChatSubmit = (prop: ChatSubmitProp) => {
@@ -44,8 +44,8 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
   }
 
   return (
-    <div className="relative py-6">
-      <div className={`relative sm:w-full md:w-3/4 mx-auto px-4 ${prop.boxWidth == 'small' ? 'lg:w-1/2' : ''}`}>
+    <div className="relative pb-6 md:pt-6">
+      <div className={`relative sm:w-full md:w-3/4 mx-auto px-4 w-full ${prop.className}`}>
         <div className="bg-blue-800 text-white p-1 text-xs border-blue-600 border invisible md:visible">
           Press ENTER to submit
         </div>
@@ -60,7 +60,7 @@ const ChatSubmit = (prop: ChatSubmitProp) => {
           onKeyUp={handleKeyUp}
           placeholder={prop.disable ? 'Processing...' : 'Type a message'}
           className="w-full py-3 px-3 text-white border-blue-500 border  shadow-sm text-xs sm:text-sm bg-blue-800 focus:outline-none focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
-          rows={2}
+          rows={1}
           disabled={prop.disable}
         />
         <span className="absolute -bottom-4 inset-y-0 end-0 grid w-20 place-content-center visible md:invisible">

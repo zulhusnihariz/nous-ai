@@ -54,7 +54,7 @@ export default function Header() {
           <div className="flex gap-2 items-center">
             <GenericButton icon={<Bar3Icon />} onClick={openModal} />
           </div>
-          <div className="flex flex-shrink-0 items-center">
+          <div className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 flex flex-shrink-0 items-center">
             <Link to="/">
               <img className="block h-12 w-auto lg:hidden" src={logo} alt="Nous Psyche" />
               <img className="hidden h-14 w-auto lg:block" src={logo} alt="Nous Psyche" />

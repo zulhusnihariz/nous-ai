@@ -171,7 +171,7 @@ const BuilderPreview = (prop: { nft: Nft }) => {
         </div>
 
         <div className="w-full row-span-2">
-          <ChatSubmit boxWidth="wide" onSendChat={msg => onSendChat(msg)} disable={false} />
+          <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={false} />
         </div>
       </div>
     </>
