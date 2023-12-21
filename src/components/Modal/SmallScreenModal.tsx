@@ -46,15 +46,6 @@ const SmallScreenModal = () => {
                   </Dialog.Title>
                   <div className="relative flex items-center justify-between text-white mt-6">
                     <div className="flex flex-col w-full gap-4 px-4">
-                      {/*                   
-                      Should be here.    
-                      <ConnectButton
-                        chainStatus={'none'}
-                        accountStatus={{
-                          smallScreen: 'avatar',
-                          largeScreen: 'avatar',
-                        }}
-                      /> */}
                       <Link
                         to="/mint"
                         className={`h-full uppercase tracking-widest sm:text-md md:text-xl hover:text-yellow-400
@@ -79,7 +70,7 @@ const SmallScreenModal = () => {
                         </>
                       )}
 
-                      {address && (
+                      {/* {address && (
                         <>
                           <Link
                             to="/subscribe"
@@ -101,7 +92,7 @@ const SmallScreenModal = () => {
                         }}
                       >
                         <span className="">Explorer</span>
-                      </Link>
+                      </Link> */}
 
                       <div className="py-2 flex flex-col gap-2">
                         <Link
