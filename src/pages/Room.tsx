@@ -16,6 +16,7 @@ import ExchangeSellDialog from 'components/Exchange/SellDialog'
 import useAllowedList from 'components/Exchange/hooks/useAllowedList'
 import useContractPaused from 'components/Exchange/hooks/usePaused'
 import ExchangeNotAllowed from 'components/Exchange/NotAllowed'
+import useUserKeyBalance from 'components/Exchange/hooks/useGetUserBalance'
 
 const PageRoom = () => {
   const { key } = useParams()
@@ -29,6 +30,7 @@ const PageRoom = () => {
   const [name, setName] = useState('')
   const [bgColor, setBgColor] = useState('')
   const { data: nft } = useGetSingleNousMetadata(key as string)
+  const { keyCount } = useUserKeyBalance(nft?.token.id as string, address.full)
 
   const { data: metadata } = useGetLineageNftToken(key as string)
   const { hasAccess } = useCheckAccess({
@@ -160,12 +162,14 @@ const PageRoom = () => {
           {isAllowed && !isPaused && (
             <>
               <GenericMiniButton className="ml-4" name="Boost" icon={<BoostIcon />} onClick={() => onClickBoost()} />
-              <GenericMiniButton
-                className="ml-4"
-                name="Unboost"
-                icon={<UnboostIcon />}
-                onClick={() => onClickUnboost()}
-              />
+              {keyCount > 1 && (
+                <GenericMiniButton
+                  className="ml-4"
+                  name="Unboost"
+                  icon={<UnboostIcon />}
+                  onClick={() => onClickUnboost()}
+                />
+              )}
             </>
           )}
         </div>
