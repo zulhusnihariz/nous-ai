@@ -9,7 +9,7 @@ import { v4 } from 'uuid'
 import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
 import GenericMiniButton from 'components/Button/GenericMiniButton'
-import { BoostIcon, RegisterIcon, UnboostIcon } from 'components/Icons/misc'
+import { BoostIcon, UnboostIcon, UnlockIcon } from 'components/Icons/misc'
 import ExchangeBuyDialog from 'components/Exchange/BuyDialog'
 import { useBoundStore } from 'store'
 import ExchangeSellDialog from 'components/Exchange/SellDialog'
@@ -130,8 +130,8 @@ const PageRoom = () => {
 
   const { setModalState, modal } = useBoundStore()
 
-  let { isAllowed } = useAllowedList({ address: address?.full })
-  let { isPaused, isLoaded } = useContractPaused()
+  const { isAllowed } = useAllowedList({ address: address?.full })
+  const { isPaused, isLoaded } = useContractPaused()
 
   const onClickBoost = () => {
     setModalState({
@@ -157,7 +157,7 @@ const PageRoom = () => {
         <div>&nbsp;</div>
         <div>
           {!isAllowed && !isPaused && (
-            <GenericMiniButton name="Register" icon={<RegisterIcon />} onClick={() => onClickRegister()} />
+            <GenericMiniButton name="Unlock Boost" icon={<UnlockIcon />} onClick={() => onClickRegister()} />
           )}
           {isAllowed && !isPaused && (
             <>

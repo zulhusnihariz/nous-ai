@@ -44,7 +44,7 @@ const GenericMiniButton = ({ name, onClick, icon, className, disabled, color, te
           color ?? 'gray'
         }-900 opacity-0 group-hover:opacity-100`}
       ></span>
-      <span className="relative transition-colors duration-100 delay-200 group-hover:text-white ease flex gap-2">
+      <span className="relative transition-colors duration-100 delay-200 group-hover:text-white ease flex gap-2 items-center">
         {icon}
         <span className="uppercase">{name}</span>
       </span>
