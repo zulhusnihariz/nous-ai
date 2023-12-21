@@ -8,9 +8,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { v4 } from 'uuid'
 import useCheckAccess from 'hooks/useCheckRoomAccess'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
-import GenericButton from 'components/Button/GenericButton'
 import GenericMiniButton from 'components/Button/GenericMiniButton'
-import { BoostIcon } from 'components/Icons/misc'
+import { BoostIcon, RegisterIcon, UnboostIcon } from 'components/Icons/misc'
+import ExchangeBuyDialog from 'components/Exchange/BuyDialog'
+import { useBoundStore } from 'store'
+import ExchangeSellDialog from 'components/Exchange/SellDialog'
+import useAllowedList from 'components/Exchange/hooks/useAllowedList'
+import useContractPaused from 'components/Exchange/hooks/usePaused'
+import ExchangeNotAllowed from 'components/Exchange/NotAllowed'
 
 const PageRoom = () => {
   const { key } = useParams()
@@ -121,15 +126,51 @@ const PageRoom = () => {
     }
   }, [bgColor])
 
+  const { setModalState, modal } = useBoundStore()
+
+  let { isAllowed } = useAllowedList({ address: address?.full })
+  let { isPaused, isLoaded } = useContractPaused()
+
+  const onClickBoost = () => {
+    setModalState({
+      subscribe: { isOpen: true, tokenId: nft?.token.id as string, amount: 0 },
+    })
+  }
+
+  const onClickUnboost = () => {
+    setModalState({
+      unsubscribe: { isOpen: true, tokenId: nft?.token.id as string, amount: 0 },
+    })
+  }
+
+  const onClickRegister = () => {
+    setModalState({
+      notAllowed: { isOpen: true },
+    })
+  }
+
   return (
     <>
       <div className="w-full flex justify-between">
         <div>&nbsp;</div>
         <div>
-          <GenericMiniButton name="Boost" icon={<BoostIcon />} onClick={() => {}} />
+          {!isAllowed && !isPaused && (
+            <GenericMiniButton name="Register" icon={<RegisterIcon />} onClick={() => onClickRegister()} />
+          )}
+          {isAllowed && !isPaused && (
+            <>
+              <GenericMiniButton className="ml-4" name="Boost" icon={<BoostIcon />} onClick={() => onClickBoost()} />
+              <GenericMiniButton
+                className="ml-4"
+                name="Unboost"
+                icon={<UnboostIcon />}
+                onClick={() => onClickUnboost()}
+              />
+            </>
+          )}
         </div>
       </div>
-      <div className="min-h-screen z-0 pb-72 font-arial">
+      <div className="min-h-screen z-0 pb-72 font-arial ">
         <div className="relative h-screen z-10 pb-[230px]">
           <div className="flex flex-col w-full h-screen">
             <div className="flex-1 p-2">
@@ -168,7 +209,11 @@ const PageRoom = () => {
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-4/5 lg:w-3/4 z-10">
+      <div
+        className={`bottom-0 left-1/2 -translate-x-1/2 w-4/5 lg:w-3/4 z-10 ${
+          modal.notAllowed.isOpen || modal.subscribe.isOpen || modal.unsubscribe.isOpen ? 'relative' : 'fixed'
+        }`}
+      >
         {chats.length <= 0 && (
           <div className="w-full text-sm lg:w-3/4 mx-auto font-arial">
             <div className="grid grid-cols-2 gap-2 text-center">
@@ -193,6 +238,10 @@ const PageRoom = () => {
         <div className="">
           <ChatSubmit onSendChat={msg => onSendChat(msg)} disable={disableChat} className="font-arial" />
         </div>
+
+        <ExchangeBuyDialog />
+        <ExchangeSellDialog />
+        <ExchangeNotAllowed />
       </div>
     </>
   )

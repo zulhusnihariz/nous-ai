@@ -1,20 +1,21 @@
 import { Dialog, Transition } from '@headlessui/react'
 import GenericButton from 'components/Button/GenericButton'
-import TypographyNormal from 'components/Typography/Normal'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useBoundStore } from 'store'
 import useSubscription from './hooks/useSubscription'
 import useGetSellPrice from './hooks/useGetSellPrice'
 import useUserKeyBalance from './hooks/useGetUserBalance'
 import { useConnectedWallet } from 'hooks/use-connected-wallet'
+import QuantityInput from 'components/QuantityInput'
 
 const ExchangeSellDialog = () => {
+  const [amount, setAmount] = useState(0)
   const { unsubscribe, isLoading } = useSubscription()
   const { modal, setModalState } = useBoundStore()
   const { address } = useConnectedWallet()
   const { sellPrice, sellPriceAfterTax } = useGetSellPrice({
     tokenId: modal.unsubscribe.tokenId,
-    amount: modal.unsubscribe.amount,
+    amount,
   })
 
   const { refetch } = useUserKeyBalance(modal.unsubscribe.tokenId, address.full)
@@ -25,20 +26,20 @@ const ExchangeSellDialog = () => {
     })
   }
 
-  const onClickSubscribe = async () => {
+  const onClickUnsubscribe = async () => {
     try {
-      await unsubscribe(modal.unsubscribe.tokenId, modal.unsubscribe.amount)
+      await unsubscribe(modal.unsubscribe.tokenId, amount)
       refetch()
       setModalState({
         alert: {
           isOpen: true,
           state: 'success',
-          message: `Succesfully unsubscribed to Nous Psyche #${modal.unsubscribe.tokenId}`,
+          message: `Unboosting Nous Psyche #${modal.unsubscribe.tokenId}`,
         },
       })
     } catch (e) {
       setModalState({
-        alert: { isOpen: true, state: 'failed', message: `Unsubscription failed` },
+        alert: { isOpen: true, state: 'failed', message: `Unboost failed` },
       })
     }
   }
@@ -72,31 +73,28 @@ const ExchangeSellDialog = () => {
               <div
                 className={`p-4 ring-1 ring-white backdrop-blur border shadow-2xl h-full bg-blue-500/70 border-blue-600`}
               >
-                <div className="">
-                  <TypographyNormal classNames="text-left uppercase text-md text-yellow-400 font-semibold tracking-wider">
-                    SUBSCRIPTION PRICE
-                  </TypographyNormal>
-                  <div className="text-left flex items-center gap-3 justify-start">
-                    <TypographyNormal classNames="uppercase text-lg text-white">{sellPrice} ETH</TypographyNormal>
+                <div className="flex flex-col p-4 text-white h-full">
+                  <h3 className="text-lg font-bold">Unstake to unboost this bot</h3>
+                  <h5 className="text-md">By unboost this bot, it would possibly drop rank</h5>
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center flex flex-col gap-1">
+                      <QuantityInput input={amount} setInput={setAmount} />
+                    </div>
                   </div>
-                </div>
-                <div className="mt-2">
-                  <TypographyNormal classNames="text-left uppercase text-md text-yellow-400 font-semibold tracking-wider">
-                    AMOUNT RECEIVED AFTER TAX
-                  </TypographyNormal>
-                  <div className="text-left flex items-center gap-3 justify-start">
-                    <TypographyNormal classNames="uppercase text-xl text-white">
-                      {sellPriceAfterTax} ETH
-                    </TypographyNormal>
+                  <div className="my-3 pr-3 w-full text-right">
+                    <h5 className="text-xs uppercase text-yellow-400">Total Unstake</h5>
+                    <h3>{sellPrice ?? 0} ETH</h3>
+                    <h5 className="text-xs uppercase text-yellow-400 mt-1">Total Unstake After Fee</h5>
+                    <h3>{sellPriceAfterTax ?? 0} ETH</h3>
+                    <div className="text-center flex justify-end gap-2 mt-2">
+                      <GenericButton
+                        name={!isLoading ? `Unboost` : `Processing`}
+                        disabled={isLoading}
+                        onClick={onClickUnsubscribe}
+                      />
+                      <GenericButton name="Cancel" onClick={onCloseModal} />
+                    </div>
                   </div>
-                </div>
-                <div className="text-center mb-3 fixed bottom-0 flex gap-2 right-4">
-                  <GenericButton
-                    name={!isLoading ? `Unsubscribe` : `Processing`}
-                    disabled={isLoading}
-                    onClick={onClickSubscribe}
-                  />
-                  <GenericButton name="Cancel" onClick={onCloseModal} />
                 </div>
               </div>
             </Dialog.Panel>
