@@ -27,6 +27,7 @@ export type Modal = {
   referral: ModalState
   subscribe: ModalState & { amount: number; tokenId: string }
   unsubscribe: ModalState & { amount: number; tokenId: string }
+  notAllowed: ModalState
   alert: ModalState & { state: string } & { message: string; onOkClicked?: () => void }
   smallMenu: ModalState
 }
@@ -102,6 +103,10 @@ const initialModal = {
       onOkClicked: () => {},
     },
     smallMenu: {
+      isOpen: false,
+    },
+
+    notAllowed: {
       isOpen: false,
     },
   },
