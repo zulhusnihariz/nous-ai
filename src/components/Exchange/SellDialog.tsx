@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import GenericButton from 'components/Button/GenericButton'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useBoundStore } from 'store'
 import useSubscription from './hooks/useSubscription'
 import useGetSellPrice from './hooks/useGetSellPrice'
@@ -18,13 +18,17 @@ const ExchangeSellDialog = () => {
     amount,
   })
 
-  const { refetch } = useUserKeyBalance(modal.unsubscribe.tokenId, address.full)
+  const { refetch, keyCount } = useUserKeyBalance(modal.unsubscribe.tokenId, address.full)
 
   const onCloseModal = () => {
     setModalState({
       unsubscribe: { isOpen: false, tokenId: '', amount: 0 },
     })
   }
+
+  useEffect(() => {
+    setAmount(keyCount)
+  }, [keyCount])
 
   const onClickUnsubscribe = async () => {
     try {
@@ -78,7 +82,7 @@ const ExchangeSellDialog = () => {
                   <h5 className="text-md">By unboost this bot, it would possibly drop rank</h5>
                   <div className="flex-1 flex items-center justify-center">
                     <div className="text-center flex flex-col gap-1">
-                      <QuantityInput input={amount} setInput={setAmount} />
+                      <QuantityInput input={amount} setInput={setAmount} max={keyCount} />
                     </div>
                   </div>
                   <div className="my-3 pr-3 w-full text-right">
