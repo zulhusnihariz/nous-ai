@@ -75,17 +75,15 @@ const PageExplorer = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
               {bots &&
-                [bots, bots, bots]
-                  .flatMap(el => el)
-                  .map((bot, index) => {
-                    if (bot.builder?.name) {
-                      return (
-                        <div key={index} className="text-[8px] sm:text-sm border border-transparent rounded-lg">
-                          <CustomChatCard dataKey={bot.dataKey} nft={bot} />
-                        </div>
-                      )
-                    }
-                  })}
+                bots.map((bot, index) => {
+                  if (bot.builder?.name) {
+                    return (
+                      <div key={index} className="text-[8px] sm:text-sm border border-transparent rounded-lg">
+                        <CustomChatCard dataKey={bot.dataKey} nft={bot} />
+                      </div>
+                    )
+                  }
+                })}
               <p ref={ref} className="mt-72 opacity-0">
                 Observe this
               </p>
