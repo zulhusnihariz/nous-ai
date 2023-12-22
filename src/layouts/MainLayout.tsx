@@ -13,6 +13,7 @@ const backgroundImages: BackgroundImages = {
   '/search': '',
   '/room': 'none',
   '': 'none',
+  '/bot2': 'none',
 }
 
 const getRootPath = (pathname: string) => {

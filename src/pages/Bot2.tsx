@@ -25,7 +25,7 @@ const PageBot2 = () => {
   const { data: nft } = useGetSingleNousMetadata(key)
   const [refetch, setRefetch] = useState(false)
   const [newsSummary, setNewsSummary] = useState('')
-  const [nousId] = useState('357')
+  const [nousId] = useState('2592')
 
   const [session, setSession] = useState(v4())
   useEffect(() => {
