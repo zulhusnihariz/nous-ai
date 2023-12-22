@@ -1,4 +1,3 @@
-import BotCard from 'components/BotCard'
 import CustomChatCard from 'components/CustomChatCard'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -6,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useGetAllBots } from 'repositories/rpc.repository'
 
 const PageExplorer = () => {
-  const { data, fetchNextPage } = useGetAllBots(20)
+  const { data, fetchNextPage } = useGetAllBots(10)
 
   const { ref, inView } = useInView()
   const bots = data?.pages?.flatMap(group => group.data)
@@ -21,8 +20,8 @@ const PageExplorer = () => {
         <div className="w-full text-center py-6">
           <Link to="/mint" className="underline font-bold">
             Mint
-          </Link>{' '}
-          new Nous Pysche NFT to create custom knowledge.{' '}
+          </Link>
+          new Nous Pysche NFT to create custom knowledge.
           <Link
             to=""
             className="underline text-gray-300"

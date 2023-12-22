@@ -3,10 +3,11 @@ import rpc, { JSONRPCFilter, Transaction } from '../services/rpc'
 import { useIpfs } from 'hooks/use-ipfs'
 import { RQ_KEY } from 'repositories'
 import { chainIdToNetwork, formatDataKey } from 'utils'
-import { Nft, NftMetadata } from 'lib'
+import { Metadata, Nft, NftMetadata } from 'lib'
 import { NousNft } from 'lib/NousNft'
 import { getNftByAddress } from 'services/wallet'
 import { getNftOwnerByTokenId, getNftsByPage } from 'services/nft'
+import { Token } from 'lib/Perk'
 
 const useGetCompleteTransactions = () => {
   return useQuery({
@@ -308,70 +309,196 @@ const useGetOwnedNousMetadatas = (public_key: string, size = 1000) => {
   })
 }
 
+enum NOUS_DATA {
+  OPENSEA_METADATA = 'metadata',
+  STORAGE = 'storage',
+  NOUS_METADATA = 'nous',
+  LEVEL = 'stat',
+  BADGE = 'achievement',
+  BUILDER = 'builder',
+}
+
+const getMetadataContent = async (
+  data_key: string,
+  meta_contract_id: string = import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID,
+  public_key: string,
+  alias: string,
+  version = ''
+) => {
+  const metadata = await rpc.getMetadata(data_key, meta_contract_id, public_key, alias, version)
+
+  if (!metadata?.cid) return undefined
+
+  const content = await rpc.getContentFromIpfs(metadata.cid)
+  return JSON.parse(content.data.result.content as string)
+}
+
+const searchMetadatasContent = async (filter: Partial<JSONRPCFilter<Metadata>>) => {
+  const metadata = await rpc.searchMetadatas(filter)
+
+  const exists = metadata && metadata.length == 1
+  if (!exists) return undefined
+
+  const content = await rpc.getContentFromIpfs(metadata[0].cid)
+  return JSON.parse(content.data.result.content as string)
+}
+
+const selectiveFetchNousMetadata = async (
+  token_id: string,
+  public_key: string,
+  owner_pk: string,
+  include: Partial<Record<NOUS_DATA, boolean>>
+) => {
+  const data_key = formatDataKey(
+    import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+    import.meta.env.VITE_NOUS_AI_NFT as string,
+    token_id
+  )
+
+  let queries: Record<NOUS_DATA, () => Promise<any>> = {
+    [NOUS_DATA.OPENSEA_METADATA]: () =>
+      getMetadataContent(
+        data_key,
+        '0x01',
+        import.meta.env.VITE_NOUS_METADATA_PK?.toLowerCase() as string,
+        '',
+        data_key
+      ),
+    [NOUS_DATA.STORAGE]: () =>
+      searchMetadatasContent({
+        query: [
+          {
+            column: 'data_key',
+            op: '=',
+            query: data_key,
+          },
+          {
+            column: 'meta_contract_id',
+            op: '=',
+            query: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID as string,
+          },
+          {
+            column: 'public_key',
+            op: '=',
+            query: public_key.toLowerCase(),
+          },
+        ],
+      }),
+    [NOUS_DATA.NOUS_METADATA]: () =>
+      searchMetadatasContent({
+        query: [
+          {
+            column: 'data_key',
+            op: '=',
+            query: data_key,
+          },
+          {
+            column: 'meta_contract_id',
+            op: '=',
+            query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+          },
+          {
+            column: 'public_key',
+            op: '=',
+            query: public_key.toLowerCase(),
+          },
+        ],
+      }),
+    [NOUS_DATA.LEVEL]: () =>
+      getMetadataContent(
+        data_key,
+        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+        import.meta.env.VITE_NOUS_DATA_PK as string,
+        'bot_level',
+        ''
+      ),
+    [NOUS_DATA.BADGE]: () =>
+      getMetadataContent(
+        data_key,
+        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
+        import.meta.env.VITE_NOUS_DATA_PK as string,
+        'badge',
+        ''
+      ),
+    [NOUS_DATA.BUILDER]: () =>
+      getMetadataContent(data_key, import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string, owner_pk, 'builder', ''),
+  }
+
+  const reduced = Object.entries(include).reduce(
+    (acc, curr) => {
+      const [key, value] = curr
+      if (value) acc[key as NOUS_DATA] = queries[key as NOUS_DATA]
+      return acc
+    },
+    {} as Record<NOUS_DATA, () => Promise<any>>
+  )
+
+  let fulfilled = await Promise.all(Object.values(reduced).map(func => func()))
+
+  const results: Record<string, any> = {}
+
+  Object.keys(reduced).forEach((key, index) => {
+    results[key] = fulfilled[index]
+  })
+
+  return results
+}
+
+const loadBots = async (data: { tokens: Token[] }, tokenIds: any[], i: number) => {
+  const tokenId = tokenIds[i]
+  const json = createDefaultMetadata(tokenId)
+  json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
+  json.owner = data.tokens[i].owner.id
+  json.latestPrice = data.tokens[i].latestPrice
+
+  const { builder } = await selectiveFetchNousMetadata(
+    tokenId as string,
+    import.meta.env.VITE_NOUS_METADATA_PK as string,
+    json.owner,
+    {
+      builder: true,
+    }
+  )
+
+  if (!builder) return json
+
+  const { metadata, achievement } = await selectiveFetchNousMetadata(
+    tokenId as string,
+    import.meta.env.VITE_NOUS_METADATA_PK as string,
+    json.owner,
+    {
+      metadata: true,
+      achievement: true,
+    }
+  )
+
+  if (metadata) json.metadata = metadata.content
+  if (achievement) json.achievement.badge = achievement.content.src as string
+  if (builder) json.builder = builder.content
+
+  json.dataKey = formatDataKey(
+    import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
+    import.meta.env.VITE_NOUS_AI_NFT as string,
+    tokenId as string
+  )
+
+  return json
+}
+
 const useGetAllBots = (size: number) => {
   return useInfiniteQuery<{ data: ({ dataKey: string } & Nft & NousNft)[]; nextCursor: number }>({
     queryKey: [RQ_KEY.GET_ALL_NFTS],
     queryFn: async ({ pageParam = 0 }) => {
-      const nfts: ({ dataKey: string } & Nft & NousNft)[] = []
-
       const { data } = await getNftsByPage({ skip: pageParam, first: size })
 
       const tokenIds = data.tokens.map((nft: any) => nft.tokenId)
+      const promises = []
 
       for (let i = 0; i < tokenIds.length; i++) {
-        const tokenId = tokenIds[i]
-        const json = createDefaultMetadata(tokenId)
-        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
-        json.owner = data.tokens[i].owner.id
-        json.latestPrice = data.tokens[i].latestPrice
-
-        const [
-          contentFromMetadata,
-          contentFromNousStorage,
-          contentFromNousMetadata,
-          contentFromNousLevel,
-          contentFromNousBadge,
-          contentFromNousBuilder,
-        ] = await fetchNousMetadata(tokenId as string, import.meta.env.VITE_NOUS_METADATA_PK as string, json.owner)
-
-        if (contentFromMetadata) {
-          const data = JSON.parse(contentFromMetadata.data.result.content as string)
-          json.metadata = data.content
-        }
-
-        if (contentFromNousStorage) {
-          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
-          json.knowledge = data.content
-        }
-
-        if (contentFromNousMetadata) {
-          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
-          json.nous = data.content
-        }
-
-        if (contentFromNousLevel) {
-          const data = JSON.parse(contentFromNousLevel.data.result.content as string)
-          json.stat.level = data.content.level as string
-        }
-
-        if (contentFromNousBadge) {
-          const data = JSON.parse(contentFromNousBadge.data.result.content as string)
-          json.achievement.badge = data.content.src as string
-        }
-
-        if (contentFromNousBuilder) {
-          const data = JSON.parse(contentFromNousBuilder.data.result.content as string)
-          json.builder = data.content
-        }
-
-        json.dataKey = formatDataKey(
-          import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
-          import.meta.env.VITE_NOUS_AI_NFT as string,
-          tokenId as string
-        )
-
-        nfts.push(json)
+        promises.push(loadBots(data, tokenIds, i))
       }
+
+      const nfts: ({ dataKey: string } & Nft & NousNft)[] = await Promise.all(promises)
 
       return { data: nfts, nextCursor: pageParam + size }
     },
