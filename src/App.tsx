@@ -23,15 +23,17 @@ import PublicLayout from 'layouts/PublicLayout'
 import PageAdmin from 'pages/admin'
 import { RainbowKitProvider, connectorsForWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
-import PageSearch from 'pages/PageSearch'
-import PageMint from 'pages/Mint'
-import PageBot from 'pages/Bot2'
-import PageExplorer from 'pages/Explorer'
-import PageContainer from 'pages/Container'
-import PageBot2 from 'pages/Bot2'
-import PagePerks from 'pages/Perks'
-import PageQuest from 'pages/Quest'
-import PageBuilder from 'pages/Builder'
+import loadable from '@loadable/component'
+
+const PageSearch = loadable(() => import('pages/PageSearch'))
+const PageMint = loadable(() => import('pages/Mint'))
+const PageBot = loadable(() => import('pages/Bot2'))
+const PageExplorer = loadable(() => import('./pages/Explorer'))
+const PageContainer = loadable(() => import('pages/Container'))
+const PageBot2 = loadable(() => import('pages/Bot2'))
+const PagePerks = loadable(() => import('pages/Perks'))
+const PageQuest = loadable(() => import('pages/Quest'))
+const PageBuilder = loadable(() => import('pages/Builder'))
 
 const App = () => {
   return (
