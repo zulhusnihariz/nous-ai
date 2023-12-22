@@ -101,214 +101,6 @@ const createDefaultMetadata = (token_id: string) => {
   }
 }
 
-const fetchNousMetadata = async (token_id: string, public_key: string, owner_pk: string) => {
-  const data_key = formatDataKey(
-    import.meta.env.VITE_DEFAULT_CHAIN_ID as string,
-    import.meta.env.VITE_NOUS_AI_NFT as string,
-    token_id
-  )
-
-  const [result_metadata, result_nous_storage, result_nous_metadata, result_nous_level, result_badge, result_builder] =
-    await Promise.all([
-      rpc.getMetadata(data_key, '0x01', import.meta.env.VITE_NOUS_METADATA_PK?.toLowerCase() as string, '', data_key),
-      rpc.searchMetadatas({
-        query: [
-          {
-            column: 'data_key',
-            op: '=',
-            query: data_key,
-          },
-          {
-            column: 'meta_contract_id',
-            op: '=',
-            query: import.meta.env.VITE_NOUS_STORAGE_META_CONTRACT_ID as string,
-          },
-          {
-            column: 'public_key',
-            op: '=',
-            query: public_key.toLowerCase(),
-          },
-        ],
-      }),
-      rpc.searchMetadatas({
-        query: [
-          {
-            column: 'data_key',
-            op: '=',
-            query: data_key,
-          },
-          {
-            column: 'meta_contract_id',
-            op: '=',
-            query: import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as string,
-          },
-          {
-            column: 'public_key',
-            op: '=',
-            query: public_key.toLowerCase(),
-          },
-        ],
-      }),
-      rpc.getMetadata(
-        data_key,
-        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
-        import.meta.env.VITE_NOUS_DATA_PK as string,
-        'bot_level',
-        ''
-      ),
-      rpc.getMetadata(
-        data_key,
-        import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String,
-        import.meta.env.VITE_NOUS_DATA_PK as string,
-        'badge',
-        ''
-      ),
-      rpc.getMetadata(data_key, import.meta.env.VITE_NOUS_AI_META_CONTRACT_ID as String, owner_pk, 'builder', ''),
-    ])
-
-  const [nous_storage_exists, nous_metadata_exists] = [
-    result_nous_storage && result_nous_storage.length == 1,
-    result_nous_metadata && result_nous_metadata.length == 1,
-  ]
-
-  const cid_metadata = result_metadata ? result_metadata.cid : ''
-  const cid_nous_storage: string = nous_storage_exists ? result_nous_storage[0].cid : ''
-  const cid_nous_metadata: string = nous_metadata_exists ? result_nous_metadata[0].cid : ''
-  const cid_nous_level = result_nous_level ? result_nous_level.cid : ''
-  const cid_nous_badge = result_badge ? result_badge.cid : ''
-  const cid_nous_builder = result_builder ? result_builder.cid : ''
-
-  const promises: any[] = [
-    cid_metadata ? rpc.getContentFromIpfs(cid_metadata) : undefined,
-    cid_nous_storage ? rpc.getContentFromIpfs(cid_nous_storage) : undefined,
-    cid_nous_metadata ? rpc.getContentFromIpfs(cid_nous_metadata) : undefined,
-    cid_nous_level ? rpc.getContentFromIpfs(cid_nous_level) : undefined,
-    cid_nous_badge ? rpc.getContentFromIpfs(cid_nous_badge) : undefined,
-    cid_nous_builder ? rpc.getContentFromIpfs(cid_nous_builder) : undefined,
-  ]
-
-  const result = await Promise.all(promises)
-  return result
-}
-
-const useGetNousMetadatas = (public_key: string, page_index: number, item_per_page: number) => {
-  return useQuery<(Nft & NousNft)[]>({
-    queryKey: [RQ_KEY.GET_METADATAS],
-    queryFn: async () => {
-      const nfts: (Nft & NousNft)[] = []
-
-      const end_index = page_index * item_per_page + 10 < 10000 ? page_index * item_per_page + 10 : 10000
-
-      for (let x = page_index * item_per_page; x < end_index; x++) {
-        const json = createDefaultMetadata(`${x}`)
-        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
-
-        const [
-          contentFromMetadata,
-          contentFromNousStorage,
-          contentFromNousMetadata,
-          contentFromNousLevel,
-          contentFromNousBadge,
-        ] = await fetchNousMetadata(`${x}`, public_key, json.owner)
-
-        if (contentFromMetadata) {
-          const data = JSON.parse(contentFromMetadata.data.result.content as string)
-          json.metadata = data.content
-        }
-
-        if (contentFromNousStorage) {
-          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
-          json.knowledge = data.content
-        }
-
-        if (contentFromNousMetadata) {
-          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
-          json.nous = data.content
-        }
-
-        if (contentFromNousLevel) {
-          const data = JSON.parse(contentFromNousLevel.data.result.content as string)
-          json.stat = data.content as { level: string }
-        }
-
-        if (contentFromNousBadge) {
-          const data = JSON.parse(contentFromNousBadge.data.result.content as string)
-          json.achievement.badge = data.content.src as string
-        }
-
-        nfts.push(json)
-      }
-
-      return nfts
-    },
-    enabled: Boolean(public_key),
-  })
-}
-
-const useGetOwnedNousMetadatas = (public_key: string, size = 1000) => {
-  return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
-    queryKey: [RQ_KEY.GET_METADATAS, public_key],
-    queryFn: async ({ pageParam = 0 }) => {
-      const { data } = await getNftByAddress(public_key.toLowerCase(), pageParam, size)
-
-      const nfts: (Nft & NousNft)[] = []
-
-      for (let i = 0; i < data.tokens.length; i++) {
-        const token = data.tokens[i]
-        const json = createDefaultMetadata(token.tokenId)
-        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
-        json.owner = data.tokens[i].owner.id
-
-        const [
-          contentFromMetadata,
-          contentFromNousStorage,
-          contentFromNousMetadata,
-          contentFromNousLevel,
-          contentFromNousBadge,
-          contentFromNousBuilder,
-        ] = await fetchNousMetadata(token.tokenId, public_key, json.owner)
-
-        if (contentFromMetadata) {
-          const data = JSON.parse(contentFromMetadata.data.result.content as string)
-          json.metadata = data.content
-        }
-
-        if (contentFromNousStorage) {
-          const data = JSON.parse(contentFromNousStorage.data.result.content as string)
-          json.knowledge = data.content
-        }
-
-        if (contentFromNousMetadata) {
-          const data = JSON.parse(contentFromNousMetadata.data.result.content as string)
-          json.nous = data.content
-        }
-
-        if (contentFromNousLevel) {
-          const data = JSON.parse(contentFromNousLevel.data.result.content as string)
-          json.stat.level = data.content.level as string
-        }
-
-        if (contentFromNousBadge) {
-          const data = JSON.parse(contentFromNousBadge.data.result.content as string)
-          json.achievement.badge = data.content.src as string
-        }
-
-        if (contentFromNousBuilder) {
-          const data = JSON.parse(contentFromNousBuilder.data.result.content as string)
-          json.builder = data.content
-        }
-
-        nfts.push(json)
-      }
-
-      return { data: nfts, nextCursor: pageParam + size }
-    },
-    getNextPageParam: lastPage => lastPage.nextCursor,
-    keepPreviousData: true,
-    enabled: Boolean(public_key),
-  })
-}
-
 enum NOUS_DATA {
   OPENSEA_METADATA = 'metadata',
   STORAGE = 'storage',
@@ -343,7 +135,7 @@ const searchMetadatasContent = async (filter: Partial<JSONRPCFilter<Metadata>>) 
   return JSON.parse(content.data.result.content as string)
 }
 
-const selectiveFetchNousMetadata = async (
+const fetchNousMetadata = async (
   token_id: string,
   public_key: string,
   owner_pk: string,
@@ -444,6 +236,87 @@ const selectiveFetchNousMetadata = async (
   return results
 }
 
+const useGetNousMetadatas = (public_key: string, page_index: number, item_per_page: number) => {
+  return useQuery<(Nft & NousNft)[]>({
+    queryKey: [RQ_KEY.GET_METADATAS],
+    queryFn: async () => {
+      const nfts: (Nft & NousNft)[] = []
+
+      const end_index = page_index * item_per_page + 10 < 10000 ? page_index * item_per_page + 10 : 10000
+
+      for (let x = page_index * item_per_page; x < end_index; x++) {
+        const json = createDefaultMetadata(`${x}`)
+        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
+
+        const { metadata, storage, nous, stat, achievement } = await fetchNousMetadata(`${x}`, public_key, json.owner, {
+          metadata: true,
+          storage: true,
+          nous: true,
+          stat: true,
+          achievement: true,
+        })
+
+        if (metadata) json.metadata = metadata.content
+        if (storage) json.knowledge = storage.content
+        if (nous) json.nous = nous.content
+        if (stat) json.stat.level = stat.content.level
+        if (achievement) json.achievement.badge = achievement.content.src
+
+        nfts.push(json)
+      }
+
+      return nfts
+    },
+    enabled: Boolean(public_key),
+  })
+}
+
+const useGetOwnedNousMetadatas = (public_key: string, size = 1000) => {
+  return useInfiniteQuery<{ data: (Nft & NousNft)[]; nextCursor: number }>({
+    queryKey: [RQ_KEY.GET_METADATAS, public_key],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await getNftByAddress(public_key.toLowerCase(), pageParam, size)
+
+      const nfts: (Nft & NousNft)[] = []
+
+      for (let i = 0; i < data.tokens.length; i++) {
+        const token = data.tokens[i]
+        const json = createDefaultMetadata(token.tokenId)
+        json.dataKey = formatDataKey(json.chain_id, json.token_address, json.token_id)
+        json.owner = data.tokens[i].owner.id
+
+        const { metadata, storage, nous, stat, achievement, builder } = await fetchNousMetadata(
+          token.tokenId,
+          public_key,
+          json.owner,
+          {
+            metadata: true,
+            storage: true,
+            nous: true,
+            stat: true,
+            achievement: true,
+            builder: true,
+          }
+        )
+
+        if (metadata) json.metadata = metadata.content
+        if (storage) json.knowledge = storage.content
+        if (nous) json.nous = nous.content
+        if (stat) json.stat.level = stat.content.level
+        if (achievement) json.achievement.badge = achievement.content.src
+        if (builder) json.builder = builder.content
+
+        nfts.push(json)
+      }
+
+      return { data: nfts, nextCursor: pageParam + size }
+    },
+    getNextPageParam: lastPage => lastPage.nextCursor,
+    keepPreviousData: true,
+    enabled: Boolean(public_key),
+  })
+}
+
 const loadBots = async (data: { tokens: Token[] }, tokenIds: any[], i: number) => {
   const tokenId = tokenIds[i]
   const json = createDefaultMetadata(tokenId)
@@ -451,7 +324,7 @@ const loadBots = async (data: { tokens: Token[] }, tokenIds: any[], i: number) =
   json.owner = data.tokens[i].owner.id
   json.latestPrice = data.tokens[i].latestPrice
 
-  const { builder } = await selectiveFetchNousMetadata(
+  const { builder } = await fetchNousMetadata(
     tokenId as string,
     import.meta.env.VITE_NOUS_METADATA_PK as string,
     json.owner,
@@ -462,7 +335,7 @@ const loadBots = async (data: { tokens: Token[] }, tokenIds: any[], i: number) =
 
   if (!builder) return json
 
-  const { metadata, achievement } = await selectiveFetchNousMetadata(
+  const { metadata, achievement } = await fetchNousMetadata(
     tokenId as string,
     import.meta.env.VITE_NOUS_METADATA_PK as string,
     json.owner,
